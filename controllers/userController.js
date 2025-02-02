@@ -145,6 +145,22 @@ const updateAcademicHistory = async (req, res) => {
   }
 };
 
+const getCareerAcademicHistory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userDoc = await db.collection("users").doc(id).get();
+
+    if (!userDoc.exists) return handleHttpError(res, "User not found", 404);
+
+    const user = userDoc.data();
+    if (user.role !== "STUDENT") return handleHttpError(res, "Only students receive recommendations", 403);
+
+    res.json({ academicHistory: user.metadata.academicHistory || [] });
+  } catch (error) {
+    handleHttpError(res, "Error retrieving recommendations", 500);
+  }
+};
+
 const getCareerRecommendations = async (req, res) => {
   try {
     const { id } = req.params;
@@ -180,5 +196,6 @@ module.exports = {
   updateAcademicHistory,
   getCareerRecommendations,
   deleteUser,
+  getCareerAcademicHistory,
   createAdminWithoutValidation,
 };

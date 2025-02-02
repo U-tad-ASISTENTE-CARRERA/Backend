@@ -19,8 +19,9 @@ router.get("/", authUserMiddleware, checkRole(["ADMIN"]), validatePagination, Us
 router.patch("/:id", authUserMiddleware, checkRole(["ADMIN", "STUDENT"]), validateUserId, UserController.updateUser);
 router.delete("/:id", authUserMiddleware, checkRole(["ADMIN"]), validateUserId, UserController.deleteUser);
 
-router.patch("/:id/academicHistory", authUserMiddleware, checkRole(["STUDENT"]), validateAcademicHistoryUpdate, UserController.updateAcademicHistory);
-router.get("/:id/recommendations", authUserMiddleware, checkRole(["STUDENT"]), validateUserId, UserController.getCareerRecommendations);
+router.patch("/:id/academicHistory", authUserMiddleware, checkRole(["ADMIN", "STUDENT"]), validateAcademicHistoryUpdate, UserController.updateAcademicHistory);
+router.get("/:id/recommendations", authUserMiddleware, checkRole(["ADMIN", "STUDENT"]), validateUserId, UserController.getCareerRecommendations);
+router.get("/:id/AcademicHistory", authUserMiddleware, checkRole(["ADMIN", "STUDENT"]), validateUserId, UserController.getCareerAcademicHistory);
 
 router.post("/setup/admin", UserController.createAdminWithoutValidation);
 
