@@ -8,7 +8,7 @@ const getTokenData = async (req, res) => {
             return handleHttpError(res, "TOKEN_NOT_PROVIDED", 401);
         }
 
-        const token = req.headers.authorization.split(" ")[1]; // ✅ Corrección aquí
+        const token = req.headers.authorization.split(" ")[1]; 
         const dataToken = verifyToken(token);
 
         if (!dataToken) {
