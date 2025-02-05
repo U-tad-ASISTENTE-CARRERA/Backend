@@ -107,7 +107,7 @@ Content-Type: application/json
 
 ### 
 GET http://localhost:3000/lzYC2HpTSuFEGE4FXbWd/recommendations
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Imx6WUMySHBUU3VGRUdFNEZYYldkIiwicm9sZSI6IlNUVURFTlQiLCJpYXQiOjE3Mzg1MTEzMTgsImV4cCI6MTczODU5NzcxOH0.jh8GBuoZ2DmSIe0uX6QKKAC8gFyLYF41zySjhVScTgM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Imx6WUMySHBUU3VGRUdFNEZYYldkIiwicm9sZSI6IlNUVURFTlQiLCJpYXQiOjE3Mzg1OTY5NzQsImV4cCI6MTczODY4MzM3NH0.PdvEM-dIyxEnL25Xq4U997wJADribw2HtIs_MENo_cs
 Content-Type: application/json
 
 ###

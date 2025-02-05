@@ -2,7 +2,9 @@ const { body, param, query } = require("express-validator");
 
 const validateUser = [
   body("name").isString().isLength({ min: 2 }).withMessage("Name must be at least 2 characters long"),
-  body("email").isEmail().withMessage("Invalid email format"),
+  body("email")
+  .matches(/^[a-zA-Z0-9._%+-]+@(live\.u-tad\.com|u-tad\.com)$/)
+  .withMessage("Invalid email format, must be @live.u-tad.com or @u-tad.com"),
   body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters long"),
   body("role").isIn(["STUDENT", "TEACHER", "ADMIN"]).withMessage("Invalid role"),
   body("metadata").optional().isObject().withMessage("Metadata must be an object"),
