@@ -1,0 +1,49 @@
+### Register User
+POST http://localhost:3000/register
+Content-Type: application/json
+
+{
+  "email": "alvaro.vazquez@live.u-tad.com",
+  "password": "SecurePass123!",
+  "seedWord": "diegoenjoyer"
+}
+
+### Login User
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "email": "alvaro.vazquez@live.u-tad.com",
+  "password": "SecurePass@123"
+}
+
+### Update password
+PUT http://localhost:3000/updatePassword
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlY3dmxMb0pnQWtkbzRLZ1NHa1Y1IiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM4ODYzNTkxLCJleHAiOjE3Mzg5NDk5OTF9.tGUKnTNxlTq7QguYwcRhTPimGhZYZTirSLsgg5Hochc
+
+{
+  "email": "alvaro.vazquez@live.u-tad.com",
+  "newPassword": "SecurePass@123",
+  "seedWord": "diego"
+}
+
+### Logout User
+POST http://localhost:3000/logout
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlY3dmxMb0pnQWtkbzRLZ1NHa1Y1IiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM4ODYzNTkxLCJleHAiOjE3Mzg5NDk5OTF9.tGUKnTNxlTq7QguYwcRhTPimGhZYZTirSLsgg5Hochc
+
+###
+GET http://localhost:3000/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlY3dmxMb0pnQWtkbzRLZ1NHa1Y1IiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM4ODYzNTkxLCJleHAiOjE3Mzg5NDk5OTF9.tGUKnTNxlTq7QguYwcRhTPimGhZYZTirSLsgg5Hochc
+
+###
+PATCH http://localhost:3000/
+Content-Type: application/json
+Authorization : Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlY3dmxMb0pnQWtkbzRLZ1NHa1Y1IiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM4ODYwMDM1LCJleHAiOjE3Mzg5NDY0MzV9.S9tx_cK0puBptGRFPs8Eir4SbtwwUEF3nkcuETmcVXg
+
+{
+  "seedWord": "diego"
+}
+

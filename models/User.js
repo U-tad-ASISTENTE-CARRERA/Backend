@@ -1,19 +1,28 @@
 const { db } = require("../config/firebase");
 
 class User {
-  constructor(name, email, role = "STUDENT", metadata = {}) {
-    this.name = name;
+  constructor(email, password, seedWord = '123', role, metadata = {}) {
     this.email = email;
+    this.password = password;
     this.role = role;
+    this.seedWord = seedWord;
     this.metadata = metadata;
     this.createdAt = new Date().toISOString();
     this.updatedAt = new Date().toISOString();
   }
 
+  // async save() {
+  //   const userRef = db.collection("users").doc();
+  //   this.id = userRef.id;
+  //   await userRef.set({ id: this.id, ...this });
+  //   return { id: this.id, ...this };
+  // }
+
   async save() {
-    const userRef = db.collection("users").doc();
-    this.id = userRef.id;
-    await userRef.set({ id: this.id, ...this });
+    const newUserRef = db.collection("users").doc(); 
+    this.id = newUserRef.id;
+    await newUserRef.set({ id: this.id, ...this });
+
     return { id: this.id, ...this };
   }
 
@@ -29,6 +38,12 @@ class User {
     return querySnapshot.docs[0].data();
   }
 
+  static async findByRole(role) {
+    const querySnapshot = await db.collection("users").where("role", "==", role).get();
+    if (querySnapshot.empty) throw new Error("User with this role not found");
+    return querySnapshot.docs[0].data();
+  }
+
   static async update(id, data) {
     data.updatedAt = new Date().toISOString();
     const userRef = db.collection("users").doc(id);
@@ -36,25 +51,29 @@ class User {
     return { id, ...data };
   }
 
+  static async updateMetadata(id, metadataUpdates) {
+    const userRef = db.collection("users").doc(id);
+    await userRef.update({
+      "metadata": admin.firestore.FieldValue.merge(metadataUpdates),
+      "updatedAt": new Date().toISOString()
+    });
+    return { id, updatedFields: metadataUpdates };
+  }
+
+  static async updateMultiMetadata(id, metadataUpdates) {
+    const userRef = db.collection("users").doc(id);
+    let updates = {};
+    
+    for (const key in metadataUpdates) updates[`metadata.${key}`] = metadataUpdates[key];
+    
+    updates.updatedAt = new Date().toISOString();
+    await userRef.update(updates);
+    return { id, updatedFields: metadataUpdates };
+  }
+
   static async delete(id) {
     await db.collection("users").doc(id).delete();
     return { message: "User deleted", id };
-  }
-
-  static async updateAcademicHistory(id, subject, grade) {
-    if (grade < 0 || grade > 10) throw new Error("Grade must be between 0 and 10");
-    
-    const userRef = db.collection("users").doc(id);
-    const userDoc = await userRef.get();
-    if (!userDoc.exists) throw new Error("User not found");
-
-    const userData = userDoc.data();
-    if (userData.role !== "STUDENT") throw new Error("Only students have academic history");
-
-    const updatedHistory = { ...userData.metadata.academicHistory, [subject]: parseFloat(grade.toFixed(2)) };
-    await userRef.update({ "metadata.academicHistory": updatedHistory, updatedAt: new Date().toISOString() });
-
-    return { message: "Academic history updated", updatedHistory };
   }
 }
 

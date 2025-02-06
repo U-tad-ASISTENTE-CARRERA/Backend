@@ -2,150 +2,149 @@ const { db } = require("../config/firebase");
 const bcrypt = require("bcryptjs");
 const { generateToken } = require("../utils/handleJwt");
 const { handleHttpError } = require("../utils/handleError");
-const { upload, parseResume } = require("../utils/pdfToJson");
+// const { sendEmail } = require("../utils/handleResend");
+const { Resend } = require("resend");
 const User = require("../models/User");
+const e = require("express");
 
-// const loginUser = async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
+const resend = new Resend(process.env.RESEND_API_KEY);
+const sendEmail = async (to, subject, content) => {
+    try {
+        await resend.emails.send({
+            from: process.env.RESEND_FROM_EMAIL,
+            to,
+            subject,
+            html: content,
+        });
+    } catch (error) {
+        console.error("Error sending email:", error.message);
+    }
+};
+    
+const registerUser = async (req, res) => {
+    try {
+        const { email, password, seedWord } = req.body;
+        console.log(email, password, seedWord);
+        try {
+            await User.findByEmail(email);
+            return handleHttpError(res, "USER_ALREADY_EXISTS", 400);
+        } catch (error) {}
 
-//     const userSnapshot = await db.collection("users").where("email", "==", email).get();
+        const domain = email.split("@")[1];
+        if (!domain) return handleHttpError(res, "INVALID_EMAIL", 400);    
+        const role = domain === "live.u-tad.com" ? "STUDENT" : "TEACHER";
 
-//     if (userSnapshot.empty) {
-//       return handleHttpError(res, "INVALID_CREDENTIALS", 401);
-//     }
+        const hashedPassword = await bcrypt.hash(password, 10);
+    
+        const newUser = new User(email, hashedPassword, seedWord, role);
+        const savedUser = await newUser.save();
 
-//     const user = userSnapshot.docs[0].data();
-//     const isPasswordValid = await bcrypt.compare(password, user.password);
+        const token = generateToken({email: savedUser.email, role: savedUser.role, seedWord: savedUser.seedWord });
+        await sendEmail(
+            email,
+            "Bienvenido a la plataforma",
+            `<h2>Hola ${email.split(".")[0]}</h2>
+            <p>Tu cuenta ha sido creada con exito.</p>
+            <p>Gracias por registrarte.</p>`
+        );
 
-//     if (!isPasswordValid) {
-//       return handleHttpError(res, "INVALID_CREDENTIALS", 401);
-//     }
+        return res.status(201).json({ message: "USER_CREATED", token, user: { ...savedUser, password: undefined } });
+    } catch (error) {
+        console.error("Register User Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
 
-//     const token = generateToken({ id: user.id, role: user.role });
+const loginUser = async (req, res) => {
+    try {
+        const { email, password } = req.body;
 
-//     res.json({ message: "LOGIN_SUCCESS", token, user: { ...user, password: undefined } });
-//   } catch (error) {
-//     console.error("Login Error:", error.message);
-//     return handleHttpError(res, "ERROR_LOGGING_IN", 500);
-//   }
-// };
+        let user;
+        try {
+            user = await User.findByEmail(email);
+        } catch (error) {
+            return handleHttpError(res, "INVALID_CREDENTIALS", 401);
+        }
+        
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) return handleHttpError(res, "INVALID_CREDENTIALS", 401);
 
-// const createAdminWithoutValidation = async (req, res) => {
-//   try {
-//     const hashedPassword = await bcrypt.hash("AdminPass123", 10);
-//     const userRef = db.collection("users").doc();
-//     const adminUser = {
-//       id: userRef.id,
-//       name: "Admin User",
-//       email: "admin@example.com",
-//       password: hashedPassword,
-//       role: "ADMIN",
-//       metadata: {},
-//       createdAt: new Date().toISOString(),
-//       updatedAt: new Date().toISOString(),
-//     };
+        const token = generateToken({ id: user.id, email: user.email, role: user.role });
 
-//     await userRef.set(adminUser);
+        return res.json({ message: "LOGIN_SUCCESS", token, user: { ...user, password : undefined} });
+    } catch (error) {
+        console.error("Login User Error:", error.message);
+        return handleHttpError(res, error.message || "INTERNAL_SERVER_ERROR", 500);
+    }
+};
 
-//     const token = generateToken({ id: adminUser.id, role: adminUser.role });
+const updatePassword = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { newPassword, seedWord } = req.body;
 
-//     res.status(201).json({ message: "Admin user created", userId: userRef.id, token });
-//   } catch (error) {
-//     console.error("Error creating admin user:", error.message);
-//     return handleHttpError(res, "ERROR_CREATING_ADMIN", 500);
-//   }
-// };
+        const user = await User.findById(id);
 
-// Autenticación y Gestión de Sesioness
-const registerUser = async (req, res) => {};
-const loginUser = async (req, res) => {};
-const resetPassword = async (req, res) => {};
-const updatePassword = async (req, res) => {};
-const logoutUser = async (req, res) => {};
-const createAdminWithoutValidation = async (req, res) => {};
+        if (user.seedWord !== seedWord) {
+            return handleHttpError(res, "INVALID_SEED_WORD", 400);
+        }
 
-// Gestión de Roles
-const updateUserRole = async (req, res) => {};
-const getUserRole = async (req, res) => {};
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
 
-// Gestión de Usuarios (CRUD)
-const getUserById = async (req, res) => {};
-const getUserByRole = async (req, res) => {};
-const getUserByEmail = async (req, res) => {};
-const getAllUsers = async (req, res) => {};
-const updateUser = async (req, res) => {};
-const deleteUser = async (req, res) => {};
-const getProfileHistory = async (req, res) => {};
-const uploadResume = async (req, res) => {};
+        await User.update(id, { password: hashedNewPassword });
 
-// Datos Académicos y Experiencia
-const updateAcademicHistory = async (req, res) => {};
-const getCareerAcademicHistory = async (req, res) => {};
+        await sendEmail(
+            user.email,
+            "Tu contraseña ha sido actualizada",
+            `<h2>Hola ${user.email.split(".")[0]}</h2>
+            <p>Tu contraseña ha sido cambiada correctamente.</p>
+            <p>Si no fuiste tú, por favor contacta con soporte.</p>`
+        );
 
-// Recomendaciones y Ajustes en Tiempo Real
-const getCareerRecommendations = async (req, res) => {};
-const getMissingRequirements = async (req, res) => {};
-const getSuggestedCourses = async (req, res) => {};
-const getMissingDataNotifications = async (req, res) => {};
-const updateRecommendationsOnChange = async (req, res) => {};
+        return res.status(200).json({ message: "PASSWORD_UPDATED_SUCCESS" });
+    } catch (error) {
+        console.error("Update Password Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
 
-// Seguimiento del Progreso
-const getProgress = async (req, res) => {};
-const getProfessionalRoadmap = async (req, res) => {};
-const getAchievements = async (req, res) => {};
-const getUserDashboard = async (req, res) => {};
-const getHistoricalProgress = async (req, res) => {};
-const notifyMilestoneCompletion = async (req, res) => {};
+const logoutUser = async (req, res) => {
+    try {
+        return res.status(200).json({ message: "LOGOUT_SUCCESS" });
+    } catch (error) {
+        console.error("Logout User Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
 
-// Generación de Reportes
-const shareReport = async (req, res) => {};
-const getActivityMetrics = async (req, res) => {};
-const getStudentReports = async (req, res) => {};
-const generateReportPDF = async (req, res) => {};
+const getUserProfile = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const user = await User.findById(id);
+        return res.json({ user: { ...user, password: undefined } });
+    } catch (error) {
+        console.error("Get User Profile Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
 
-// Integraciones con Sistemas Externos
-const getMarketJobs = async (req, res) => {};
-const getCareerPositions = async (req, res) => {};
-const scrapeJobMarketData = async (req, res) => {};
-const syncAcademicData = async (req, res) => {};
-const getAPIDocumentation = async (req, res) => {};
+const updateSeedWord = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { seedWord } = req.body;
+        await User.update(id, { seedWord });
+        return res.status(200).json({ message: "SEED_WORD_UPDATED_SUCCESS" });
+    } catch (error) {   
+        console.error("Update Seed Word Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
 
-module.exports = {
-  registerUser,
-  loginUser,
-  resetPassword,
-  updatePassword,
-  logoutUser,
-  createAdminWithoutValidation,
-  updateUserRole,
-  getUserRole,
-  getUserById,
-  getAllUsers,
-  updateUser,
-  deleteUser,
-  getProfileHistory,
-  uploadResume,
-  updateAcademicHistory,
-  getCareerAcademicHistory,
-  getCareerRecommendations,
-  getMissingRequirements,
-  getSuggestedCourses,
-  getMissingDataNotifications,
-  updateRecommendationsOnChange,
-  getProgress,
-  getProfessionalRoadmap,
-  getAchievements,
-  getUserDashboard,
-  getHistoricalProgress,
-  notifyMilestoneCompletion,
-  shareReport,
-  getActivityMetrics,
-  getStudentReports,
-  generateReportPDF,
-  getMarketJobs,
-  getCareerPositions,
-  scrapeJobMarketData,
-  syncAcademicData,
-  getAPIDocumentation,
+module.exports = { 
+    registerUser,
+    loginUser,
+    updatePassword,
+    logoutUser,
+    getUserProfile,
+    updateSeedWord,
 };

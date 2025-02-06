@@ -1,109 +1,118 @@
-const { body, param, query } = require("express-validator");
+const { check } = require("express-validator");
+const validateResults = require("../utils/handleValidator")
 
 const validateUser = [
-    body("name")
-    .isString().isLength({ min: 3 }).withMessage("Como minimo 3 caractéres de tamaño")
-    .isEmpty({ ignore_whitespace: false }).withMessage("Name cannot be empty"),
-    body("email")
-    .isString().isLength({ min: 3 }).withMessage("Como minimo 3 caractéres de tamaño")
-    .isEmpty({ ignore_whitespace: false })
-    .matches(/^[a-zA-Z0-9._%+-]+@(live\.u-tad\.com|u-tad\.com)$/)
-    .isEmpty({ ignore_whitespace: false }).withMessage("Email cannot be empty")
-    .withMessage("Invalid email format, must be @live.u-tad.com or @u-tad.com"),
-    body("password")
-    .isLength({ min: 8 }).withMessage("Password must be at least 8 characters long")
-    .matches(/^(?=.*[A-Z])(?=.*[@$!%*?&]).$/),
-    body("metadata").optional().isObject().withMessage("Metadata must be an object"),
+    check("email")
+        .isString()
+        .isLength({ min: 3 }).withMessage("Email must be at least 3 characters long")
+        .matches(/^[a-zA-Z0-9._%+-]+@(live\.u-tad\.com|u-tad\.com)$/)
+        .withMessage("Invalid email format, must be @live.u-tad.com or @u-tad.com")
+        .notEmpty().withMessage("Email cannot be empty"),
     
-    //middleware para manejar errores
+    check("password")
+        .isLength({ min: 8 }).withMessage("Password must be at least 8 characters long")
+        .matches(/^(?=.*[A-Z])(?=.*[@$!%*?&])/)
+        .withMessage("Password must have at least one uppercase letter and one special character"),
+
+    check("seedWord")
+        .notEmpty().withMessage("Seed word cannot be empty"),
+
     (req, res, next) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-        next();
+        return validateResults(req, res, next)
+    }
+];
+
+const validateNewPassword = [
+    check("email")
+        .isString()
+        .isLength({ min: 3 }).withMessage("Email must be at least 3 characters long")
+        .matches(/^[a-zA-Z0-9._%+-]+@(live\.u-tad\.com|u-tad\.com)$/)
+        .withMessage("Invalid email format, must be @live.u-tad.com or @u-tad.com")
+        .notEmpty().withMessage("Email cannot be empty"),
+    
+    check("newPassword")
+        .isLength({ min: 8 }).withMessage("Password must be at least 8 characters long")
+        .matches(/^(?=.*[A-Z])(?=.*[@$!%*?&])/)
+        .withMessage("Password must have at least one uppercase letter and one special character"),
+
+    check("seedWord")
+        .notEmpty().withMessage("Seed word cannot be empty"),
+
+    (req, res, next) => {
+        return validateResults(req, res, next)
     }
 ];
 
 const valitdateLogin = [
-    body("email")
-    .isString().isLength({ min: 3 }).withMessage("Como minimo 3 caractéres de tamaño")
-    .isEmpty({ ignore_whitespace: false })
-    .matches(/^[a-zA-Z0-9._%+-]+@(live\.u-tad\.com|u-tad\.com)$/)
-    .isEmpty({ ignore_whitespace: false }).withMessage("Email cannot be empty")
-    .withMessage("Invalid email format, must be @live.u-tad.com or @u-tad.com"),
-    body("password")
-    .isLength({ min: 8 }).withMessage("Password must be at least 8 characters long")
-    .matches(/^(?=.*[A-Z])(?=.*[@$!%*?&]).$/),
+    check("email")
+        .isString()
+        .isLength({ min: 3 }).withMessage("Email must be at least 3 characters long")
+        .matches(/^[a-zA-Z0-9._%+-]+@(live\.u-tad\.com|u-tad\.com)$/)
+        .withMessage("Invalid email format, must be @live.u-tad.com or @u-tad.com")
+        .notEmpty().withMessage("Email cannot be empty"),
+    
+    check("password")
+        .isLength({ min: 8 }).withMessage("Password must be at least 8 characters long")
+        .matches(/^(?=.*[A-Z])(?=.*[@$!%*?&])/)
+        .withMessage("Password must have at least one uppercase letter and one special character"),
+
     (req, res, next) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-        next();
+        return validateResults(req, res, next)
     }
 ];
 
-const validateUserId = [
-    param("id")
-    .isString().withMessage("Id cant be a string")
-    .isEmpty({ ignore_whitespace: false }).withMessage("Id cannot be empty"),
-    (req, res, next) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-        next();
+const studentMetadataSchemas = {
+    "student": [
+        check("name").isString().notEmpty().withMessage("Name cannot be empty"),
+        check("surname").isString().notEmpty().withMessage("Surname cannot be empty"),
+        check("date_of_birth").isISO8601().withMessage("Date of birth must be a valid date"),
+        check("dni").isString().notEmpty().withMessage("DNI cannot be empty"),
+        check("degree").isString().notEmpty().withMessage("Degree cannot be empty"),
+        check("specialization").isString().notEmpty().withMessage("Specialization cannot be empty"),
+        check("institution").isString().notEmpty().withMessage("Institution cannot be empty"),
+        check("graduation_date").isISO8601().withMessage("Graduation date must be a valid date"),
+    ],
+
+    "languages": [
+        check("language").isString().notEmpty().withMessage("Language name cannot be empty"),
+        check("level").isIn(["low", "medium", "high"]).withMessage("Level must be 'low', 'medium' or 'high'")
+    ],
+
+    "academic_history": [
+        check("name").isString().notEmpty().withMessage("Subject name cannot be empty"),
+        check("grade").isFloat({ min: 0.0, max: 10.0 }).withMessage("Grade must be between 0.0 and 10.0"),
+    ],
+
+    "certifications": [
+        check("name").isString().notEmpty().withMessage("Certificate name cannot be empty"),
+        check("date").isISO8601().withMessage("Certificate date must be a valid date"),
+        check("institution").isString().notEmpty().withMessage("Institution cannot be empty")
+    ],
+
+    "work_experience": [
+        check("job_type").isString().notEmpty().withMessage("Job type cannot be empty"),
+        check("start_date").isISO8601().withMessage("Start date must be a valid date"),
+        check("end_date").isISO8601().withMessage("End date must be a valid date"),
+        check("company").isString().notEmpty().withMessage("Company cannot be empty"),
+        check("description").isString().notEmpty().withMessage("Description cannot be empty"),
+        check("responsibilities").isString().notEmpty().withMessage("Responsibilities cannot be empty")
+    ],
+};
+
+const validateMetadata = (key) => {
+    if (!studentMetadataSchemas[key]) {
+        throw new Error(`No validations defined for the key '${key}'`);
     }
 
-];
-
-const validateAcademicHistoryUpdate = [
-    //Recibo de un pdf
-    param("id")
-    .isString().withMessage("Id cant be a string")
-    .isEmpty({ ignore_whitespace: false }).withMessage("Id cannot be empty"),
-    body("subject")
-    .isString().withMessage("Subject must be a string")
-    .isLength({ min: 3 }).withMessage("Subject must be at least 3 characters long"),
-    body("grade").isFloat({ min: 0, max: 10 }).withMessage("Grade must be between 0 and 10"),
-    (req, res, next) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-        next();
-    }
-]; 
-
-const validateRoleUpdate = [
-  param("id").isString().withMessage("Invalid user ID"),
-  body("role").isIn(["STUDENT", "TEACHER", "ADMIN"]).withMessage("Invalid role"),
-];
-
-const validateUserFilter = [
-  query("field").isString().withMessage("Field parameter is required"),
-  query("value").isString().withMessage("Value parameter is required"),
-];
-
-
-const validatePagination = [
-  query("page").optional().isInt({ min: 1 }).withMessage("Page must be a positive integer"),
-  query("limit").optional().isInt({ min: 1, max: 100 }).withMessage("Limit must be between 1 and 100"),
-];
-
-const validateUpdateByRole = [
-  query("role").isIn(["STUDENT", "TEACHER", "ADMIN"]).withMessage("Invalid role"),
-  body("data").isObject().withMessage("Update data must be an object"),
-];
+    return [
+        ...studentMetadataSchemas[key],
+        (req, res, next) => validateResults(req, res, next)
+    ];
+};
 
 module.exports = {
   validateUser,
-  validateLogin,
-  validateUserId,
-  validateAcademicHistoryUpdate,
-  validateRoleUpdate,
-  validateUserFilter,
-  validatePagination,
-  validateUpdateByRole,
+  valitdateLogin,
+  validateNewPassword,
+  validateMetadata,
 };
