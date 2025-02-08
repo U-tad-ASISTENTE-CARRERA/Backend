@@ -46,6 +46,13 @@ class User {
     return querySnapshot.docs[0].data();
   }
 
+  static async findByIdAndDelete(id) {
+    const doc = await db.collection("users").doc(id).get();
+    if (!doc.exists) throw new Error("User not found");
+    await db.collection("users").doc(id).delete();
+    return doc.data();
+  }
+
   static async update(id, data) {
     data.updatedAt = new Date().toISOString();
     const userRef = db.collection("users").doc(id);
@@ -72,7 +79,7 @@ class User {
     await userRef.update(updates);
     return { id, updatedFields: metadataUpdates };
   }
-
+  
   static async delete(id) {
     await db.collection("users").doc(id).delete();
     return { message: "User deleted", id };

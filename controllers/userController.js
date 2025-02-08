@@ -88,6 +88,29 @@ const logoutUser = async (req, res) => {
     }
 };
 
+const updateUser = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const updates = req.body;
+
+        const user = await User.findById(id);
+        if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
+
+        const mergedUpdates = { ...user, ...updates };
+
+        if (!updates.password) {
+            mergedUpdates.password = user.password;
+        }
+
+        await User.update(id, mergedUpdates);
+
+        return res.status(200).json({ message: "USER_UPDATED", updatedFields: updates });
+    } catch (error) {
+        console.error("Update User Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
 const updatePassword = async (req, res) => {
     try {
         const { id } = req.user;
@@ -140,16 +163,6 @@ const deleteUser = async (req, res) => {
         return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
     }
 }
-
-const getAllUsers = async (req, res) => {
-    try {
-        const users = await User.findAll();
-        return res.json(users);
-    } catch (error) {
-        console.error("Get All Users Error:", error.message);
-        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
-    }
-};
 
 const getUserProfile = async (req, res) => {
     try {
@@ -293,17 +306,141 @@ const deleteUserMetadata = async (req, res) => {
     }
 };
 
+const getAllStudents = async (req, res) => {
+    try {
+        const users = await User.findByRole("STUDENT"); 
+        return res.json(users);
+    } catch (error) {
+        console.error("Get All Users Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+const getSpecializationStudent = async (req, res) => {
+    try {
+        const { specialization } = req.query;
+        const users = await User.findByRole("STUDENT"); 
+        const filteredUsers = users.filter(user => user.metadata.specialization === specialization);
+        return res.json(filteredUsers);
+    } catch (error) {
+        console.error("Get Specialization Student Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+}
+
+const getStudent = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findById(id);
+        return res.json(user);
+    } catch (error) {
+        console.error("Get Student Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+const createAdmin = async (req, res) => {
+    try {
+        const email = "admin@example.com";
+        const password = "S3guroPassw0rd";
+        const seedWord = "securityphrase";
+
+        try {
+            await User.findByEmail(email);
+            return handleHttpError(res, "USER_ALREADY_EXISTS", 400);
+        } catch (error) {}
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const newUser = new User(email, hashedPassword, seedWord, "ADMIN");
+        const savedUser = await newUser.save();
+
+        const token = generateToken({ email: savedUser.email, role: savedUser.role });
+
+        return res.status(201).json({ message: "HARDCODED_ADMIN_CREATED", token, user: { email: savedUser.email, role: savedUser.role } });
+    } catch (error) {
+        console.error("Register Hardcoded Admin Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.findAll();
+        return res.json(users);
+    } catch (error) {
+        console.error("Get All Users Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+const updateUserByAdmin = async (req, res) => {
+    try {
+        const { id } = req.params; 
+        const updates = req.body;
+
+        const user = await User.findById(id);
+        if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
+
+        if (user.role === "ADMIN") return handleHttpError(res, "CANNOT_UPDATE_ADMIN", 403);
+
+        if (updates.password) updates.password = await bcrypt.hash(updates.password, 10);
+        
+        const allowedUpdates = ["email", "password", "seedWord", "role", "metadata"];
+        const filteredUpdates = {};
+
+        Object.keys(updates).forEach(key => {
+            if (allowedUpdates.includes(key)) {
+                filteredUpdates[key] = updates[key];
+            }
+        });
+
+        if (Object.keys(filteredUpdates).length === 0) {
+            return handleHttpError(res, "NO_VALID_FIELDS_TO_UPDATE", 400);
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(id, filteredUpdates, { new: true });
+        return res.status(200).json({ message: "USER_UPDATED_SUCCESSFULLY", updatedUser });
+    } catch (error) {
+        console.error("Admin Update User Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+const deleteUserByAdmin = async (req, res) => {
+    try {
+        const { id } = req.params; 
+
+        const user = await User.findById(id);
+        if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
+
+        if (user.role === "ADMIN") return handleHttpError(res, "CANNOT_DELETE_ADMIN", 403);
+
+        await User.findByIdAndDelete(id);
+        return res.status(200).json({ message: "USER_DELETED_SUCCESSFULLY" });
+    } catch (error) {
+        console.error("Admin Delete User Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
 module.exports = { 
     registerUser,
     loginUser,
     logoutUser,
+    updateUser,
     updatePassword,
     updateSeedWord,
     deleteUser,
-    getAllUsers,
     getUserProfile,
     getUserMetadata,
     updateUserMetadata,
     deleteUserMetadata,
-    
+    getAllStudents,
+    getSpecializationStudent,
+    getStudent,
+    createAdmin,
+    getAllUsers,
+    updateUserByAdmin,
+    deleteUserByAdmin,
 };
