@@ -11,19 +11,21 @@ class User {
     this.updatedAt = new Date().toISOString();
   }
 
-  // async save() {
-  //   const userRef = db.collection("users").doc();
-  //   this.id = userRef.id;
-  //   await userRef.set({ id: this.id, ...this });
-  //   return { id: this.id, ...this };
-  // }
-
   async save() {
     const newUserRef = db.collection("users").doc(); 
     this.id = newUserRef.id;
     await newUserRef.set({ id: this.id, ...this });
 
     return { id: this.id, ...this };
+  }
+  
+  static async findAll() {  
+    const querySnapshot = await db.collection("users").get();
+    const users = [];
+    querySnapshot.forEach((doc) => {
+      users.push(doc.data());
+    });
+    return users;
   }
 
   static async findById(id) {

@@ -6,6 +6,7 @@ const { handleHttpError } = require("../utils/handleError");
 const { Resend } = require("resend");
 const User = require("../models/User");
 const e = require("express");
+const admin = require("firebase-admin");
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const sendEmail = async (to, subject, content) => {
@@ -78,6 +79,15 @@ const loginUser = async (req, res) => {
     }
 };
 
+const logoutUser = async (req, res) => {
+    try {
+        return res.status(200).json({ message: "LOGOUT_SUCCESS" });
+    } catch (error) {
+        console.error("Logout User Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
 const updatePassword = async (req, res) => {
     try {
         const { id } = req.user;
@@ -108,11 +118,35 @@ const updatePassword = async (req, res) => {
     }
 };
 
-const logoutUser = async (req, res) => {
+const updateSeedWord = async (req, res) => {
     try {
-        return res.status(200).json({ message: "LOGOUT_SUCCESS" });
+        const { id } = req.user;
+        const { seedWord } = req.body;
+        await User.update(id, { seedWord });
+        return res.status(200).json({ message: "SEED_WORD_UPDATED_SUCCESS" });
+    } catch (error) {   
+        console.error("Update Seed Word Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+const deleteUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await User.delete(id);
+        return res.status(200).json({ message: "USER_DELETED" });
     } catch (error) {
-        console.error("Logout User Error:", error.message);
+        console.error("Delete User Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+}
+
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.findAll();
+        return res.json(users);
+    } catch (error) {
+        console.error("Get All Users Error:", error.message);
         return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
     }
 };
@@ -128,14 +162,133 @@ const getUserProfile = async (req, res) => {
     }
 };
 
-const updateSeedWord = async (req, res) => {
+const getUserMetadata = async (req, res) => {
     try {
         const { id } = req.user;
-        const { seedWord } = req.body;
-        await User.update(id, { seedWord });
-        return res.status(200).json({ message: "SEED_WORD_UPDATED_SUCCESS" });
-    } catch (error) {   
-        console.error("Update Seed Word Error:", error.message);
+        const user = await User.findById(id);
+        return res.json({ metadata: user.metadata });
+    } catch (error) {
+        console.error("Get User Metadata Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};  
+
+const updateUserMetadata = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const updates = req.body;
+
+        const user = await User.findById(id);
+        if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
+
+        if (user.role === "ADMIN") {
+            return handleHttpError(res, "ADMIN_CANNOT_HAVE_METADATA", 400);
+        }
+
+        const METADATA_FIELDS = {
+            STUDENT: [
+                "firstName", "lastName", "birthDate", "dni", "degree", "specialization", "institution", "endDate",
+                "languages", "programmingLanguages", "academicHistory", "milestones", "certifications",
+                "workExperience", "roadmaps", "updatedAt"
+            ],
+            TEACHER: [
+                "firstName", "lastName", "birthDate", "dni", "specialization", "updatedAt"
+            ],
+        };
+
+        const validFields = METADATA_FIELDS[user.role];
+        const metadataUpdates = {};
+
+        for (const key in updates) {
+            if (validFields.includes(key)) {
+                if (Array.isArray(updates[key]) && Array.isArray(user.metadata[key])) {
+                    const existingData = user.metadata[key] || [];
+                    
+                    const mergedData = [...existingData, ...updates[key]].reduce((acc, item) => {
+                        if (!acc.some(el => JSON.stringify(el) === JSON.stringify(item))) {
+                            acc.push(item);
+                        }
+                        return acc;
+                    }, []);
+
+                    metadataUpdates[`metadata.${key}`] = mergedData;
+                } else {
+                    if (!user.metadata[key]) {
+                        metadataUpdates[`metadata.${key}`] = updates[key];
+                    }
+                }
+            }
+        }
+
+        if (Object.keys(metadataUpdates).length === 0) {
+            return handleHttpError(res, "NO_VALID_FIELDS_TO_UPDATE", 400);
+        }
+
+        metadataUpdates["metadata.updatedAt"] = new Date().toISOString();
+        await User.update(id, metadataUpdates);
+
+        return res.status(200).json({ message: "METADATA_UPDATED_SUCCESS", updatedFields: metadataUpdates });
+    } catch (error) {
+        console.error("Update User Metadata Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+const deleteUserMetadata = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const updates = req.body; 
+
+        const user = await User.findById(id);
+        if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
+
+        if (user.role === "ADMIN") {
+            return handleHttpError(res, "ADMIN_CANNOT_HAVE_METADATA", 400);
+        }
+
+        const METADATA_FIELDS = {
+            STUDENT: [
+                "firstName", "lastName", "birthDate", "dni", "degree", "specialization", "institution", "endDate",
+                "languages", "programmingLanguages", "academicHistory", "milestones", "certifications",
+                "workExperience", "roadmaps", "updatedAt"
+            ],
+            TEACHER: [
+                "firstName", "lastName", "birthDate", "dni", "specialization", "updatedAt"
+            ],
+        };
+
+        const validFields = METADATA_FIELDS[user.role];
+        const metadataDeletes = {};
+
+        for (const key in updates) {
+            if (validFields.includes(key)) {
+                if (Array.isArray(user.metadata[key]) && Array.isArray(updates[key])) {
+                    const existingData = user.metadata[key] || [];
+                    const filteredData = existingData.filter(item => 
+                        !updates[key].some(toDelete => JSON.stringify(toDelete) === JSON.stringify(item))
+                    );
+
+                    if (filteredData.length === 0) {
+                        metadataDeletes[`metadata.${key}`] = admin.firestore.FieldValue.delete();
+                    } else {
+                        metadataDeletes[`metadata.${key}`] = filteredData;
+                    }
+                } else {
+                    metadataDeletes[`metadata.${key}`] = admin.firestore.FieldValue.delete();
+                }
+            }
+        }
+
+        if (Object.keys(metadataDeletes).length === 0) {
+            return handleHttpError(res, "NO_VALID_FIELDS_TO_DELETE", 400);
+        }
+
+        metadataDeletes["metadata.updatedAt"] = new Date().toISOString();
+        await User.update(id, metadataDeletes);
+
+        return res.status(200).json({ message: "METADATA_DELETED_SUCCESS", deletedFields: Object.keys(metadataDeletes) });
+    } catch (error) {
+        console.error("Delete User Metadata Error:", error.message);
         return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
     }
 };
@@ -143,8 +296,14 @@ const updateSeedWord = async (req, res) => {
 module.exports = { 
     registerUser,
     loginUser,
-    updatePassword,
     logoutUser,
-    getUserProfile,
+    updatePassword,
     updateSeedWord,
+    deleteUser,
+    getAllUsers,
+    getUserProfile,
+    getUserMetadata,
+    updateUserMetadata,
+    deleteUserMetadata,
+    
 };

@@ -1,5 +1,4 @@
-/*
-estudiantes:
+/* METADATA STUDENT
   nombre (string)
   apellido (string)
   fecha de nacimiento (date)
@@ -25,10 +24,6 @@ estudiantes:
       creditos (integer)
       fecha de actualización (date)
 
-  fortalezas (top tres asignaturas que mejor nota tiene) lista de objetos
-
-  debilidades (top tres asignaturas que peor nota tiene) lista de objetos
-
   hitos (lista objetos)
     hito (objeto)
       id_Hito (string)
@@ -51,9 +46,20 @@ estudiantes:
 
   RoadMaps (historial) (lista de objetos)
     roadmap (objeto)
-      id_roadmap 
+      id_roadmap
 
   fecha de actualización (date)
+*/
+
+/* METADATA TEACHER
+  nombre (string)
+  apellido (string)
+  fecha de nacimiento (date)
+  dni (string)
+  titulación (string)
+  especializacion (string)
+  institución (string)
+  fecha de fin (date)
 */
 
 /*

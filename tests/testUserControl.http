@@ -36,14 +36,72 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlY3dmxMb0pnQ
 ###
 GET http://localhost:3000/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlY3dmxMb0pnQWtkbzRLZ1NHa1Y1IiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5MDI5NDc2LCJleHAiOjE3MzkxMTU4NzZ9.vjvjdDp78U6XTmDKmmQnxeUXX3iVQ4m_sGeucwL8UwM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlY3dmxMb0pnQWtkbzRLZ1NHa1Y1IiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5MDM0NDI0LCJleHAiOjE3MzkxMjA4MjR9.ibPzuaKuKqNK26JZ0x5ehMbZ2tCUkKxeSUVQzMFqqJE
 
 ###
 PATCH http://localhost:3000/
 Content-Type: application/json
-Authorization : Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlY3dmxMb0pnQWtkbzRLZ1NHa1Y1IiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM4ODYwMDM1LCJleHAiOjE3Mzg5NDY0MzV9.S9tx_cK0puBptGRFPs8Eir4SbtwwUEF3nkcuETmcVXg
+Authorization : Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlY3dmxMb0pnQWtkbzRLZ1NHa1Y1IiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5MDI5NDc2LCJleHAiOjE3MzkxMTU4NzZ9.vjvjdDp78U6XTmDKmmQnxeUXX3iVQ4m_sGeucwL8UwM
 
 {
   "seedWord": "diego"
 }
 
+###
+PATCH http://localhost:3000/metadata
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlY3dmxMb0pnQWtkbzRLZ1NHa1Y1IiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5MDM0NDI0LCJleHAiOjE3MzkxMjA4MjR9.ibPzuaKuKqNK26JZ0x5ehMbZ2tCUkKxeSUVQzMFqqJE
+
+{
+  "languages": [
+    { "language": "English", "level": "medium" },    
+    { "language": "French", "level": "low" }
+  ]
+}
+
+### Update Metadata (Modify Specialization)
+PATCH http://localhost:3000/metadata
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlY3dmxMb0pnQWtkbzRLZ1NHa1Y1IiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5MDM0NDI0LCJleHAiOjE3MzkxMjA4MjR9.ibPzuaKuKqNK26JZ0x5ehMbZ2tCUkKxeSUVQzMFqqJE
+
+{
+  "specialization": "Artificial Intelligence"
+}
+
+### Update Metadata (Invalid Field)
+PATCH http://localhost:3000/metadata
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlY3dmxMb0pnQWtkbzRLZ1NHa1Y1IiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5MDM0NDI0LCJleHAiOjE3MzkxMjA4MjR9.ibPzuaKuKqNK26JZ0x5ehMbZ2tCUkKxeSUVQzMFqqJE
+
+{
+  "invalidField": "SomeData"
+}
+
+### Delete Metadata (Remove a Language)
+DELETE http://localhost:3000/metadata
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlY3dmxMb0pnQWtkbzRLZ1NHa1Y1IiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5MDM0NDI0LCJleHAiOjE3MzkxMjA4MjR9.ibPzuaKuKqNK26JZ0x5ehMbZ2tCUkKxeSUVQzMFqqJE
+
+{
+  "languages": [
+    { "language": "French", "level": "low" }
+  ]
+}
+
+### Delete Metadata (Remove Specialization)
+DELETE http://localhost:3000/metadata
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlY3dmxMb0pnQWtkbzRLZ1NHa1Y1IiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5MDM0NDI0LCJleHAiOjE3MzkxMjA4MjR9.ibPzuaKuKqNK26JZ0x5ehMbZ2tCUkKxeSUVQzMFqqJE
+
+{
+  "specialization" : ""
+}
+
+### Delete Metadata (Invalid Field)
+DELETE http://localhost:3000/metadata
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+{
+  "randomField": "ShouldFail"
+}
