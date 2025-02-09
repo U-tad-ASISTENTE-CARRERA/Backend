@@ -1,0 +1,500 @@
+POST http://localhost:3000/degrees/
+Content-Type: application/json
+
+{
+  "name": "Ingenieria de Software",
+  "subjects": [
+        {
+          "mencion": "",
+          "name": "Fundamentos de Desarrollo Web",
+          "credits": 6,
+          "label": "desarrollo_web, fundamentos, programacion",
+          "type": "B",
+          "languages": ["HTML", "CSS", "JavaScript"],
+          "year": 1
+        },
+        {
+          "mencion": "",
+          "name": "Introducción a la Programación I",
+          "credits": 6,
+          "label": "programacion_basica, introduccion, algoritmos",
+          "type": "B",
+          "languages": ["C"],
+          "year": 1
+        },
+        {
+          "mencion": "",
+          "name": "Laboratorios de Redes y Sistemas Operativos",
+          "credits": 6,
+          "label": "redes, sistemas_operativos, practicas",
+          "type": "OB",
+          "languages": ["Linux"],
+          "year": 1
+        },
+        {
+          "mencion": "",
+          "name": "Lógica y Matemática Discreta",
+          "credits": 6,
+          "label": "logica, matematica_discreta, fundamentos",
+          "type": "B",
+          "languages": [],
+          "year": 1
+        },
+        {
+          "mencion": "",
+          "name": "Pensamiento Creativo",
+          "credits": 3,
+          "label": "creatividad, innovacion, pensamiento",
+          "type": "OB",
+          "languages": [],
+          "year": 1
+        },
+        {
+          "mencion": "",
+          "name": "Álgebra",
+          "credits": 6,
+          "label": "matematicas, algebra, fundamentos",
+          "type": "B",
+          "languages": ["R", "Python"],
+          "year": 1
+        },
+        {
+          "mencion": "",
+          "name": "Arquitectura de Ordenadores",
+          "credits": 6,
+          "label": "hardware, arquitectura, ordenadores",
+          "type": "B",
+          "languages": ["Ensamblador"],
+          "year": 1
+        },
+        {
+          "mencion": "",
+          "name": "Introducción a la Programación II",
+          "credits": 6,
+          "label": "programacion_intermedia, estructuras_datos, algoritmos, punteros",
+          "type": "OB",
+          "languages": ["c"],
+          "year": 1
+        },
+        {
+          "mencion": "",
+          "name": "Laboratorio de Bases de Datos y Sistemas Distribuidos",
+          "credits": 6,
+          "label": "bases_datos, distribuidos, practicas",
+          "type": "OB",
+          "languages": ["SQL"],
+          "year": 1
+        },
+        {
+          "mencion": "",
+          "name": "Sociedad Digital",
+          "credits": 3,
+          "label": "tecnologia_sociedad, digitalizacion, etica",
+          "type": "OB",
+          "languages": [],
+          "year": 1
+        },
+        {
+          "mencion": "",
+          "name": "Proyectos I: Técnicas y Tecnologías Digitales",
+          "credits": 6,
+          "label": "proyectos, tecnologia_digital, practicas",
+          "type": "OB",
+          "languages": ["Arduino"],
+          "year": 1
+        },
+        {
+          "mencion": "",
+          "name": "Fundamentos de Composición Visual",
+          "credits": 3,
+          "label": "composicion_visual, diseno, creatividad",
+          "type": "OB",
+          "languages": [],
+          "year": 2
+        },
+        {
+          "mencion": "",
+          "name": "Probabilidad y Estadística",
+          "credits": 6,
+          "label": "estadistica, probabilidad, matematicas",
+          "type": "B",
+          "languages": ["R", "Python"],
+          "year": 2
+        },
+        {
+          "mencion": "",
+          "name": "Programación Orientada a Objetos",
+          "credits": 6,
+          "label": "poo, objetos, programacion",
+          "type": "OB",
+          "languages": ["Java"],
+          "year": 2
+        },
+        {
+          "mencion": "",
+          "name": "Redes de Ordenadores",
+          "credits": 6,
+          "label": "redes, comunicacion, hardware",
+          "type": "B",
+          "languages": ["Linux"],
+          "year": 2
+        },
+        {
+          "mencion": "",
+          "name": "Sistemas Operativos",
+          "credits": 6,
+          "label": "sistemas, operativos, gestion_reyears",
+          "type": "B",
+          "languages": ["Java"],
+          "year": 2
+        },
+        {
+          "mencion": "",
+          "name": "Análisis y Diseño de Algoritmos",
+          "credits": 6,
+          "label": "algoritmos, diseno, analisis",
+          "type": "OB",
+          "languages": ["C++"],
+          "year": 2
+        },
+        {
+          "mencion": "",
+          "name": "Bases de Datos",
+          "credits": 6,
+          "label": "bases_datos, consultas, almacenamiento",
+          "type": "B",
+          "languages": ["SQL","NoSQL","MONOGDB"],
+          "year": 2
+        },
+        {
+          "mencion": "",
+          "name": "Cálculo",
+          "credits": 6,
+          "label": "calculo, integrales, matematicas",
+          "type": "B",
+          "languages": [],
+          "year": 2
+        },
+        {
+          "mencion": "",
+          "name": "Diseño de Software",
+          "credits": 6,
+          "label": "diseno_software, arquitectura, desarrollo",
+          "type": "OB",
+          "languages": ["Java"],
+          "year": 2
+        },
+        {
+          "mencion": "",
+          "name": "Negocios y Modelos Digitales",
+          "credits": 3,
+          "label": "negocios_digitales, economia, tecnologia",
+          "type": "OB",
+          "languages": [],
+          "year": 2
+        },
+        {
+          "mencion": "",
+          "name": "Proyectos II: Tendencias de la Ingeniería del Software",
+          "credits": 6,
+          "label": "proyectos, ingenieria_software, desarrollo",
+          "type": "OB",
+          "languages": ["Java","Kalilinux","UrealEngine"],
+          "year": 2
+        },
+        {
+          "mencion": "",
+          "name": "Inteligencia Artificial",
+          "credits": 6,
+          "label": "ia, machine_learning, algoritmos",
+          "type": "OB",
+          "languages": ["Pyhon","R"],
+          "year": 3
+        },
+        {
+          "mencion": "",
+          "name": "Dirección y Gestión de Proyectos",
+          "credits": 3,
+          "label": "gestion_proyectos, organizacion, liderazgo",
+          "type": "OB",
+          "languages": [],
+          "year": 3
+        },
+        {
+          "mencion": "",
+          "name": "Programación de Sistemas Distribuidos",
+          "credits": 6,
+          "label": "sistemas_distribuidos, programacion, redes, AWS",
+          "type": "OB",
+          "languages": ["Dockers","Kubernetes"],
+          "year": 3
+        },
+        {
+          "mencion": "",
+          "name": "Programación Web I, Cliente",
+          "credits": 6,
+          "label": "programacion_web, cliente, desarrollo",
+          "type": "OB",
+          "languages": ["HTML","CSS","JavaScript","NodeJS","React","Express","Tailwind"],
+          "year": 3
+        },
+        {
+          "mencion": "",
+          "name": "Programación Web II, Servidor",
+          "credits": 6,
+          "label": "programacion_web, servidor, backend",
+          "type": "OB",
+          "languages": ["HTML","CSS","JavaScript","NodeJS","React","Express","Tailwind","MongoDB","Slack"],
+          "year": 3
+        },
+        {
+          "mencion": "",
+          "name": "Desarrollo de aplicaciones móviles",
+          "credits": 3,
+          "label": "apps_moviles, desarrollo, tecnologias, AndroidStudio",
+          "type": "OB",
+          "languages": ["Java","Kotlin", "Swift","Firebase"],
+          "year": 3
+        },
+        {
+          "mencion": "",
+          "name": "Fundamentos de UX",
+          "credits": 3,
+          "label": "ux, experiencia_usuario, diseno, Figma",
+          "type": "OB",
+          "languages": [],
+          "year": 3
+        },
+        {
+          "mencion": "",
+          "name": "Proyectos III: Desarrollo Web y Apps",
+          "credits": 9,
+          "label": "proyectos, desarrollo_web, apps",
+          "type": "OB",
+          "languages": ["HTML","CSS","JavaScript","NodeJS","React","Express","Tailwind","MongoDB","Slack"],
+          "year": 3
+        },
+        {
+          "mencion": "Ciberseguridad",
+          "name": "Introducción a la Seguridad Informática",
+          "credits": 6,
+          "label": "seguridad_informatica, introduccion, ciberseguridad",
+          "type": "OBM",
+          "languages": [],
+          "year": 3
+        },
+        {
+          "mencion": "Ciberseguridad",
+          "name": "Análisis Forense",
+          "credits": 6,
+          "label": "analisis_forense, investigacion, ciberseguridad",
+          "type": "OBM",
+          "languages": [],
+          "year": 3
+        },
+        {
+          "mencion": "Ciberseguridad",
+          "name": "Hacking Ético",
+          "credits": 6,
+          "label": "hacking_etico, seguridad, ciberseguridad",
+          "type": "OBM",
+          "languages": [],
+          "year": 3
+        },
+        {
+          "mencion": "Ingeniería de Datos",
+          "name": "Ampliación de Bases de Datos",
+          "credits": 6,
+          "label": "bases_datos, ampliacion, ingenieria_datos",
+          "type": "OBM",
+          "languages": ["SQL","NoSQL","MongoDB", "redis"],
+          "year": 3
+        },
+        {
+          "mencion": "Ingeniería de Datos",
+          "name": "Búsqueda y Análisis de la Información",
+          "credits": 6,
+          "label": "busqueda, analisis, ingenieria_datos",
+          "type": "OBM",
+          "languages": [],
+          "year": 3
+        },
+        {
+          "mencion": "Ingeniería de Datos",
+          "name": "Procesamiento de Datos",
+          "credits": 6,
+          "label": "procesamiento, datos, ingenieria_datos",
+          "type": "OBM",
+          "languages": [],
+          "year": 3
+        },
+        {
+          "mencion": "",
+          "name": "TFG",
+          "credits": 9,
+          "label": "tfg, trabajo_final, investigacion",
+          "type": "OB",
+          "languages": [],
+          "year": 4
+        },
+        {
+          "mencion": "",
+          "name": "Creación y Dirección de Empresas",
+          "credits": 3,
+          "label": "empresas, direccion, gestion",
+          "type": "OB",
+          "languages": [],
+          "year": 4
+        },
+        {
+          "mencion": "",
+          "name": "Ingeniería del Software",
+          "credits": 6,
+          "label": "ingenieria_software, desarrollo, metodologias, metodologias_agiles",
+          "type": "OB",
+          "languages": [],
+          "year": 4
+        },
+        {
+          "mencion": "",
+          "name": "Paradigmas de Programación",
+          "credits": 3,
+          "label": "paradigmas, programacion, metodologias",
+          "type": "OB",
+          "languages": ["Python"],
+          "year": 4
+        },
+        {
+          "mencion": "",
+          "name": "Formación para el Empleo",
+          "credits": 6,
+          "label": "empleo, formacion, carrera",
+          "type": "OP",
+          "languages": [],
+          "year": 4
+        },
+        {
+          "mencion": "",
+          "name": "Prácticas en Empresa",
+          "credits": 6,
+          "label": "practicas, empresa, experiencia",
+          "type": "OP",
+          "languages": [],
+          "year": 4
+        },
+        {
+          "mencion": "",
+          "name": "Programación de Bajo Nivel",
+          "credits": 6,
+          "label": "bajo_nivel, programacion, hardware",
+          "type": "OP",
+          "languages": ["Ensamblador, Cuda"],
+          "year": 4
+        },
+        {
+          "mencion": "",
+          "name": "Verificación de Software",
+          "credits": 3,
+          "label": "verificacion, software, calidad",
+          "type": "OP",
+          "languages": ["C++","Python"],
+          "year": 4
+        },
+        {
+          "mencion": "Ciberseguridad",
+          "name": "Proyectos de Ciberseguridad Ciberejercicios",
+          "credits": 9,
+          "label": "ciberseguridad, proyectos, ejercicios",
+          "type": "OBM",
+          "languages": [],
+          "year": 4
+        },
+        {
+          "mencion": "Ciberseguridad",
+          "name": "Bastionado",
+          "credits": 6,
+          "label": "bastionado, ciberseguridad, proteccion",
+          "type": "OBM",
+          "languages": [],
+          "year": 4
+        },
+        {
+          "mencion": "Ciberseguridad",
+          "name": "Técnicas y Metodologías de Investigación en Ciberseguridad",
+          "credits": 6,
+          "label": "investigacion, metodologias, ciberseguridad",
+          "type": "OBM",
+          "languages": [],
+          "year": 4
+        },
+        {
+          "mencion": "Ciberseguridad",
+          "name": "Análisis de Malware",
+          "credits": 6,
+          "label": "analisis_malware, investigacion, ciberseguridad",
+          "type": "OBM",
+          "languages": [],
+          "year": 4
+        },
+        {
+          "mencion": "Ciberseguridad",
+          "name": "Desarrollo de Herramientas de Ciberseguridad",
+          "credits": 3,
+          "label": "herramientas, desarrollo, ciberseguridad",
+          "type": "OBM",
+          "languages": [],
+          "year": 4
+        },
+        {
+          "mencion": "Ingeniería de Datos",
+          "name": "Proyectos de Ingeniería de Datos",
+          "credits": 9,
+          "label": "proyectos, ingenieria_datos, analisis",
+          "type": "OBM",
+          "languages": [],
+          "year": 4
+        },
+        {
+          "mencion": "Ingeniería de Datos",
+          "name": "Aprendizaje Automático I",
+          "credits": 6,
+          "label": "IA, inteligencia_artificial, machine_learning, aprendizaje, ingenieria_datos",
+          "type": "OBM",
+          "languages": ["python","R"],
+          "year": 4
+        },
+        {
+          "mencion": "Ingeniería de Datos",
+          "name": "Visión por Computador",
+          "credits": 6,
+          "label": "vision_computador, analisis, ingenieria_datos",
+          "type": "OBM",
+          "languages": ["Python"],
+          "year": 4
+        },
+        {
+          "mencion": "Ingeniería de Datos",
+          "name": "Aprendizaje Automático II",
+          "credits": 6,
+          "label": "IA, inteligencia_artificial, machine_learning, algoritmos, ingenieria_datos",
+          "type": "OBM",
+          "languages": ["Python"],
+          "year": 4
+        },
+        {
+          "mencion": "Ingeniería de Datos",
+          "name": "Visualización de Datos",
+          "credits": 6,
+          "label": "visualizacion, datos, ingenieria_datos",
+          "type": "OBM",
+          "languages": ["Python"],
+          "year": 4
+        }
+    ]
+}
+
+###
+GET http://localhost:3000/degrees/
+Content-Type: application/json
+
+
