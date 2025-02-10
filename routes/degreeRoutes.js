@@ -9,6 +9,7 @@ const {
     deleteDegree,
     addSubjectToDegree,
     getSubjectsByDegree,
+    getSubjectsById,
     updateSubjectInDegree,
     deleteSubjectFromDegree,
     searchSubjectsInDegree
@@ -23,7 +24,8 @@ router.patch("/:id", patchDegree);
 router.delete("/:id", deleteDegree);
 
 router.post("/:id/subjects", validateSubject, addSubjectToDegree);
-router.get("/:id/subjects", getSubjectsByDegree);
+router.get("/:id/subjects/:id", getSubjectsByDegree);
+router.get("/:id/subjects/:subjectId", getSubjectsById);
 router.patch("/:id/subjects/:subjectId", validateSubject, updateSubjectInDegree);
 router.delete("/:id/subjects/:subjectId", deleteSubjectFromDegree);
 router.get("/:id/subjects/search", searchSubjectsInDegree);

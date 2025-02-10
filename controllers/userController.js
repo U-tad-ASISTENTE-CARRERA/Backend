@@ -113,10 +113,11 @@ const updateUser = async (req, res) => {
 
 const updatePassword = async (req, res) => {
     try {
-        const { id } = req.user;
-        const { newPassword, seedWord } = req.body;
+        const { email, newPassword, seedWord } = req.body;
 
-        const user = await User.findById(id);
+        console.log(email, newPassword, seedWord);
+        const user = await User.findByEmail(email);
+        if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
 
         if (user.seedWord !== seedWord) {
             return handleHttpError(res, "INVALID_SEED_WORD", 400);
@@ -124,7 +125,7 @@ const updatePassword = async (req, res) => {
 
         const hashedNewPassword = await bcrypt.hash(newPassword, 10);
 
-        await User.update(id, { password: hashedNewPassword });
+        await User.update(user.id, { password: hashedNewPassword });
 
         await sendEmail(
             user.email,

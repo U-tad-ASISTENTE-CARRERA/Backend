@@ -79,6 +79,15 @@ const getSubjectsByDegree = async (req, res) => {
   }
 };
 
+const getSubjectsById = async (req, res) => {
+  try {
+    const subject = await Degree.getSubjectById(req.params.id, req.params.subjectId);
+    res.status(200).json(subject);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+}
+
 const updateSubjectInDegree = async (req, res) => {
   try {
     const updatedSubject = await Degree.updateSubject(req.params.id, req.params.subjectId, req.body);
@@ -124,6 +133,7 @@ module.exports = {
   deleteDegree,
   addSubjectToDegree,
   getSubjectsByDegree,
+  getSubjectsById,
   updateSubjectInDegree,
   deleteSubjectFromDegree,
   searchSubjectsInDegree,

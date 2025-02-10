@@ -35,7 +35,7 @@ const router = express.Router();
 // User routes
 router.post("/login", validateLogin, loginUser);
 router.post("/register", validateUser, registerUser);
-router.put("/updatePassword", authUserMiddleware, validateNewPassword, updatePassword);
+router.put("/updatePassword", validateNewPassword, updatePassword);
 router.post("/logout", authUserMiddleware, logoutUser);
 router.delete("/", authUserMiddleware, deleteUser);
 router.put("/", authUserMiddleware, updateUser);
