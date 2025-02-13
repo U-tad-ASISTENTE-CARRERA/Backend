@@ -3,7 +3,7 @@ POST http://localhost:3000/register
 Content-Type: application/json
 
 {
-  "email": "alvaro.vazquez@live.u-tad.com",
+  "email": "diego.keess@live.u-tad.com",
   "password": "SecurePass123!",
   "seedWord": "diegoenjoyer"
 }
@@ -32,7 +32,7 @@ Content-Type: application/json
 
 {
   "email": "alvaro.vazquez@live.u-tad.com",
-  "newPassword": "SecurePass@123",
+  "newPassword": "NecurePass@123",
   "seedWord": "diegoenjoyer"
 }
 
@@ -119,4 +119,5 @@ Authorization: Bearer YOUR_JWT_TOKEN_HERE
   "randomField": "ShouldFail"
 }
 
-
+### create admin
+POST http://localhost:3000/admin

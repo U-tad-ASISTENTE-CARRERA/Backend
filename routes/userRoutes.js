@@ -47,20 +47,17 @@ router.get("/metadata", authUserMiddleware, getUserMetadata);
 router.patch("/metadata", authUserMiddleware, validateMetadata, updateUserMetadata);
 router.delete("/metadata", authUserMiddleware, validateMetadata, deleteUserMetadata);
 
-// Student routes
-
-
 // Teacher routes
-router.get("/teacher", authUserMiddleware, checkRole("teacher"), getAllStudents);
-router.get("/teacher/specialization", authUserMiddleware, checkRole("teacher"), getSpecializationStudent);
-router.get("/teacher/:id", authUserMiddleware, checkRole("teacher"), getStudent);
-router.patch("/teacher/:id", authUserMiddleware, checkRole("teacher"), updateUserMetadata);
-router.delete("/teacher/:id", authUserMiddleware, checkRole("teacher"), deleteUserMetadata);
+router.get("/teacher", authUserMiddleware, checkRole("TEACHER"), getAllStudents);
+router.get("/teacher/specialization", authUserMiddleware, checkRole("TEACHER"), getSpecializationStudent);
+router.get("/teacher/:id", authUserMiddleware, checkRole("TEACHER"), getStudent);
+router.patch("/teacher/:id", authUserMiddleware, checkRole("TEACHER"), updateUserMetadata);
+router.delete("/teacher/:id", authUserMiddleware, checkRole("TEACHER"), deleteUserMetadata);
 
 // Admin routes
 router.post("/admin", createAdmin);
-router.get("/admin", authUserMiddleware, checkRole("admin"), getAllUsers);
-router.patch("/admin/:id", authUserMiddleware, checkRole("admin"), updateUserByAdmin);
-router.delete("/admin/:id", authUserMiddleware, checkRole("admin"), deleteUserByAdmin);
+router.get("/admin", authUserMiddleware, checkRole("ADMIN"), getAllUsers);
+router.patch("/admin/:id", authUserMiddleware, checkRole("ADMIN"), updateUserByAdmin);
+router.delete("/admin/:id", authUserMiddleware, checkRole("ADMIN"), deleteUserByAdmin);
 
 module.exports = router;

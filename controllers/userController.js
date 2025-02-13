@@ -9,12 +9,14 @@ const e = require("express");
 const admin = require("firebase-admin");
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+
 const sendEmail = async (to, subject, content) => {
     try {
+        console.log("Sending email to:", to);
         await resend.emails.send({
-            from: process.env.RESEND_FROM_EMAIL,
-            to,
-            subject,
+            from: "Asistene de carrera <onboarding@resend.dev>",
+            to : to,
+            subject : subject,
             html: content,
         });
     } catch (error) {
@@ -342,8 +344,8 @@ const getStudent = async (req, res) => {
 
 const createAdmin = async (req, res) => {
     try {
-        const email = "admin@example.com";
-        const password = "S3guroPassw0rd";
+        const email = "alvaro.vazquez.1716@gmail.com";
+        const password = "SecurePass@123";
         const seedWord = "securityphrase";
 
         try {
@@ -357,6 +359,13 @@ const createAdmin = async (req, res) => {
         const savedUser = await newUser.save();
 
         const token = generateToken({ email: savedUser.email, role: savedUser.role });
+        await sendEmail(
+            email,
+            "Bienvenido a la plataforma",
+            `<h2>Hola ${email.split(".")[0]}</h2>
+            <p>Tu cuenta ha sido creada con exito.</p>
+            <p>Gracias por registrarte.</p>`
+        );
 
         return res.status(201).json({ message: "HARDCODED_ADMIN_CREATED", token, user: { email: savedUser.email, role: savedUser.role } });
     } catch (error) {

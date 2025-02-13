@@ -47,7 +47,7 @@ const validateLogin = [
     check("email")
         .isString()
         .isLength({ min: 3 }).withMessage("Email must be at least 3 characters long")
-        .matches(/^[a-zA-Z0-9._%+-]+@(live\.u-tad\.com|u-tad\.com)$/)
+        .matches(/^[a-zA-Z0-9._%+-]+@(live\.u-tad\.com|u-tad\.com|gmail\.com)$/)
         .withMessage("El correo debe terminar en @live.u-tad.com o @u-tad.com")
         .notEmpty().withMessage("Email cannot be empty"),
     
