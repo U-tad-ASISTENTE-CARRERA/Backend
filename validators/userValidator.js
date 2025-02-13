@@ -6,7 +6,7 @@ const validateUser = [
         .isString()
         .isLength({ min: 3 }).withMessage("Email must be at least 3 characters long")
         .matches(/^[a-zA-Z0-9._%+-]+@(live\.u-tad\.com|u-tad\.com)$/)
-        .withMessage("Invalid email format, must be @live.u-tad.com or @u-tad.com")
+        .withMessage("El correo debe terminar en @live.u-tad.com o @u-tad.com")
         .notEmpty().withMessage("Email cannot be empty"),
     
     check("password")
@@ -27,7 +27,7 @@ const validateNewPassword = [
         .isString()
         .isLength({ min: 3 }).withMessage("Email must be at least 3 characters long")
         .matches(/^[a-zA-Z0-9._%+-]+@(live\.u-tad\.com|u-tad\.com)$/)
-        .withMessage("Invalid email format, must be @live.u-tad.com or @u-tad.com")
+        .withMessage("El correo debe terminar en @live.u-tad.com o @u-tad.com")
         .notEmpty().withMessage("Email cannot be empty"),
     
     check("newPassword")
@@ -48,7 +48,7 @@ const validateLogin = [
         .isString()
         .isLength({ min: 3 }).withMessage("Email must be at least 3 characters long")
         .matches(/^[a-zA-Z0-9._%+-]+@(live\.u-tad\.com|u-tad\.com)$/)
-        .withMessage("Invalid email format, must be @live.u-tad.com or @u-tad.com")
+        .withMessage("El correo debe terminar en @live.u-tad.com o @u-tad.com")
         .notEmpty().withMessage("Email cannot be empty"),
     
     check("password")
