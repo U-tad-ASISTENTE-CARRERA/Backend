@@ -1,0 +1,701 @@
+### register teacher
+POST http://localhost:3000/register
+Content-Type: application/json
+
+{
+  "email": "alvaro.vazquez@live.u-tad.com",
+  "password": "SecurePass123!",
+  "seedWord": "sash"
+}
+
+### login teacher
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "email": "alvaro.vazquez@live.u-tad.com",
+  "password": "SecurePass123!"
+}
+
+### Test para agregar metadata a un estudiante
+PATCH http://localhost:3000/metadata
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzNFloWUZpNkJIMU5WIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5NjQzMjk1LCJleHAiOjE3Mzk3Mjk2OTV9.jePUpyaBe2Y-PNoc2RyPKepdJ1x2mdTbnO5SXvKr76M
+
+{
+    "firstName": "alvaro",
+    "lastName": "Vazquez",
+    "birthDate": "2002-10-17",
+    "dni": "12345678A",
+    "degree": "INSO",
+    "specialization": "Artificial Intelligence",
+    "institution": "U-Tad",
+    "endDate": "2026-06-30",
+    "languages": [
+        { "language": "English", "level": "high" },
+        { "language": "Spanish", "level": "high" },
+        { "language": "French", "level": "high" }
+    ],
+    "programmingLanguages": [
+        { "language": "Python", "level": "high" },
+        { "language": "JavaScript", "level": "medium" },
+        { "language": "Java", "level": "medium" },
+        { "language": "C++", "level": "low" },
+        { "language": "C#", "level": "low" }
+    ],
+    "certifications": [
+        { "name": "AWS Certified Developer", "date": "2024-01-15", "institution": "Amazon" },
+        { "name": "Microsoft Certified: Azure Developer Associate", "date": "2024-02-15", "institution": "Microsoft" },
+        { "name": "Google Professional Data Engineer", "date": "2024-03-15", "institution": "Google" },
+        { "name": "Oracle Certified Professional: Java SE 11 Developer", "date": "2024-04-15", "institution": "Oracle" }
+    ],
+    "workExperience": [
+        { "jobType": "Intern", "startDate": "2023-06-01", "endDate": "2023-12-31", "company": "Nvidia", "description": "AI Developer", "responsibilities": "AI development tasks" }
+    ]
+}
+
+###
+GET http://localhost:3000/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzNFloWUZpNkJIMU5WIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5NjQzMjk1LCJleHAiOjE3Mzk3Mjk2OTV9.jePUpyaBe2Y-PNoc2RyPKepdJ1x2mdTbnO5SXvKr76M
+
+
+###
+GET http://localhost:3000/metadata
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzNFloWUZpNkJIMU5WIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5NjQ0NTE4LCJleHAiOjE3Mzk3MzA5MTh9.Ud4bmETqFiOHsUffewJ3C_GW5NX_U8qTSjbRmO_T_XM
+
+### 
+DELETE http://localhost:3000/metadata
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzNFloWUZpNkJIMU5WIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5NjQzMjk1LCJleHAiOjE3Mzk3Mjk2OTV9.jePUpyaBe2Y-PNoc2RyPKepdJ1x2mdTbnO5SXvKr76M
+
+{
+    "workExperience": [
+        { "jobType": "Intern", "startDate": "2023-06-01", "endDate": "2023-12-31", "company": "Nvidia", "description": "AI Developer", "responsibilities": "AI development tasks" }
+    ],
+    "certifications": [
+        { "name": "AWS Certified Developer", "date": "2024-01-15", "institution": "Amazon" },
+        { "name": "Microsoft Certified: Azure Developer Associate", "date": "2024-02-15", "institution": "Microsoft" },
+        { "name": "Oracle Certified Professional: Java SE 11 Developer", "date": "2024-04-15", "institution": "Oracle" }
+    ]
+}
+
+### 
+GET http://localhost:3000/degrees/student/AH
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzNFloWUZpNkJIMU5WIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5NjQ0NTE4LCJleHAiOjE3Mzk3MzA5MTh9.Ud4bmETqFiOHsUffewJ3C_GW5NX_U8qTSjbRmO_T_XM
+
+### 
+GET http://localhost:3000/AH
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzNFloWUZpNkJIMU5WIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5NjQ0NTE4LCJleHAiOjE3Mzk3MzA5MTh9.Ud4bmETqFiOHsUffewJ3C_GW5NX_U8qTSjbRmO_T_XM
+
+###
+PATCH  http://localhost:3000/AH
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzNFloWUZpNkJIMU5WIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5NjQ2Nzg3LCJleHAiOjE3Mzk3MzMxODd9.0_Rv9hJXK-wWUrAzqlbfHDzEX6NCOckPQzIG7wv702o
+
+{
+    "subjects": [
+      {
+        "mencion": "",
+        "name": "Fundamentos de Desarrollo Web",
+        "credits": 6,
+        "label": "desarrollo_web, fundamentos, programacion",
+        "type": "B",
+        "languages": [
+          "HTML",
+          "CSS",
+          "JavaScript"
+        ],
+        "year": 1,
+        "grade": 8.5
+      },
+      {
+        "mencion": "",
+        "name": "Introducción a la Programación I",
+        "credits": 6,
+        "label": "programacion_basica, introduccion, algoritmos",
+        "type": "B",
+        "languages": [
+          "C"
+        ],
+        "year": 1,
+        "grade": 8.5
+      },
+      {
+        "mencion": "",
+        "name": "Laboratorios de Redes y Sistemas Operativos",
+        "credits": 6,
+        "label": "redes, sistemas_operativos, practicas",
+        "type": "OB",
+        "languages": [
+          "Linux"
+        ],
+        "year": 1,
+        "grade": 8
+      },
+      {
+        "languages": [],
+        "mencion": "",
+        "name": "Lógica y Matemática Discreta",
+        "credits": 6,
+        "label": "logica, matematica_discreta, fundamentos",
+        "type": "B",
+        "year": 1,
+        "grade": 7.5
+      },
+      {
+        "languages": [],
+        "mencion": "",
+        "name": "Pensamiento Creativo",
+        "credits": 3,
+        "label": "creatividad, innovacion, pensamiento",
+        "type": "OB",
+        "year": 1,
+        "grade": 8.9
+      },
+      {
+        "mencion": "",
+        "name": "Álgebra",
+        "credits": 6,
+        "label": "matematicas, algebra, fundamentos",
+        "type": "B",
+        "languages": [
+          "R",
+          "Python"
+        ],
+        "year": 1,
+        "grade": 8.7
+      },
+      {
+        "mencion": "",
+        "name": "Arquitectura de Ordenadores",
+        "credits": 6,
+        "label": "hardware, arquitectura, ordenadores",
+        "type": "B",
+        "languages": [
+          "Ensamblador"
+        ],
+        "year": 1,
+        "grade": 7
+      },
+      {
+        "mencion": "",
+        "name": "Introducción a la Programación II",
+        "credits": 6,
+        "label": "programacion_intermedia, estructuras_datos, algoritmos, punteros",
+        "type": "OB",
+        "languages": [
+          "c"
+        ],
+        "year": 1,
+        "grade": 9
+      },
+      {
+        "mencion": "",
+        "name": "Laboratorio de Bases de Datos y Sistemas Distribuidos",
+        "credits": 6,
+        "label": "bases_datos, distribuidos, practicas",
+        "type": "OB",
+        "languages": [
+          "SQL"
+        ],
+        "year": 1,
+        "grade": 8.5
+      },
+      {
+        "languages": [],
+        "mencion": "",
+        "name": "Sociedad Digital",
+        "credits": 3,
+        "label": "tecnologia_sociedad, digitalizacion, etica",
+        "type": "OB",
+        "year": 1,
+        "grade": 8.5
+      },
+      {
+        "mencion": "",
+        "name": "Proyectos I: Técnicas y Tecnologías Digitales",
+        "credits": 6,
+        "label": "proyectos, tecnologia_digital, practicas",
+        "type": "OB",
+        "languages": [
+          "Arduino"
+        ],
+        "year": 1,
+        "grade": 8.5
+      },
+      {
+        "languages": [],
+        "mencion": "",
+        "name": "Fundamentos de Composición Visual",
+        "credits": 3,
+        "label": "composicion_visual, diseno, creatividad",
+        "type": "OB",
+        "year": 2,
+        "grade": 10
+      },
+      {
+        "mencion": "",
+        "name": "Probabilidad y Estadística",
+        "credits": 6,
+        "label": "estadistica, probabilidad, matematicas",
+        "type": "B",
+        "languages": [
+          "R",
+          "Python"
+        ],
+        "year": 2,
+        "grade": 10
+      },
+      {
+        "mencion": "",
+        "name": "Programación Orientada a Objetos",
+        "credits": 6,
+        "label": "poo, objetos, programacion",
+        "type": "OB",
+        "languages": [
+          "Java"
+        ],
+        "year": 2
+      },
+      {
+        "mencion": "",
+        "name": "Redes de Ordenadores",
+        "credits": 6,
+        "label": "redes, comunicacion, hardware",
+        "type": "B",
+        "languages": [
+          "Linux"
+        ],
+        "year": 2
+      },
+      {
+        "mencion": "",
+        "name": "Sistemas Operativos",
+        "credits": 6,
+        "label": "sistemas, operativos, gestion_reyears",
+        "type": "B",
+        "languages": [
+          "Java"
+        ],
+        "year": 2
+      },
+      {
+        "mencion": "",
+        "name": "Análisis y Diseño de Algoritmos",
+        "credits": 6,
+        "label": "algoritmos, diseno, analisis",
+        "type": "OB",
+        "languages": [
+          "C++"
+        ],
+        "year": 2
+      },
+      {
+        "mencion": "",
+        "name": "Bases de Datos",
+        "credits": 6,
+        "label": "bases_datos, consultas, almacenamiento",
+        "type": "B",
+        "languages": [
+          "SQL",
+          "NoSQL",
+          "MONOGDB"
+        ],
+        "year": 2
+      },
+      {
+        "languages": [],
+        "mencion": "",
+        "name": "Cálculo",
+        "credits": 6,
+        "label": "calculo, integrales, matematicas",
+        "type": "B",
+        "year": 2
+      },
+      {
+        "mencion": "",
+        "name": "Diseño de Software",
+        "credits": 6,
+        "label": "diseno_software, arquitectura, desarrollo",
+        "type": "OB",
+        "languages": [
+          "Java"
+        ],
+        "year": 2
+      },
+      {
+        "languages": [],
+        "mencion": "",
+        "name": "Negocios y Modelos Digitales",
+        "credits": 3,
+        "label": "negocios_digitales, economia, tecnologia",
+        "type": "OB",
+        "year": 2
+      },
+      {
+        "mencion": "",
+        "name": "Proyectos II: Tendencias de la Ingeniería del Software",
+        "credits": 6,
+        "label": "proyectos, ingenieria_software, desarrollo",
+        "type": "OB",
+        "languages": [
+          "Java",
+          "Kalilinux",
+          "UrealEngine"
+        ],
+        "year": 2
+      },
+      {
+        "mencion": "",
+        "name": "Inteligencia Artificial",
+        "credits": 6,
+        "label": "ia, machine_learning, algoritmos",
+        "type": "OB",
+        "languages": [
+          "Pyhon",
+          "R"
+        ],
+        "year": 3
+      },
+      {
+        "languages": [],
+        "mencion": "",
+        "name": "Dirección y Gestión de Proyectos",
+        "credits": 3,
+        "label": "gestion_proyectos, organizacion, liderazgo",
+        "type": "OB",
+        "year": 3
+      },
+      {
+        "mencion": "",
+        "name": "Programación de Sistemas Distribuidos",
+        "credits": 6,
+        "label": "sistemas_distribuidos, programacion, redes, AWS",
+        "type": "OB",
+        "languages": [
+          "Dockers",
+          "Kubernetes"
+        ],
+        "year": 3
+      },
+      {
+        "mencion": "",
+        "name": "Programación Web I, Cliente",
+        "credits": 6,
+        "label": "programacion_web, cliente, desarrollo",
+        "type": "OB",
+        "languages": [
+          "HTML",
+          "CSS",
+          "JavaScript",
+          "NodeJS",
+          "React",
+          "Express",
+          "Tailwind"
+        ],
+        "year": 3
+      },
+      {
+        "mencion": "",
+        "name": "Programación Web II, Servidor",
+        "credits": 6,
+        "label": "programacion_web, servidor, backend",
+        "type": "OB",
+        "languages": [
+          "HTML",
+          "CSS",
+          "JavaScript",
+          "NodeJS",
+          "React",
+          "Express",
+          "Tailwind",
+          "MongoDB",
+          "Slack"
+        ],
+        "year": 3
+      },
+      {
+        "mencion": "",
+        "name": "Desarrollo de aplicaciones móviles",
+        "credits": 3,
+        "label": "apps_moviles, desarrollo, tecnologias, AndroidStudio",
+        "type": "OB",
+        "languages": [
+          "Java",
+          "Kotlin",
+          "Swift",
+          "Firebase"
+        ],
+        "year": 3
+      },
+      {
+        "languages": [],
+        "mencion": "",
+        "name": "Fundamentos de UX",
+        "credits": 3,
+        "label": "ux, experiencia_usuario, diseno, Figma",
+        "type": "OB",
+        "year": 3
+      },
+      {
+        "mencion": "",
+        "name": "Proyectos III: Desarrollo Web y Apps",
+        "credits": 9,
+        "label": "proyectos, desarrollo_web, apps",
+        "type": "OB",
+        "languages": [
+          "HTML",
+          "CSS",
+          "JavaScript",
+          "NodeJS",
+          "React",
+          "Express",
+          "Tailwind",
+          "MongoDB",
+          "Slack"
+        ],
+        "year": 3
+      },
+      {
+        "languages": [],
+        "mencion": "Ciberseguridad",
+        "name": "Introducción a la Seguridad Informática",
+        "credits": 6,
+        "label": "seguridad_informatica, introduccion, ciberseguridad",
+        "type": "OBM",
+        "year": 3
+      },
+      {
+        "languages": [],
+        "mencion": "Ciberseguridad",
+        "name": "Análisis Forense",
+        "credits": 6,
+        "label": "analisis_forense, investigacion, ciberseguridad",
+        "type": "OBM",
+        "year": 3
+      },
+      {
+        "languages": [],
+        "mencion": "Ciberseguridad",
+        "name": "Hacking Ético",
+        "credits": 6,
+        "label": "hacking_etico, seguridad, ciberseguridad",
+        "type": "OBM",
+        "year": 3
+      },
+      {
+        "mencion": "Ingeniería de Datos",
+        "name": "Ampliación de Bases de Datos",
+        "credits": 6,
+        "label": "bases_datos, ampliacion, ingenieria_datos",
+        "type": "OBM",
+        "languages": [
+          "SQL",
+          "NoSQL",
+          "MongoDB",
+          "redis"
+        ],
+        "year": 3
+      },
+      {
+        "languages": [],
+        "mencion": "Ingeniería de Datos",
+        "name": "Búsqueda y Análisis de la Información",
+        "credits": 6,
+        "label": "busqueda, analisis, ingenieria_datos",
+        "type": "OBM",
+        "year": 3
+      },
+      {
+        "languages": [],
+        "mencion": "Ingeniería de Datos",
+        "name": "Procesamiento de Datos",
+        "credits": 6,
+        "label": "procesamiento, datos, ingenieria_datos",
+        "type": "OBM",
+        "year": 3
+      },
+      {
+        "languages": [],
+        "mencion": "",
+        "name": "TFG",
+        "credits": 9,
+        "label": "tfg, trabajo_final, investigacion",
+        "type": "OB",
+        "year": 4
+      },
+      {
+        "languages": [],
+        "mencion": "",
+        "name": "Creación y Dirección de Empresas",
+        "credits": 3,
+        "label": "empresas, direccion, gestion",
+        "type": "OB",
+        "year": 4
+      },
+      {
+        "languages": [],
+        "mencion": "",
+        "name": "Ingeniería del Software",
+        "credits": 6,
+        "label": "ingenieria_software, desarrollo, metodologias, metodologias_agiles",
+        "type": "OB",
+        "year": 4
+      },
+      {
+        "mencion": "",
+        "name": "Paradigmas de Programación",
+        "credits": 3,
+        "label": "paradigmas, programacion, metodologias",
+        "type": "OB",
+        "languages": [
+          "Python"
+        ],
+        "year": 4
+      },
+      {
+        "languages": [],
+        "mencion": "",
+        "name": "Formación para el Empleo",
+        "credits": 6,
+        "label": "empleo, formacion, carrera",
+        "type": "OP",
+        "year": 4
+      },
+      {
+        "languages": [],
+        "mencion": "",
+        "name": "Prácticas en Empresa",
+        "credits": 6,
+        "label": "practicas, empresa, experiencia",
+        "type": "OP",
+        "year": 4
+      },
+      {
+        "mencion": "",
+        "name": "Programación de Bajo Nivel",
+        "credits": 6,
+        "label": "bajo_nivel, programacion, hardware",
+        "type": "OP",
+        "languages": [
+          "Ensamblador, Cuda"
+        ],
+        "year": 4
+      },
+      {
+        "mencion": "",
+        "name": "Verificación de Software",
+        "credits": 3,
+        "label": "verificacion, software, calidad",
+        "type": "OP",
+        "languages": [
+          "C++",
+          "Python"
+        ],
+        "year": 4
+      },
+      {
+        "languages": [],
+        "mencion": "Ciberseguridad",
+        "name": "Proyectos de Ciberseguridad Ciberejercicios",
+        "credits": 9,
+        "label": "ciberseguridad, proyectos, ejercicios",
+        "type": "OBM",
+        "year": 4
+      },
+      {
+        "languages": [],
+        "mencion": "Ciberseguridad",
+        "name": "Bastionado",
+        "credits": 6,
+        "label": "bastionado, ciberseguridad, proteccion",
+        "type": "OBM",
+        "year": 4
+      },
+      {
+        "languages": [],
+        "mencion": "Ciberseguridad",
+        "name": "Técnicas y Metodologías de Investigación en Ciberseguridad",
+        "credits": 6,
+        "label": "investigacion, metodologias, ciberseguridad",
+        "type": "OBM",
+        "year": 4
+      },
+      {
+        "languages": [],
+        "mencion": "Ciberseguridad",
+        "name": "Análisis de Malware",
+        "credits": 6,
+        "label": "analisis_malware, investigacion, ciberseguridad",
+        "type": "OBM",
+        "year": 4
+      },
+      {
+        "languages": [],
+        "mencion": "Ciberseguridad",
+        "name": "Desarrollo de Herramientas de Ciberseguridad",
+        "credits": 3,
+        "label": "herramientas, desarrollo, ciberseguridad",
+        "type": "OBM",
+        "year": 4
+      },
+      {
+        "languages": [],
+        "mencion": "Ingeniería de Datos",
+        "name": "Proyectos de Ingeniería de Datos",
+        "credits": 9,
+        "label": "proyectos, ingenieria_datos, analisis",
+        "type": "OBM",
+        "year": 4
+      },
+      {
+        "mencion": "Ingeniería de Datos",
+        "name": "Aprendizaje Automático I",
+        "credits": 6,
+        "label": "IA, inteligencia_artificial, machine_learning, aprendizaje, ingenieria_datos",
+        "type": "OBM",
+        "languages": [
+          "python",
+          "R"
+        ],
+        "year": 4
+      },
+      {
+        "mencion": "Ingeniería de Datos",
+        "name": "Visión por Computador",
+        "credits": 6,
+        "label": "vision_computador, analisis, ingenieria_datos",
+        "type": "OBM",
+        "languages": [
+          "Python"
+        ],
+        "year": 4
+      },
+      {
+        "mencion": "Ingeniería de Datos",
+        "name": "Aprendizaje Automático II",
+        "credits": 6,
+        "label": "IA, inteligencia_artificial, machine_learning, algoritmos, ingenieria_datos",
+        "type": "OBM",
+        "languages": [
+          "Python"
+        ],
+        "year": 4
+      },
+      {
+        "mencion": "Ingeniería de Datos",
+        "name": "Visualización de Datos",
+        "credits": 6,
+        "label": "visualizacion, datos, ingenieria_datos",
+        "type": "OBM",
+        "languages": [
+          "Python"
+        ],
+        "year": 4
+      }
+    ]
+}

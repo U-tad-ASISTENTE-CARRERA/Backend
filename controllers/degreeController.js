@@ -72,10 +72,20 @@ const addSubjectToDegree = async (req, res) => {
 
 const getSubjectsByDegree = async (req, res) => {
   try {
-    const subjects = await Degree.getSubjects(req.params.id);
+    const user = req.user;  
+    if (!user || !user.metadata || !user.metadata.degree) {
+      return res.status(400).json({ error: "DEGREE_NOT_FOUND_IN_METADATA" });
+    }
+
+    const subjects = await Degree.findByName(user.metadata.degree);
+    if (!subjects || subjects.length === 0) {
+      return res.status(404).json({ error: "NO_SUBJECTS_FOUND_FOR_DEGREE" });
+    }
+
     res.status(200).json(subjects);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Error in getSubjectsByDegree:", error.message);
+    res.status(500).json({ error: "INTERNAL_SERVER_ERROR" });
   }
 };
 

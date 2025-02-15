@@ -65,11 +65,11 @@ const validateLogin = [
 const METADATA_FIELDS = {
     STUDENT: new Set([
         "firstName", "lastName", "birthDate", "dni", "degree", "specialization", "institution", "endDate",
-        "languages", "programmingLanguages", "academicHistory", "milestones", "certifications",
-        "workExperience", "roadmaps", "updatedAt"
+        "languages", "programmingLanguages", "certifications", "workExperience"
     ]),
+
     TEACHER: new Set([
-        "firstName", "lastName", "birthDate", "dni", "specialization", "studentList", "updatedAt"
+        "firstName", "lastName", "birthDate", "dni", "specialization"
     ]),
 };
 
@@ -137,11 +137,6 @@ const validateMetadata = [
         { name: "updatedAt", type: "string" },
     ]),
 
-    validateArrayObjects("milestones", [
-        { name: "milestoneId", type: "string" },
-        { name: "unlockDate", type: "string" },
-    ]),
-
     validateArrayObjects("certifications", [
         { name: "name", type: "string" },
         { name: "date", type: "string" },
@@ -155,14 +150,6 @@ const validateMetadata = [
         { name: "company", type: "string" },
         { name: "description", type: "string" },
         { name: "responsibilities", type: "string" },
-    ]),
-
-    validateArrayObjects("roadmaps", [
-        { name: "roadmapId", type: "string" },
-    ]),
-
-    validateArrayObjects("studentList", [
-        { name: "studentId", type: "string" },
     ]),
 
     (req, res, next) => {

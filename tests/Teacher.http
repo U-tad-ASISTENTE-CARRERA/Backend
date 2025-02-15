@@ -1,0 +1,53 @@
+### register teacher
+POST http://localhost:3000/register
+Content-Type: application/json
+
+{
+  "email": "Alvaro.vazquez@u-tad.com",
+  "password": "SecurePass123!",
+  "seedWord": "TEACHER"
+}
+
+### login teacher
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "email": "Alvaro.vazquez@u-tad.com",
+  "password": "SecurePass123!"
+}
+
+### Test para agregar metadata a un profesors
+PATCH http://localhost:3000/metadata
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik9xQVp4NDU1SWNnckVQQjNFaExuIiwiZW1haWwiOiJBbHZhcm8udmF6cXVlekB1LXRhZC5jb20iLCJyb2xlIjoiVEVBQ0hFUiIsImlhdCI6MTczOTY0Mjk5MywiZXhwIjoxNzM5NzI5MzkzfQ.4aL173KYYJ99Nuwz1kkes-Mbo2V-yqxWPrPn6U1xnD0
+
+{
+  "firstName": "Alvaro",
+  "lastName": "Vazquez",
+  "birthDate": "1985-08-20",
+  "dni": "87654321B",
+  "specialization": "Data Science"
+}
+
+###
+POST http://localhost:3000/teacher
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik9xQVp4NDU1SWNnckVQQjNFaExuIiwiZW1haWwiOiJBbHZhcm8udmF6cXVlekB1LXRhZC5jb20iLCJyb2xlIjoiVEVBQ0hFUiIsImlhdCI6MTczOTY0MzI2NSwiZXhwIjoxNzM5NzI5NjY1fQ.GDsXh_cKH2VoZDm04IfpQbUfQKrgcZyDlexg8AXKlrA
+
+{
+  "studentId": "xxonj4cT4K6f4UT4WM7U"
+}
+
+### Ver a todos los estudiantes
+GET  http://localhost:3000/teacher/students
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik9xQVp4NDU1SWNnckVQQjNFaExuIiwiZW1haWwiOiJBbHZhcm8udmF6cXVlekB1LXRhZC5jb20iLCJyb2xlIjoiVEVBQ0hFUiIsImlhdCI6MTczOTY0MzI2NSwiZXhwIjoxNzM5NzI5NjY1fQ.GDsXh_cKH2VoZDm04IfpQbUfQKrgcZyDlexg8AXKlrA
+
+###
+GET http://localhost:3000/teacher
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik9xQVp4NDU1SWNnckVQQjNFaExuIiwiZW1haWwiOiJBbHZhcm8udmF6cXVlekB1LXRhZC5jb20iLCJyb2xlIjoiVEVBQ0hFUiIsImlhdCI6MTczOTY0MzI2NSwiZXhwIjoxNzM5NzI5NjY1fQ.GDsXh_cKH2VoZDm04IfpQbUfQKrgcZyDlexg8AXKlrA
+
+###
+DELETE 

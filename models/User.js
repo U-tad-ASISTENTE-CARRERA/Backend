@@ -42,9 +42,10 @@ class User {
 
   static async findByRole(role) {
     const querySnapshot = await db.collection("users").where("role", "==", role).get();
-    if (querySnapshot.empty) throw new Error("User with this role not found");
-    return querySnapshot.docs[0].data();
-  }
+    if (querySnapshot.empty) throw new Error("No users with this role found");
+
+    return querySnapshot.docs.map(doc => doc.data()); 
+}
 
   static async findByIdAndDelete(id) {
     const doc = await db.collection("users").doc(id).get();

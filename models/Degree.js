@@ -20,6 +20,12 @@ class Degree {
     return querySnapshot.docs.map((doc) => doc.data());
   }
 
+  static async findByName(name) {
+    const querySnapshot = await db.collection("degrees").where("name", "==", name).get();
+    if (querySnapshot.empty) throw new Error("Degree not found");
+    return querySnapshot.docs.map((doc) => doc.data());
+}
+
   static async findById(id) {
     const doc = await db.collection("degrees").doc(id).get();
     if (!doc.exists) throw new Error("Degree not found");

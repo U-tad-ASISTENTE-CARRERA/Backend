@@ -204,34 +204,30 @@ const updateUserMetadata = async (req, res) => {
         const METADATA_FIELDS = {
             STUDENT: [
                 "firstName", "lastName", "birthDate", "dni", "degree", "specialization", "institution", "endDate",
-                "languages", "programmingLanguages", "academicHistory", "milestones", "certifications",
-                "workExperience", "roadmaps", "updatedAt"
+                "languages", "programmingLanguages", "certifications", "workExperience"
             ],
             TEACHER: [
-                "firstName", "lastName", "birthDate", "dni", "specialization", "updatedAt"
+                "firstName", "lastName", "birthDate", "dni", "specialization"
             ],
         };
 
         const validFields = METADATA_FIELDS[user.role];
         const metadataUpdates = {};
 
+        if (!user.metadata) user.metadata = {};
         for (const key in updates) {
             if (validFields.includes(key)) {
-                if (Array.isArray(updates[key]) && Array.isArray(user.metadata[key])) {
-                    const existingData = user.metadata[key] || [];
-                    
-                    const mergedData = [...existingData, ...updates[key]].reduce((acc, item) => {
-                        if (!acc.some(el => JSON.stringify(el) === JSON.stringify(item))) {
-                            acc.push(item);
-                        }
+                const existingValue = user.metadata[key];
+
+                if (Array.isArray(updates[key]) && Array.isArray(existingValue)) {
+                    const mergedData = [...existingValue, ...updates[key]].reduce((acc, item) => {
+                        if (!acc.some(el => JSON.stringify(el) === JSON.stringify(item))) acc.push(item);
                         return acc;
                     }, []);
 
-                    metadataUpdates[`metadata.${key}`] = mergedData;
+                    if (JSON.stringify(existingValue) !== JSON.stringify(mergedData)) metadataUpdates[`metadata.${key}`] = mergedData;
                 } else {
-                    if (!user.metadata[key]) {
-                        metadataUpdates[`metadata.${key}`] = updates[key];
-                    }
+                    if (existingValue !== updates[key]) metadataUpdates[`metadata.${key}`] = updates[key];
                 }
             }
         }
@@ -309,12 +305,164 @@ const deleteUserMetadata = async (req, res) => {
     }
 };
 
+const updateAH = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { subjects } = req.body;
+
+        const user = await User.findById(id);
+        if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
+
+        if (!user.metadata) user.metadata = {};
+        if (!user.metadata.AH) user.metadata.AH = {};
+        if (!user.metadata.AH.subjects) user.metadata.AH.subjects = [];
+
+        // const updatedSubjects = user.metadata.AH.subjects.map(existingSubject => {
+        //     const newSubjectData = subjects.find(s => s.name === existingSubject.name);
+        //     return newSubjectData ? { ...existingSubject, grade: newSubjectData.grade ?? null } : existingSubject;
+        // });
+
+        for (const subject of subjects) {
+            if (subject.grade !== undefined && (subject.grade < 0 || subject.grade > 10)) {
+                return handleHttpError(res, "INVALID_GRADE_RANGE", 400, `La nota de '${subject.name}' debe estar entre 0 y 10.`);
+            }
+        }
+
+        const updatedSubjects = user.metadata.AH.subjects.map(existingSubject => {
+            const newSubjectData = subjects.find(s => s.name === existingSubject.name);
+            return newSubjectData ? { 
+                ...existingSubject, 
+                grade: newSubjectData.grade ?? existingSubject.grade
+            } : existingSubject;
+        });
+
+        subjects.forEach(newSubject => {
+            if (!updatedSubjects.some(existing => existing.name === newSubject.name)) {
+                updatedSubjects.push({ 
+                    ...newSubject,
+                    grade: newSubject.grade ?? null
+                });
+            }
+        });
+
+        const subjectsWithGrades = updatedSubjects.filter(subject => subject.grade !== null);
+        const totalCredits = updatedSubjects.reduce((acc, subject) => acc + subject.credits, 0);
+        const totalCreditsWithGrades = subjectsWithGrades.reduce((acc, subject) => acc + subject.credits, 0);
+        const averageGrade = subjectsWithGrades.length > 0 
+            ? subjectsWithGrades.reduce((acc, subject) => acc + subject.grade, 0) / subjectsWithGrades.length
+            : null;
+
+        const sortedSubjects = [...subjectsWithGrades].sort((a, b) => b.grade - a.grade);
+        const top5BestSubjects = sortedSubjects.slice(0, 5);
+        const top5WorstSubjects = sortedSubjects.slice(-5);
+
+        const yearsCompleted = [];
+        const yearsGrouped = updatedSubjects.reduce((acc, subject) => {
+            acc[subject.year] = acc[subject.year] || [];
+            acc[subject.year].push(subject);
+            return acc;
+        }, {});
+
+        Object.keys(yearsGrouped).forEach(year => {
+            const allSubjectsGraded = yearsGrouped[year].every(subject =>
+                updatedSubjects.some(s => s.name === subject.name && s.grade !== null)
+            );
+            if (allSubjectsGraded) yearsCompleted.push(parseInt(year));
+        });
+
+        const metadataUpdates = {
+            "metadata.AH.subjects": updatedSubjects,
+            "metadata.AH.averageGrade": averageGrade,
+            "metadata.AH.totalCredits": totalCredits,
+            "metadata.AH.totalCreditsWithGrades": totalCreditsWithGrades,
+            "metadata.AH.top5BestSubjects": top5BestSubjects,
+            "metadata.AH.top5WorstSubjects": top5WorstSubjects,
+            "metadata.AH.yearsCompleted": yearsCompleted,
+            "metadata.AH.lastUpdatedAt": new Date().toISOString()
+        };
+
+        await User.update(id, metadataUpdates);
+
+        return res.status(200).json({ message: "SUBJECTS_METADATA_UPDATED", updatedSubjects, metadataUpdates });
+    } catch (error) {
+        console.error("Error updating subjects metadata:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+const getAH = async (req, res) => {
+    try {
+        const { id } = req.user;
+
+        const user = await User.findById(id);
+        if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
+
+        if (!user.metadata || !user.metadata.AH) {
+            return res.status(200).json({ subjects: [], lastUpdatedAt: null });
+        }
+
+        return res.status(200).json({ 
+            subjects: user.metadata.AH, 
+            lastUpdatedAt: user.metadata.lastUpdatedAt || null 
+        });
+    } catch (error) {
+        console.error("Error retrieving subjects metadata:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+const addStudentToTeacher = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { studentId } = req.body;
+
+        const teacher = await User.findById(id);
+        if (!teacher) return handleHttpError(res, "TEACHER_NOT_FOUND", 404);
+
+        const student = await User.findById(studentId);
+        if (!student) return handleHttpError(res, "STUDENT_NOT_FOUND", 404);
+
+        if (teacher.role !== "TEACHER") return handleHttpError(res, "NOT_A_TEACHER", 403);
+        if (student.role !== "STUDENT") return handleHttpError(res, "NOT_A_STUDENT", 403);
+
+        const studentList = teacher.metadata.studentList || [];
+        if (studentList.includes(studentId)) return handleHttpError(res, "STUDENT_ALREADY_ADDED", 400);
+
+        studentList.push(studentId);
+        await User.update(id, { "metadata.studentList": studentList });
+
+        return res.status(200).json({ message: "STUDENT_ADDED_TO_TEACHER", studentId });
+    } catch (error) {
+        console.error("Add Student To Teacher Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
 const getAllStudents = async (req, res) => {
     try {
         const users = await User.findByRole("STUDENT"); 
         return res.json(users);
     } catch (error) {
         console.error("Get All Users Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+const getAllTeacherStudents = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const user = await User.findById(id);
+        if (!user) return handleHttpError(res, "TEACHER_NOT_FOUND", 404);
+
+        const studentIds = user.metadata.studentList || [];
+        if (studentIds.length === 0) return res.json([]);
+
+        const studentsSnapshot = await db.collection("users").where("id", "in", studentIds).get();
+        const students = studentsSnapshot.docs.map(doc => doc.data());
+
+        return res.json(students);
+    } catch (error) {
+        console.error("Get All Teacher Students Error:", error.message);
         return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
     }
 };
@@ -446,7 +594,11 @@ module.exports = {
     getUserMetadata,
     updateUserMetadata,
     deleteUserMetadata,
+    updateAH,
+    getAH,
     getAllStudents,
+    addStudentToTeacher,
+    getAllTeacherStudents,
     getSpecializationStudent,
     getStudent,
     createAdmin,

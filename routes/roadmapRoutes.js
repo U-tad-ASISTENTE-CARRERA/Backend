@@ -13,6 +13,7 @@ const {
 const { validateRoadmap } = require("../validators/roadmapValidator");
 const { authUserMiddleware, checkRole } = require("../middlewares/auth");
 
+// Admin routes 
 router.post("/", authUserMiddleware, checkRole("ADMIN"), validateRoadmap, createRoadmap);
 router.post("/many", authUserMiddleware, checkRole("ADMIN"), createRoadmaps);
 router.get("/", getAllRoadmaps);
@@ -21,5 +22,7 @@ router.get("/year/:year", authUserMiddleware, checkRole("ADMIN"), getRoadmapByYe
 router.get("/mention/:mention", authUserMiddleware, checkRole("ADMIN"), getRoadmapByMention);
 router.patch("/roadmaps/:roadmapId", authUserMiddleware, checkRole("ADMIN"), validateRoadmap, updateRoadmap);
 router.delete("/roadmaps/:roadmapId", authUserMiddleware, checkRole("ADMIN"), deleteRoadmap);
+
+
 
 module.exports = router;

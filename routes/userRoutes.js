@@ -12,7 +12,11 @@ const {
     getUserMetadata,
     updateUserMetadata,
     deleteUserMetadata,
+    updateAH,
+    getAH,
     getAllStudents,
+    addStudentToTeacher,
+    getAllTeacherStudents,
     getSpecializationStudent,
     getStudent,
     createAdmin,
@@ -38,8 +42,7 @@ router.post("/register", validateUser, registerUser);
 router.put("/updatePassword", validateNewPassword, updatePassword);
 router.post("/logout", authUserMiddleware, logoutUser);
 router.delete("/", authUserMiddleware, deleteUser);
-router.put("/", authUserMiddleware, updateUser);
-
+router.patch("/", authUserMiddleware, updateUser);
 router.get("/", authUserMiddleware, getUserProfile);
 router.patch("/", authUserMiddleware, updateSeedWord);
 
@@ -47,12 +50,16 @@ router.get("/metadata", authUserMiddleware, getUserMetadata);
 router.patch("/metadata", authUserMiddleware, validateMetadata, updateUserMetadata);
 router.delete("/metadata", authUserMiddleware, validateMetadata, deleteUserMetadata);
 
+//
+router.get("/AH", authUserMiddleware, checkRole("STUDENT"), getAH);
+router.patch("/AH", authUserMiddleware, checkRole("STUDENT"), updateAH);
+
 // Teacher routes
-router.get("/teacher", authUserMiddleware, checkRole("TEACHER"), getAllStudents);
+router.post("/teacher", authUserMiddleware, checkRole("TEACHER"), addStudentToTeacher);
+router.get("/teacher/students", authUserMiddleware, checkRole("TEACHER"), getAllStudents);
+router.get("/teacher", authUserMiddleware, checkRole("TEACHER"), getAllTeacherStudents);
 router.get("/teacher/specialization", authUserMiddleware, checkRole("TEACHER"), getSpecializationStudent);
 router.get("/teacher/:id", authUserMiddleware, checkRole("TEACHER"), getStudent);
-router.patch("/teacher/:id", authUserMiddleware, checkRole("TEACHER"), updateUserMetadata);
-router.delete("/teacher/:id", authUserMiddleware, checkRole("TEACHER"), deleteUserMetadata);
 
 // Admin routes
 router.post("/admin", createAdmin);
