@@ -5,6 +5,7 @@ const { handleHttpError } = require("../utils/handleError");
 // const { sendEmail } = require("../utils/handleResend");
 const { Resend } = require("resend");
 const User = require("../models/User");
+const Roadmap = require("../models/Roadmap");
 const e = require("express");
 const admin = require("firebase-admin");
 
@@ -72,9 +73,15 @@ const loginUser = async (req, res) => {
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) return handleHttpError(res, "INVALID_CREDENTIALS", 401);
 
+        await User.update(user.id, { updatedAt: new Date().toISOString() });
         const token = generateToken({ id: user.id, email: user.email, role: user.role });
 
-        return res.json({ message: "LOGIN_SUCCESS", token, user: { ...user, password : undefined} });
+        return res.json({ 
+            message: "LOGIN_SUCCESS", 
+            token, 
+            user: { ...user, password: undefined, updatedAt: new Date().toISOString() } 
+        });
+
     } catch (error) {
         console.error("Login User Error:", error.message);
         return handleHttpError(res, error.message || "INTERNAL_SERVER_ERROR", 500);
@@ -378,7 +385,8 @@ const updateAH = async (req, res) => {
             "metadata.AH.top5BestSubjects": top5BestSubjects,
             "metadata.AH.top5WorstSubjects": top5WorstSubjects,
             "metadata.AH.yearsCompleted": yearsCompleted,
-            "metadata.AH.lastUpdatedAt": new Date().toISOString()
+            "metadata.AH.lastUpdatedAt": new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
         };
 
         await User.update(id, metadataUpdates);
@@ -411,6 +419,111 @@ const getAH = async (req, res) => {
     }
 };
 
+const updateRoadmap = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { roadmapId, status } = req.body;
+
+        const validStatuses = ["TODO", "DOING", "DONE"];
+
+        const user = await User.findById(id);
+        if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
+        if (!user.metadata) user.metadata = {};
+        if (!user.metadata.roadmaps) user.metadata.roadmaps = [];
+
+        let roadmaps = user.metadata.roadmaps;
+
+        const roadmapIndex = roadmaps.findIndex(r => r.roadmapId === roadmapId);
+
+        if (roadmapIndex !== -1) {
+            if (status && validStatuses.includes(status)) roadmaps[roadmapIndex].status = status;
+            roadmaps[roadmapIndex].updatedAt = new Date().toISOString();
+        } else {
+            roadmaps.push({
+                roadmapId,
+                status: "TODO",
+                updatedAt: new Date().toISOString(),
+            });
+        }
+
+        const metadataUpdates = {
+            "metadata.roadmaps": roadmaps,
+            "metadata.updatedAt": new Date().toISOString(),
+        };
+
+        await User.update(id, metadataUpdates);
+
+        return res.json({ message: "Roadmap updated successfully", roadmaps });
+    } catch (error) {
+        console.error("Error updating roadmap:", error.message);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+};
+
+const getRoadmaps = async (req, res) => {
+    try {
+        const { id } = req.user;
+
+        const user = await User.findById(id);
+        if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
+
+        // Asegurar que metadata y roadmaps existen
+        if (!user.metadata) user.metadata = {};
+        if (!user.metadata.roadmaps) user.metadata.roadmaps = [];
+
+        const userRoadmaps = user.metadata.roadmaps;
+        if (userRoadmaps.length === 0) return res.json([]);
+
+        // Extraer solo los roadmapId que tiene el usuario
+        const roadmapIds = userRoadmaps.map(r => r.roadmapId);
+
+        // Buscar solo los roadmaps con los IDs que tiene el usuario
+        const roadmaps = await Roadmap.findAll({
+            where: { id: roadmapIds }
+        });
+
+        // Mapear para incluir el estado del roadmap
+        const roadmapsWithStatus = roadmaps
+            .filter(r => roadmapIds.includes(r.id)) // Filtrar por seguridad
+            .map(r => ({
+                ...r, // No usamos toJSON() porque ya es un objeto
+                status: userRoadmaps.find(ur => ur.roadmapId === r.id)?.status || "TODO"
+            }));
+
+        res.json(roadmapsWithStatus);
+    } catch (error) {
+        console.error("Error fetching roadmaps:", error.message);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
+
+const deleteRoadmap = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { roadmapId } = req.body;
+        if (!roadmapId) return handleHttpError(res, "ROADMAP_ID_REQUIRED", 400);
+        const user = await User.findById(id);
+        if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
+        if (!user.metadata) user.metadata = {};
+        if (!user.metadata.roadmaps) user.metadata.roadmaps = [];
+        let roadmaps = user.metadata.roadmaps;
+
+        const newRoadmaps = roadmaps.filter(r => r.roadmapId !== roadmapId);
+        if (newRoadmaps.length === roadmaps.length) return handleHttpError(res, "ROADMAP_NOT_FOUND", 404);
+        
+        const metadataUpdates = {
+            "metadata.roadmaps": newRoadmaps,
+            "metadata.updatedAt": new Date().toISOString(),
+        };
+
+        await User.update(id, metadataUpdates);
+
+        return res.json({ message: "Roadmap deleted successfully", roadmaps: newRoadmaps });
+    } catch (error) {
+        console.error("Error deleting roadmap:", error.message);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+};
 const addStudentToTeacher = async (req, res) => {
     try {
         const { id } = req.user;
@@ -596,6 +709,9 @@ module.exports = {
     deleteUserMetadata,
     updateAH,
     getAH,
+    updateRoadmap,
+    getRoadmaps,
+    deleteRoadmap,
     getAllStudents,
     addStudentToTeacher,
     getAllTeacherStudents,

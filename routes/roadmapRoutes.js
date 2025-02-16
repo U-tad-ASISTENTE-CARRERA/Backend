@@ -16,13 +16,13 @@ const { authUserMiddleware, checkRole } = require("../middlewares/auth");
 // Admin routes 
 router.post("/", authUserMiddleware, checkRole("ADMIN"), validateRoadmap, createRoadmap);
 router.post("/many", authUserMiddleware, checkRole("ADMIN"), createRoadmaps);
-router.get("/", getAllRoadmaps);
-router.get("/label/:label", authUserMiddleware, checkRole("ADMIN"), getRoadmapByLabelWithRecommended);
-router.get("/year/:year", authUserMiddleware, checkRole("ADMIN"), getRoadmapByYear);
-router.get("/mention/:mention", authUserMiddleware, checkRole("ADMIN"), getRoadmapByMention);
 router.patch("/roadmaps/:roadmapId", authUserMiddleware, checkRole("ADMIN"), validateRoadmap, updateRoadmap);
 router.delete("/roadmaps/:roadmapId", authUserMiddleware, checkRole("ADMIN"), deleteRoadmap);
 
-
+// Student routes
+router.get("/", getAllRoadmaps);
+router.get("/label/:label", authUserMiddleware, checkRole("STUDENT"), getRoadmapByLabelWithRecommended);
+router.get("/year/:year", authUserMiddleware, checkRole("STUDENT"), getRoadmapByYear);
+router.get("/mention/:mention", authUserMiddleware, checkRole("STUDENT"), getRoadmapByMention);
 
 module.exports = router;

@@ -35,11 +35,27 @@ class Roadmap {
         const querySnapshot = await db.collection("roadmaps").where("label", "==", label).get();
         return querySnapshot.docs.map((doc) => doc.data());
     }
-
+    
     static async findByLabelWithRecommended(label) {
-        const querySnapshot = await db.collection("roadmaps").where("label", "==", label).get();
-        const querySnapshot2 = await db.collection("roadmaps").where("recommendedLabels", "==", label).get();
-        return querySnapshot.docs.map((doc) => doc.data()).concat(querySnapshot2.docs.map((doc) => doc.data()));        
+        const querySnapshot = await db.collection("roadmaps")
+            .where("label", "array-contains", label)
+            .get();
+    
+        const querySnapshot2 = await db.collection("roadmaps")
+            .where("recommendedLabels", "array-contains", label)
+            .get();
+    
+        const results = new Map();
+    
+        querySnapshot.docs.forEach(doc => {
+            results.set(doc.id, doc.data());
+        });
+    
+        querySnapshot2.docs.forEach(doc => {
+            results.set(doc.id, doc.data());
+        });
+    
+        return Array.from(results.values());
     }
 
     static async findByYear(year) {

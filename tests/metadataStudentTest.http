@@ -699,3 +699,49 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzN
       }
     ]
 }
+
+
+###
+GET http://localhost:3000/roadmaps
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzNFloWUZpNkJIMU5WIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5NjQ2Nzg3LCJleHAiOjE3Mzk3MzMxODd9.0_Rv9hJXK-wWUrAzqlbfHDzEX6NCOckPQzIG7wv702o
+
+###
+GET http://localhost:3000/roadmaps/label/ai
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzNFloWUZpNkJIMU5WIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5NzIyNDY4LCJleHAiOjE3Mzk4MDg4Njh9.ae6TQXAlO3U7TIorhJgREZF_s6LfwlgY0wK61lNDeR8
+
+###
+GET http://localhost:3000/roadmaps/year/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzNFloWUZpNkJIMU5WIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5NzIyNDY4LCJleHAiOjE3Mzk4MDg4Njh9.ae6TQXAlO3U7TIorhJgREZF_s6LfwlgY0wK61lNDeR8
+
+###
+GET http://localhost:3000/roadmaps/mention/data
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzNFloWUZpNkJIMU5WIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5NzIyNDY4LCJleHAiOjE3Mzk4MDg4Njh9.ae6TQXAlO3U7TIorhJgREZF_s6LfwlgY0wK61lNDeR8
+
+
+###
+GET http://localhost:3000/RoadmapStudent
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzNFloWUZpNkJIMU5WIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5NzIyNDY4LCJleHAiOjE3Mzk4MDg4Njh9.ae6TQXAlO3U7TIorhJgREZF_s6LfwlgY0wK61lNDeR8
+
+
+###
+PATCH http://localhost:3000/RoadmapStudent
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzNFloWUZpNkJIMU5WIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5NzI4NTg3LCJleHAiOjE3Mzk4MTQ5ODd9.M2LcRmraff1IOnmIHmqonjgO5ZktnRVNyKyrLkDYfX0
+
+{
+  "roadmapId": "0AIAAiQcmYUBBZbQArw8"
+}
+
+###
+DELETE http://localhost:3000/RoadmapStudent
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzNFloWUZpNkJIMU5WIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5NzI4NTg3LCJleHAiOjE3Mzk4MTQ5ODd9.M2LcRmraff1IOnmIHmqonjgO5ZktnRVNyKyrLkDYfX0
+
+{
+  "roadmapId": "0AIAAiQcmYUBBZbQArw8"
+}

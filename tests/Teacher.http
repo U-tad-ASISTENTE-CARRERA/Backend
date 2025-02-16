@@ -49,5 +49,3 @@ GET http://localhost:3000/teacher
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik9xQVp4NDU1SWNnckVQQjNFaExuIiwiZW1haWwiOiJBbHZhcm8udmF6cXVlekB1LXRhZC5jb20iLCJyb2xlIjoiVEVBQ0hFUiIsImlhdCI6MTczOTY0MzI2NSwiZXhwIjoxNzM5NzI5NjY1fQ.GDsXh_cKH2VoZDm04IfpQbUfQKrgcZyDlexg8AXKlrA
 
-###
-DELETE 
