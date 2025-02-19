@@ -29,6 +29,7 @@ const registerUser = async (req, res) => {
     try {
         const { email, password, seedWord } = req.body;
         console.log(email, password, seedWord);
+        
         try {
             await User.findByEmail(email);
             return handleHttpError(res, "USER_ALREADY_EXISTS", 400);
@@ -41,18 +42,23 @@ const registerUser = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
     
         const newUser = new User(email, hashedPassword, seedWord, role);
-        const savedUser = await newUser.save();
-
-        const token = generateToken({email: savedUser.email, role: savedUser.role, seedWord: savedUser.seedWord });
+        const savedUser = await newUser.save();        
+        const userId = savedUser.id; 
+        const token = generateToken({ id: userId, email: savedUser.email, role: savedUser.role, seedWord: savedUser.seedWord });
+        
         await sendEmail(
             email,
             "Bienvenido a la plataforma",
             `<h2>Hola ${email.split(".")[0]}</h2>
-            <p>Tu cuenta ha sido creada con exito.</p>
+            <p>Tu cuenta ha sido creada con éxito.</p>
             <p>Gracias por registrarte.</p>`
         );
 
-        return res.status(201).json({ message: "USER_CREATED", token, user: { ...savedUser, password: undefined } });
+        return res.status(201).json({ 
+            message: "USER_CREATED", 
+            token, 
+            user: { ...savedUser, password: undefined } 
+        });
     } catch (error) {
         console.error("Register User Error:", error.message);
         return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);

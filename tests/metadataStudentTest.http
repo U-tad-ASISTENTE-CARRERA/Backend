@@ -3,7 +3,7 @@ POST http://localhost:3000/register
 Content-Type: application/json
 
 {
-  "email": "alvaro.vazquez@live.u-tad.com",
+  "email": "alvaroVqz@live.u-tad.com",
   "password": "SecurePass123!",
   "seedWord": "sash"
 }
@@ -20,7 +20,7 @@ Content-Type: application/json
 ### Test para agregar metadata a un estudiante
 PATCH http://localhost:3000/metadata
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzNFloWUZpNkJIMU5WIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5NjQzMjk1LCJleHAiOjE3Mzk3Mjk2OTV9.jePUpyaBe2Y-PNoc2RyPKepdJ1x2mdTbnO5SXvKr76M
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkJtQWN4cFdMclhHWFo2QjVGZVRkIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsInNlZWRXb3JkIjoic2FzaCIsImlhdCI6MTczOTk3NzE5MCwiZXhwIjoxNzQwMDYzNTkwfQ.bv9Cj6S53Mn5jOT3i0uTz_sM0SDSZ5lGHJJHlPxktko
 
 {
     "firstName": "alvaro",
@@ -54,18 +54,18 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzN
     ]
 }
 
-###
+### Test para obtener un estudiante
 GET http://localhost:3000/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzNFloWUZpNkJIMU5WIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5NjQzMjk1LCJleHAiOjE3Mzk3Mjk2OTV9.jePUpyaBe2Y-PNoc2RyPKepdJ1x2mdTbnO5SXvKr76M
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkJtQWN4cFdMclhHWFo2QjVGZVRkIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsInNlZWRXb3JkIjoic2FzaCIsImlhdCI6MTczOTk3NzE5MCwiZXhwIjoxNzQwMDYzNTkwfQ.bv9Cj6S53Mn5jOT3i0uTz_sM0SDSZ5lGHJJHlPxktko
 
 
-###
+### Test para obtener la metadata de un estudiante
 GET http://localhost:3000/metadata
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzNFloWUZpNkJIMU5WIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5NjQ0NTE4LCJleHAiOjE3Mzk3MzA5MTh9.Ud4bmETqFiOHsUffewJ3C_GW5NX_U8qTSjbRmO_T_XM
 
-### 
+###  Test para eliminar algun dato la metadata de un estudiante
 DELETE http://localhost:3000/metadata
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzNFloWUZpNkJIMU5WIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5NjQzMjk1LCJleHAiOjE3Mzk3Mjk2OTV9.jePUpyaBe2Y-PNoc2RyPKepdJ1x2mdTbnO5SXvKr76M
@@ -81,17 +81,17 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzN
     ]
 }
 
-### 
+###  obtener las asignaturas de un grado
 GET http://localhost:3000/degrees/student/AH
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzNFloWUZpNkJIMU5WIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5NjQ0NTE4LCJleHAiOjE3Mzk3MzA5MTh9.Ud4bmETqFiOHsUffewJ3C_GW5NX_U8qTSjbRmO_T_XM
 
-### 
+### obtener las asignaturas de el AH del estudiante
 GET http://localhost:3000/AH
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzNFloWUZpNkJIMU5WIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5NjQ0NTE4LCJleHAiOjE3Mzk3MzA5MTh9.Ud4bmETqFiOHsUffewJ3C_GW5NX_U8qTSjbRmO_T_XM
 
-###
+### crear y modificar el AH del estudiante
 PATCH  http://localhost:3000/AH
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzNFloWUZpNkJIMU5WIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5NjQ2Nzg3LCJleHAiOjE3Mzk3MzMxODd9.0_Rv9hJXK-wWUrAzqlbfHDzEX6NCOckPQzIG7wv702o
@@ -725,8 +725,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzN
 ###
 GET http://localhost:3000/RoadmapStudent
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzNFloWUZpNkJIMU5WIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5NzIyNDY4LCJleHAiOjE3Mzk4MDg4Njh9.ae6TQXAlO3U7TIorhJgREZF_s6LfwlgY0wK61lNDeR8
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzNFloWUZpNkJIMU5WIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekBsaXZlLnUtdGFkLmNvbSIsInJvbGUiOiJTVFVERU5UIiwiaWF0IjoxNzM5ODg3NTQ2LCJleHAiOjE3Mzk5NzM5NDZ9.MStyqeCEGrQMJUemY_C166BI0XWUinyPFz4O2q9jVao
 
 ###
 PATCH http://localhost:3000/RoadmapStudent
@@ -745,3 +744,5 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkRxTm1GNzkzN
 {
   "roadmapId": "0AIAAiQcmYUBBZbQArw8"
 }
+
+
