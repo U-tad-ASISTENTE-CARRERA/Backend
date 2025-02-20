@@ -61,11 +61,10 @@ const validateLogin = [
     }
 ];
 
-// Metadata validation schemas
 const METADATA_FIELDS = {
     STUDENT: new Set([
-        "firstName", "lastName", "birthDate", "dni", "degree", "specialization", "institution", "endDate",
-        "languages", "programmingLanguages", "certifications", "workExperience"
+        "firstName", "lastName", "gender", "dni", "degree", "degree", "institution", "endDate",
+        "languages", "skills", "certifications", "workExperience"
     ]),
 
     TEACHER: new Set([
@@ -112,10 +111,9 @@ const validateMetadata = [
 
     check("firstName").if(body("firstName").exists()).isString().withMessage("firstName must be a string"),
     check("lastName").if(body("lastName").exists()).isString().withMessage("lastName must be a string"),
-    check("birthDate").if(body("birthDate").exists()).isISO8601().withMessage("birthDate must be a valid date"),
+    check("gender").if(body("gender").exists()).isString().withMessage("gender must be a string").isIn(["male", "female", "prefer not to say"]).withMessage("gender must be one of: male, female, or prefer not to say"),
     check("dni").if(body("dni").exists()).isString().withMessage("dni must be a string"),
-    check("degree").if(body("degree").exists()).isString().withMessage("degree must be a string"),
-    check("specialization").if(body("specialization").exists()).isString().withMessage("specialization must be a string"),
+    check("degree").if(body("degree").exists()).isString().withMessage("degree must be a string").isIn(["MAIS", "FIIS", "INSO_GAME", "INSO_DATA", "INSO_CYBER"]).withMessage("degree must be one of MAIS, FIIS, INSO_GAME, INSO_DATA, or INSO_CYBER"),
     check("institution").if(body("institution").exists()).isString().withMessage("institution must be a string"),
     check("endDate").if(body("endDate").exists()).isISO8601().withMessage("endDate must be a valid date"),
 
@@ -124,9 +122,8 @@ const validateMetadata = [
         { name: "level", type: "string", enum: ["low", "medium", "high"] },
     ]),
 
-    validateArrayObjects("programmingLanguages", [
-        { name: "language", type: "string" },
-        { name: "level", type: "string", enum: ["low", "medium", "high"] },
+    validateArrayObjects("skills", [
+        { name: "skill", type: "string" },
     ]),
 
     validateArrayObjects("academicHistory", [

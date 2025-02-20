@@ -1,11 +1,65 @@
+const fs = require("fs/promises");
 const Degree = require("../models/Degree");
+const path = require("path");
+const Joi = require("joi");
+const db = require("../config/firebase");
+const multer = require("multer");
+
+const subjectSchema = Joi.object({
+  mention: Joi.string().allow(""), 
+  name: Joi.string().required(),
+  credits: Joi.number().integer().positive().required(),
+  label: Joi.string().allow("").required(), 
+  type: Joi.string().valid("B", "OB", "OP", "OBM").required(),
+  skills: Joi.array().items(Joi.string()).required(),
+  year: Joi.number().integer().min(1).max(6).required(),
+});
+
+const degreeSchema = Joi.object({
+  degree: Joi.object({
+    name: Joi.string().required(),
+    subjects: Joi.array().items(subjectSchema).min(1).required(),
+  }).required(),
+});
 
 const createDegree = async (req, res) => {
   try {
-    const { name, subjects } = req.body;
-    const newDegree = new Degree(name, subjects || []);
-    const savedDegree = await newDegree.save();
-    res.status(201).json(savedDegree);
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+
+    const filePath = req.file.path;
+    const data = await fs.readFile(filePath, "utf8");
+
+    let parsedData;
+    try {
+      parsedData = JSON.parse(data);
+    } catch (jsonError) {
+      return res.status(400).json({ error: "Invalid JSON format", details: jsonError.message });
+    }
+
+    if (!parsedData.degree) {
+      return res.status(400).json({ error: "Degree object is missing in JSON" });
+    }
+
+    const { name, subjects } = parsedData.degree;
+
+    // Verificar si el grado ya existe
+    try {
+      await Degree.findByName(name);
+      return res.status(409).json({ error: "Degree already exists" });
+    } catch (err) {
+      if (err.message !== "Degree not found") {
+        return res.status(500).json({ error: err.message });
+      }
+    }
+
+    // Crear y guardar el nuevo grado
+    const degree = new Degree(name, subjects);
+    const savedDegree = await degree.save();
+
+    await fs.unlink(filePath);
+    res.status(201).json({ message: "Degree saved successfully", ...savedDegree });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -20,25 +74,18 @@ const getAllDegrees = async (req, res) => {
   }
 };
 
-const getDegreeById = async (req, res) => {
+const getDegreeByName = async (req, res) => {
   try {
-    const degree = await Degree.findById(req.params.id);
+    const degree = await Degree.findByName(req.params.name);
+    if (!degree) return res.status(404).json({ error: "Degree not found" });
     res.status(200).json(degree);
-  } catch (error) {
-    res.status(404).json({ error: error.message });
   }
-};
-
-const updateDegree = async (req, res) => {
-  try {
-    const updatedDegree = await Degree.update(req.params.id, req.body);
-    res.status(200).json(updatedDegree);
-  } catch (error) {
+  catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
+}
 
-const patchDegree = async (req, res) => {
+const updateDegree = async (req, res) => {
   try {
     const degree = await Degree.findById(req.params.id);
     if (!degree) return res.status(404).json({ error: "Degree not found" });
@@ -60,75 +107,80 @@ const deleteDegree = async (req, res) => {
   }
 };
 
-const addSubjectToDegree = async (req, res) => {
+const updateSubjects = async (req, res) => {
   try {
-    const { subject } = req.body;
-    const addedSubject = await Degree.addSubject(req.params.id, subject);
-    res.status(201).json(addedSubject);
+    const { name } = req.params;
+    const updatedSubjects = req.body.subjects;
+
+    if (!Array.isArray(updatedSubjects) || updatedSubjects.length === 0) {
+      return res.status(400).json({ error: "Invalid subjects array" });
+    }
+
+    let degree;
+    try {
+      degree = await Degree.findByName(name);
+    } catch (err) {
+      return res.status(404).json({ error: "Degree not found" });
+    }
+
+    let subjects = degree.subjects || [];
+    let subjectMap = new Map(subjects.map(subject => [subject.name, subject]));
+
+    updatedSubjects.forEach(subjectUpdate => {
+      if (subjectMap.has(subjectUpdate.name)) {
+        subjectMap.set(subjectUpdate.name, {
+          ...subjectMap.get(subjectUpdate.name),
+          ...subjectUpdate,
+          updatedAt: new Date().toISOString(),
+        });
+      }
+    });
+
+    const newSubjects = Array.from(subjectMap.values());
+
+    const updatedDegree = await Degree.update(name, { subjects: newSubjects });
+
+    res.status(200).json({
+      message: "Subjects updated successfully",
+      updatedSubjects: updatedSubjects.map(subject => subject.name),
+      degree: updatedDegree,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-const getSubjectsByDegree = async (req, res) => {
+const deleteSubjects = async (req, res) => {
   try {
-    const user = req.user;  
-    if (!user || !user.metadata || !user.metadata.degree) {
-      return res.status(400).json({ error: "DEGREE_NOT_FOUND_IN_METADATA" });
+    const { name } = req.params;
+    const subjectsToDelete = req.body.subjects;
+
+    if (!Array.isArray(subjectsToDelete) || subjectsToDelete.length === 0) {
+      return res.status(400).json({ error: "Invalid subjects array" });
     }
 
-    const subjects = await Degree.findByName(user.metadata.degree);
-    if (!subjects || subjects.length === 0) {
-      return res.status(404).json({ error: "NO_SUBJECTS_FOUND_FOR_DEGREE" });
+    let degree;
+    try {
+      degree = await Degree.findByName(name);
+    } catch (err) {
+      return res.status(404).json({ error: "Degree not found" });
     }
 
-    res.status(200).json(subjects);
-  } catch (error) {
-    console.error("Error in getSubjectsByDegree:", error.message);
-    res.status(500).json({ error: "INTERNAL_SERVER_ERROR" });
-  }
-};
+    let subjects = degree.subjects || [];
+    const remainingSubjects = subjects.filter(subject => !subjectsToDelete.includes(subject.name));
+    const deletedSubjects = subjects.filter(subject => subjectsToDelete.includes(subject.name));
 
-const getSubjectsById = async (req, res) => {
-  try {
-    const subject = await Degree.getSubjectById(req.params.id, req.params.subjectId);
-    res.status(200).json(subject);
-  } catch (error) {
-    res.status(404).json({ error: error.message });
-  }
-}
-
-const updateSubjectInDegree = async (req, res) => {
-  try {
-    const updatedSubject = await Degree.updateSubject(req.params.id, req.params.subjectId, req.body);
-    res.status(200).json(updatedSubject);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-const deleteSubjectFromDegree = async (req, res) => {
-  try {
-    const response = await Degree.deleteSubject(req.params.id, req.params.subjectId);
-    res.status(200).json(response);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-const searchSubjectsInDegree = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { field, value } = req.query;
-
-    if (!field || !value) {
-      return res.status(400).json({ error: "Both 'field' and 'value' parameters are required." });
+    if (deletedSubjects.length === 0) {
+      return res.status(404).json({ error: "No matching subjects found for deletion" });
     }
 
-    const subjects = await Degree.getSubjects(id);
-    const filteredSubjects = subjects.filter((subject) => String(subject[field]).toLowerCase().includes(value.toLowerCase()));
+    const updatedDegree = await Degree.update(name, { subjects: remainingSubjects });
 
-    res.status(200).json(filteredSubjects);
+    res.status(200).json({
+      message: "Subjects deleted successfully",
+      deletedSubjects: deletedSubjects.map(subject => subject.name),
+      degree: updatedDegree,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -137,14 +189,9 @@ const searchSubjectsInDegree = async (req, res) => {
 module.exports = {
   createDegree,
   getAllDegrees,
-  getDegreeById,
+  getDegreeByName,
   updateDegree,
-  patchDegree,
   deleteDegree,
-  addSubjectToDegree,
-  getSubjectsByDegree,
-  getSubjectsById,
-  updateSubjectInDegree,
-  deleteSubjectFromDegree,
-  searchSubjectsInDegree,
+  updateSubjects,
+  deleteSubjects
 };

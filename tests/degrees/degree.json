@@ -1,0 +1,421 @@
+{
+  "degree": {
+    "name": "INSO_DATA",
+    "subjects": [
+      {
+        "mention": "",
+        "name": "Fundamentos de Desarrollo Web",
+        "credits": 6,
+        "label": "frontend",
+        "type": "B",
+        "skills": ["HTML", "CSS", "JavaScript"],
+        "year": 1
+      },
+      {
+        "mention": "",
+        "name": "Introducción a la Programación I",
+        "credits": 6,
+        "label": "software",
+        "type": "B",
+        "skills": ["C"],
+        "year": 1
+      },
+      {
+        "mention": "",
+        "name": "Laboratorios de Redes y Sistemas Operativos",
+        "credits": 6,
+        "label": "software",
+        "type": "OB",
+        "skills": ["Linux"],
+        "year": 1
+      },
+      {
+        "mention": "",
+        "name": "Lógica y Matemática Discreta",
+        "credits": 6,
+        "label": "maths",
+        "type": "B",
+        "skills": [],
+        "year": 1
+      },
+      {
+        "mention": "",
+        "name": "Pensamiento Creativo",
+        "credits": 3,
+        "label": "softSkills",
+        "type": "OB",
+        "skills": [],
+        "year": 1
+      },
+      {
+        "mention": "",
+        "name": "Álgebra",
+        "credits": 6,
+        "label": "maths",
+        "type": "B",
+        "skills": ["R", "python"],
+        "year": 1
+      },
+      {
+        "mention": "",
+        "name": "Arquitectura de Ordenadores",
+        "credits": 6,
+        "label": "hardware",
+        "type": "B",
+        "skills": [],
+        "year": 1
+      },
+      {
+        "mention": "",
+        "name": "Introducción a la Programación II",
+        "credits": 6,
+        "label": "software",
+        "type": "OB",
+        "skills": ["C"],
+        "year": 1
+      },
+      {
+        "mention": "",
+        "name": "Laboratorio de Bases de Datos y Sistemas Distribuidos",
+        "credits": 6,
+        "label": "db",
+        "type": "OB",
+        "skills": ["SQL"],
+        "year": 1
+      },
+      {
+        "mention": "",
+        "name": "Sociedad Digital",
+        "credits": 3,
+        "label": "softSkills",
+        "type": "OB",
+        "skills": [],
+        "year": 1
+      },
+      {
+        "mention": "",
+        "name": "Proyectos I: Técnicas y Tecnologías Digitales",
+        "credits": 6,
+        "label": "hardware",
+        "type": "OB",
+        "skills": ["Arduino"],
+        "year": 1
+      },
+      {
+        "mention": "",
+        "name": "Fundamentos de Composición Visual",
+        "credits": 3,
+        "label": "softSkills",
+        "type": "OB",
+        "skills": [],
+        "year": 2
+      },
+      {
+        "mention": "",
+        "name": "Probabilidad y Estadística",
+        "credits": 6,
+        "label": "maths",
+        "type": "B",
+        "skills": ["R", "python"],
+        "year": 2
+      },
+      {
+        "mention": "",
+        "name": "Programación Orientada a Objetos",
+        "credits": 6,
+        "label": "software",
+        "type": "OB",
+        "skills": ["Java"],
+        "year": 2
+      },
+      {
+        "mention": "",
+        "name": "Redes de Ordenadores",
+        "credits": 6,
+        "label": "software",
+        "type": "B",
+        "skills": ["Linux"],
+        "year": 2
+      },
+      {
+        "mention": "",
+        "name": "Sistemas Operativos",
+        "credits": 6,
+        "label": "software",
+        "type": "B",
+        "skills": ["C"],
+        "year": 2
+      },
+      {
+        "mention": "",
+        "name": "Análisis y Diseño de Algoritmos",
+        "credits": 6,
+        "label": "software",
+        "type": "OB",
+        "skills": ["C++"],
+        "year": 2
+      },
+      {
+        "mention": "",
+        "name": "Bases de Datos",
+        "credits": 6,
+        "label": "db",
+        "type": "B",
+        "skills": ["SQL"],
+        "year": 2
+      },
+      {
+        "mention": "",
+        "name": "Cálculo",
+        "credits": 6,
+        "label": "maths",
+        "type": "B",
+        "skills": [],
+        "year": 2
+      },
+      {
+        "mention": "",
+        "name": "Diseño de Software",
+        "credits": 6,
+        "label": "software",
+        "type": "OB",
+        "skills": ["Java"],
+        "year": 2
+      },
+      {
+        "mention": "",
+        "name": "Negocios y Modelos Digitales",
+        "credits": 3,
+        "label": "softSkills",
+        "type": "OB",
+        "skills": [],
+        "year": 2
+      },
+      {
+        "mention": "",
+        "name": "Proyectos II: Tendencias de la Ingeniería del Software",
+        "credits": 6,
+        "label": "software",
+        "type": "OB",
+        "skills": [],
+        "year": 2
+      },
+      {
+        "mention": "",
+        "name": "Inteligencia Artificial",
+        "credits": 6,
+        "label": "ai",
+        "type": "OB",
+        "skills": ["Pyhon", "deep_learning", "machine_learning"],
+        "year": 3
+      },
+      {
+        "mention": "",
+        "name": "Dirección y Gestión de Proyectos",
+        "credits": 3,
+        "label": "softSkills",
+        "type": "OB",
+        "skills": [],
+        "year": 3
+      },
+      {
+        "mention": "",
+        "name": "Programación de Sistemas Distribuidos",
+        "credits": 6,
+        "label": "software",
+        "type": "OB",
+        "skills": ["C++", "AWS"],
+        "year": 3
+      },
+      {
+        "mention": "",
+        "name": "Programación Web I, Cliente",
+        "credits": 6,
+        "label": "frontend",
+        "type": "OB",
+        "skills": ["CSS","JavaScript","React","Tailwind"],
+        "year": 3
+      },
+      {
+        "mention": "",
+        "name": "Programación Web II, Servidor",
+        "credits": 6,
+        "label": "backend",
+        "type": "OB",
+        "skills": ["JavaScript","NodeJS","Express"],
+        "year": 3
+      },
+      {
+        "mention": "",
+        "name": "Desarrollo de aplicaciones móviles",
+        "credits": 3,
+        "label": "software",
+        "type": "OB",
+        "skills": [],
+        "year": 3
+      },
+      {
+        "mention": "",
+        "name": "Fundamentos de UX",
+        "credits": 3,
+        "label": "softSkills",
+        "type": "OB",
+        "skills": [],
+        "year": 3
+      },
+      {
+        "mention": "",
+        "name": "Proyectos III: Desarrollo Web y Apps",
+        "credits": 9,
+        "label": "softSkills",
+        "type": "OB",
+        "skills": [],
+        "year": 3
+      },
+      {
+        "mention": "data",
+        "name": "Ampliación de Bases de Datos",
+        "credits": 6,
+        "label": "db",
+        "type": "OBM",
+        "skills": ["NoSQL"],
+        "year": 3
+      },
+      {
+        "mention": "data",
+        "name": "Búsqueda y Análisis de la Información",
+        "credits": 6,
+        "label": "data_analisys",
+        "type": "OBM",
+        "skills": ["python","scala","R"],
+        "year": 3
+      },
+      {
+        "mention": "data",
+        "name": "Procesamiento de Datos",
+        "credits": 6,
+        "label": "data_analisys",
+        "type": "OBM",
+        "skills": ["python","scala","R"],
+        "year": 3
+      },
+      {
+        "mention": "",
+        "name": "TFG",
+        "credits": 9,
+        "label": "",
+        "type": "OB",
+        "skills": [],
+        "year": 4
+      },
+      {
+        "mention": "",
+        "name": "Creación y Dirección de Empresas",
+        "credits": 3,
+        "label": "softSkills",
+        "type": "OB",
+        "skills": [],
+        "year": 4
+      },
+      {
+        "mention": "",
+        "name": "Ingeniería del Software",
+        "credits": 6,
+        "label": "softSkills",
+        "type": "OB",
+        "skills": [],
+        "year": 4
+      },
+      {
+        "mention": "",
+        "name": "Paradigmas de Programación",
+        "credits": 3,
+        "label": "software",
+        "type": "OB",
+        "skills": ["python"],
+        "year": 4
+      },
+      {
+        "mention": "",
+        "name": "Formación para el Empleo",
+        "credits": 6,
+        "label": "softSkills",
+        "type": "OP",
+        "skills": [],
+        "year": 4
+      },
+      {
+        "mention": "",
+        "name": "Prácticas en Empresa",
+        "credits": 6,
+        "label": "softSkills",
+        "type": "OP",
+        "skills": [],
+        "year": 4
+      },
+      {
+        "mention": "",
+        "name": "Programación de Bajo Nivel",
+        "credits": 3,
+        "label": "hardware",
+        "type": "OP",
+        "skills": ["Cuda", "C++"],
+        "year": 4
+      },
+      {
+        "mention": "",
+        "name": "Verificación de Software",
+        "credits": 3,
+        "label": "data_analisys",
+        "type": "OP",
+        "skills": ["python"],
+        "year": 4
+      },
+      {
+        "mention": "data",
+        "name": "Proyectos de Ingeniería de Datos",
+        "credits": 9,
+        "label": "data_analisys",
+        "type": "OBM",
+        "skills": [],
+        "year": 4
+      },
+      {
+        "mention": "data",
+        "name": "Aprendizaje Automático I",
+        "credits": 6,
+        "label": "ai",
+        "type": "OBM",
+        "skills": ["python", "R", "machine_learning"],
+        "year": 4
+      },
+      {
+        "mention": "data",
+        "name": "Visión por Computador",
+        "credits": 6,
+        "label": "ai",
+        "type": "OBM",
+        "skills": ["python", "opencv", "deep_learning", "machine_learning"],
+        "year": 4
+      },
+      {
+        "mention": "data",
+        "name": "Aprendizaje Automático II",
+        "credits": 6,
+        "label": "ai",
+        "type": "OBM",
+        "skills": ["python", "deep_learning"],
+        "year": 4
+      },
+      {
+        "mention": "data",
+        "name": "Visualización de Datos",
+        "credits": 6,
+        "label": "data_analisys",
+        "type": "OBM",
+        "skills": ["python", "scala", "R"],
+        "year": 4
+      }
+    ]
+  }
+}

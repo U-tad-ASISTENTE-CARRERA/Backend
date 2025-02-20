@@ -1,0 +1,101 @@
+### register 
+POST http://localhost:3000/register
+Content-Type: application/json
+
+{
+  "email": "alvaroVqz@live.u-tad.com",
+  "password": "SecurePass123!",
+  "seedWord": "sash"
+}
+
+### login 
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "email": "alvaroVqz@live.u-tad.com",
+  "password": "SecurePass123!"
+}
+
+### Test para agregar metadata a un estudiante
+PATCH http://localhost:3000/metadata
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxeGthRnE0UXZMMmJFIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDA3NzE2OSwiZXhwIjoxNzQwMTYzNTY5fQ.2QIk8GWO9zEbYQ76O7aFUIkDd6MHMZV0IQmMeJrwlpQ
+
+{
+    "firstName": "alvaro",
+    "lastName": "Vazquez",
+    "gender": "male",
+    "dni": "12345678A",
+    "degree": "INSO_DATA",
+    "institution": "U-Tad",
+    "endDate": "2026-06-30",
+    "languages": [
+        { "language": "English", "level": "high" },
+        { "language": "Spanish", "level": "high" },
+        { "language": "French", "level": "high" }
+    ],
+    "skills": [
+        { "skill": "C" }
+    ],
+    "certifications": [
+        { "name": "AWS Certified Developer", "date": "2024-01-15", "institution": "Amazon" },
+        { "name": "Microsoft Certified: Azure Developer Associate", "date": "2024-02-15", "institution": "Microsoft" },
+        { "name": "Google Professional Data Engineer", "date": "2024-03-15", "institution": "Google" },
+        { "name": "Oracle Certified Professional: Java SE 11 Developer", "date": "2024-04-15", "institution": "Oracle" }
+    ],
+    "workExperience": [
+        { 
+            "jobType": "Intern", 
+            "startDate": "2023-06-01", 
+            "endDate": "2023-12-31", 
+            "company": "Nvidia", 
+            "description": "AI Developer", 
+            "responsibilities": "AI development tasks" 
+        }
+    ]
+}
+
+### Test para obtener un estudiante
+GET http://localhost:3000/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxeGthRnE0UXZMMmJFIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDA3NzE2OSwiZXhwIjoxNzQwMTYzNTY5fQ.2QIk8GWO9zEbYQ76O7aFUIkDd6MHMZV0IQmMeJrwlpQ
+
+### Test para obtener la metadata de un estudiante
+GET http://localhost:3000/metadata
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxeGthRnE0UXZMMmJFIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDA3NzE2OSwiZXhwIjoxNzQwMTYzNTY5fQ.2QIk8GWO9zEbYQ76O7aFUIkDd6MHMZV0IQmMeJrwlpQ
+
+###  Test para eliminar algun dato la metadata de un estudiante
+DELETE http://localhost:3000/metadata
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxeGthRnE0UXZMMmJFIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDA3NzE2OSwiZXhwIjoxNzQwMTYzNTY5fQ.2QIk8GWO9zEbYQ76O7aFUIkDd6MHMZV0IQmMeJrwlpQ
+
+{
+    "workExperience": [
+        { "jobType": "Intern", "startDate": "2023-06-01", "endDate": "2023-12-31", "company": "Nvidia", "description": "AI Developer", "responsibilities": "AI development tasks" }
+    ],
+    "certifications": [
+        { "name": "AWS Certified Developer", "date": "2024-01-15", "institution": "Amazon" },
+        { "name": "Microsoft Certified: Azure Developer Associate", "date": "2024-02-15", "institution": "Microsoft" },
+        { "name": "Oracle Certified Professional: Java SE 11 Developer", "date": "2024-04-15", "institution": "Oracle" }
+    ]
+}
+
+### Test obtener el historial academico de un estudiante
+GET http://localhost:3000/AH
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxeGthRnE0UXZMMmJFIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDA3NzE2OSwiZXhwIjoxNzQwMTYzNTY5fQ.2QIk8GWO9zEbYQ76O7aFUIkDd6MHMZV0IQmMeJrwlpQ
+
+###
+PATCH http://localhost:3000/AH
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxeGthRnE0UXZMMmJFIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDA3NzE2OSwiZXhwIjoxNzQwMTYzNTY5fQ.2QIk8GWO9zEbYQ76O7aFUIkDd6MHMZV0IQmMeJrwlpQ
+
+{
+  "grades": [
+    { "name": "Fundamentos de Desarrollo Web", "grade": 8.5 },
+    { "name": "Bases de Datos", "grade": 7.2 },
+    { "name": "Álgebra", "grade": 6.8 }
+  ]
+}

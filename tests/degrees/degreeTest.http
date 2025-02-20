@@ -1,0 +1,60 @@
+### registrar un administrador
+POST http://localhost:3000/admin
+Content-Type: application/json
+
+### login como administrador
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "email": "alvaro.vazquez.1716@gmail.com",
+  "password": "SecurePass@123"
+}
+
+### registrar un nuevo degree
+POST http://localhost:3000/degrees/ 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlRiNndRbzJPZnFVVGNKSzNXbG8yIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlei4xNzE2QGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc0MDA3MzkzNCwiZXhwIjoxNzQwMTYwMzM0fQ.EXnoYdrmVi1OKOCk_rIxZ58nTn1WWneFlQZNkyPJbLM
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="file"; filename="degree.json"
+Content-Type: application/json
+
+< ./degree.json
+------WebKitFormBoundary--
+
+### obtener todos los degrees
+GET http://localhost:3000/degrees/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlRiNndRbzJPZnFVVGNKSzNXbG8yIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlei4xNzE2QGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc0MDA3MzcxOSwiZXhwIjoxNzQwMTYwMTE5fQ.JPA6Rz_X2W6AA0y1dcUH8iiBjo9ugRvKB01C1I83HD8
+
+### obtener un degree por su nombre
+GET http://localhost:3000/degrees/INSO_DATA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlhtUnlRZHFrNE5VRFQza1E1bkhXIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDA3NDEyNSwiZXhwIjoxNzQwMTYwNTI1fQ.HwokUmOZLvQRHq2E23DdUzySsHGTdAdP6z9-JKLHQ4k
+
+### update degree
+PATCH http://localhost:3000/degrees/subjects/INSO_DATA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlRiNndRbzJPZnFVVGNKSzNXbG8yIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlei4xNzE2QGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc0MDA3MzcxOSwiZXhwIjoxNzQwMTYwMTE5fQ.JPA6Rz_X2W6AA0y1dcUH8iiBjo9ugRvKB01C1I83HD8
+Content-Type: application/json
+
+{
+  "subjects": [
+      {
+        "mention": "",
+        "name": "Fundamentos de Desarrollo Web",
+        "credits": 6,
+        "label": "frontend",
+        "type": "B",
+        "skills": ["HTML", "CSS", "JavaScript"],
+        "year": 1
+      }
+  ]
+}
+
+### delete degree
+DELETE http://localhost:3000/degrees/subjects/INSO_DATA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlRiNndRbzJPZnFVVGNKSzNXbG8yIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlei4xNzE2QGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc0MDA3MzcxOSwiZXhwIjoxNzQwMTYwMTE5fQ.JPA6Rz_X2W6AA0y1dcUH8iiBjo9ugRvKB01C1I83HD8
+Content-Type: application/json
+
+{
+  "subjects": ["Fundamentos de Desarrollo Web"]
+}

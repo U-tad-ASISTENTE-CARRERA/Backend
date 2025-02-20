@@ -1,28 +1,18 @@
-const { check, param, body} = require("express-validator");
-const validateResults = require("../utils/handleValidator")
+const { check, param, body } = require("express-validator");
+const validateResults = require("../utils/handleValidator");
 
-const validateDegree = [
-    body("name").notEmpty().withMessage("Degree name is required."),
-    body("subjects").isArray().optional(),
-
-    (req, res, next) => {
-        return validateResults(req, res, next)
-    }
-];
-    
 const validateSubject = [
-    param("degreeId").notEmpty().withMessage("Degree ID is required."),
-    body("mencion").optional().isString(),
-    body("name").notEmpty().withMessage("Subject name is required."),
-    body("credits").isInt({ min: 1 }).withMessage("Credits must be a positive integer."),
-    body("label").notEmpty().withMessage("Label is required."),
-    body("type").notEmpty().withMessage("Type is required."),
-    body("languages").isArray().optional(),
-    body("year").isInt({ min: 1 }).withMessage("Year must be a positive integer."),
-    
+    body("subjects").isArray({ min: 1 }).withMessage("Subjects must be a non-empty array."),
+    body("subjects.*.name").notEmpty().withMessage("Subject name is required."),
+    body("subjects.*.credits").isInt({ min: 1 }).withMessage("Credits must be a positive integer."),
+    body("subjects.*.label").notEmpty().withMessage("Label is required."),
+    body("subjects.*.type").notEmpty().withMessage("Type is required."),
+    body("subjects.*.skills").isArray().withMessage("Skills must be an array."),
+    body("subjects.*.year").isInt({ min: 1 }).withMessage("Year must be a positive integer."),
+  
     (req, res, next) => {
-        return validateResults(req, res, next)
-    }
+      return validateResults(req, res, next);
+    },
 ];
-    
-module.exports = { validateDegree, validateSubject };
+
+module.exports = { validateSubject };
