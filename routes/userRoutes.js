@@ -14,16 +14,13 @@ const {
     deleteUserMetadata,
     updateAH,
     getAH,
-    updateRoadmap,
-    getRoadmaps,
+    addTeacherToStudent,
+    getAllTeacher,
     getAllStudents,
-    addStudentToTeacher,
-    getAllTeacherStudents,
-    getSpecializationStudent,
+    getSpecializationTeacher,
     getStudent,
     createAdmin,
     getAllUsers,
-    deleteRoadmap,
     updateUserByAdmin,
     deleteUserByAdmin,
 } = require("../controllers/userController");
@@ -57,16 +54,9 @@ router.delete("/metadata", authUserMiddleware, validateMetadata, deleteUserMetad
 router.get("/AH", authUserMiddleware, checkRole("STUDENT"), getAH);
 router.patch("/AH", authUserMiddleware, checkRole("STUDENT"), updateAH);
 
-router.get("/RoadmapStudent", authUserMiddleware, checkRole("STUDENT"), getRoadmaps);
-router.patch("/RoadmapStudent", authUserMiddleware, checkRole("STUDENT"), updateRoadmap);
-router.delete("/RoadmapStudent", authUserMiddleware, checkRole("STUDENT"), deleteRoadmap);
-
-// Teacher routes
-router.post("/teacher", authUserMiddleware, checkRole("TEACHER"), addStudentToTeacher);
-router.get("/teacher/students", authUserMiddleware, checkRole("TEACHER"), getAllStudents);
-router.get("/teacher", authUserMiddleware, checkRole("TEACHER"), getAllTeacherStudents);
-router.get("/teacher/specialization", authUserMiddleware, checkRole("TEACHER"), getSpecializationStudent);
-router.get("/teacher/:id", authUserMiddleware, checkRole("TEACHER"), getStudent);
+// router.get("/RoadmapStudent", authUserMiddleware, checkRole("STUDENT"), getRoadmaps);
+// router.patch("/RoadmapStudent", authUserMiddleware, checkRole("STUDENT"), updateRoadmap);
+// router.delete("/RoadmapStudent", authUserMiddleware, checkRole("STUDENT"), deleteRoadmap);
 
 // Admin routes
 router.post("/admin", createAdmin);

@@ -217,18 +217,21 @@ const updateUserMetadata = async (req, res) => {
 
         const METADATA_FIELDS = {
             STUDENT: [
-                "firstName", "lastName", "gender", "dni", "degree", "degree", "institution", "endDate",
+                "firstName", "lastName", "gender", "dni", "degree", "institution", "endDate",
                 "languages", "skills", "certifications", "workExperience"
             ],
             TEACHER: [
-                "firstName", "lastName", "birthDate", "dni", "specialization"
+                "firstName", "lastName", "dni", "specialization"
             ],
         };
 
         const validFields = METADATA_FIELDS[user.role];
         const metadataUpdates = {};
+        const updateLog = [];
 
         if (!user.metadata) user.metadata = {};
+        if (!user.updateHistory) user.updateHistory = []; 
+
         for (const key in updates) {
             if (validFields.includes(key)) {
                 const existingValue = user.metadata[key];
@@ -239,21 +242,42 @@ const updateUserMetadata = async (req, res) => {
                         return acc;
                     }, []);
 
-                    if (JSON.stringify(existingValue) !== JSON.stringify(mergedData)) metadataUpdates[`metadata.${key}`] = mergedData;
+                    if (JSON.stringify(existingValue) !== JSON.stringify(mergedData)) {
+                        metadataUpdates[`metadata.${key}`] = mergedData;
+                        updateLog.push({ field: key, oldValue: existingValue, newValue: mergedData });
+                    }
                 } else {
-                    if (existingValue !== updates[key]) metadataUpdates[`metadata.${key}`] = updates[key];
+                    if (existingValue !== updates[key]) {
+                        metadataUpdates[`metadata.${key}`] = updates[key];
+                        updateLog.push({ field: key, oldValue: existingValue, newValue: updates[key] });
+                    }
                 }
             }
         }
 
-        if (Object.keys(metadataUpdates).length === 0) {
+        if (updateLog.length === 0) {
             return handleHttpError(res, "NO_VALID_FIELDS_TO_UPDATE", 400);
         }
 
-        metadataUpdates["metadata.updatedAt"] = new Date().toISOString();
+        const now = new Date();
+        user.updateHistory.push({
+            timestamp: now.toISOString(),
+            changes: updateLog
+        });
+
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+        user.updateHistory = user.updateHistory.filter(entry => new Date(entry.timestamp) > oneYearAgo);
+        metadataUpdates["metadata.updatedAt"] = now.toISOString();
+        metadataUpdates["updateHistory"] = user.updateHistory;
+
         await User.update(id, metadataUpdates);
 
-        return res.status(200).json({ message: "METADATA_UPDATED_SUCCESS", updatedFields: metadataUpdates });
+        return res.status(200).json({ 
+            message: "METADATA_UPDATED_SUCCESS", 
+            updatedFields: metadataUpdates,
+            updateHistory: user.updateHistory
+        });
     } catch (error) {
         console.error("Update User Metadata Error:", error.message);
         return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
@@ -274,17 +298,20 @@ const deleteUserMetadata = async (req, res) => {
 
         const METADATA_FIELDS = {
             STUDENT: [
-                "firstName", "lastName", "birthDate", "dni", "degree", "specialization", "institution", "endDate",
-                "languages", "programmingLanguages", "academicHistory", "milestones", "certifications",
-                "workExperience", "roadmaps", "updatedAt"
+                "firstName", "lastName", "gender", "dni", "degree", "institution", "endDate",
+                "languages", "skills", "certifications", "workExperience"
             ],
             TEACHER: [
-                "firstName", "lastName", "birthDate", "dni", "specialization", "updatedAt"
+                "firstName", "lastName", "dni", "specialization"
             ],
         };
 
         const validFields = METADATA_FIELDS[user.role];
         const metadataDeletes = {};
+        const deleteLog = [];
+
+        if (!user.metadata) user.metadata = {};
+        if (!user.updateHistory) user.updateHistory = []; 
 
         for (const key in updates) {
             if (validFields.includes(key)) {
@@ -296,23 +323,45 @@ const deleteUserMetadata = async (req, res) => {
 
                     if (filteredData.length === 0) {
                         metadataDeletes[`metadata.${key}`] = admin.firestore.FieldValue.delete();
+                        deleteLog.push({ field: key, oldValue: existingData });
                     } else {
                         metadataDeletes[`metadata.${key}`] = filteredData;
+                        deleteLog.push({ field: key, oldValue: updates[key] });
                     }
                 } else {
-                    metadataDeletes[`metadata.${key}`] = admin.firestore.FieldValue.delete();
+                    if (user.metadata[key] !== undefined) {
+                        metadataDeletes[`metadata.${key}`] = admin.firestore.FieldValue.delete();
+                        deleteLog.push({ field: key, oldValue: user.metadata[key] });
+                    }
                 }
             }
         }
 
-        if (Object.keys(metadataDeletes).length === 0) {
+        if (deleteLog.length === 0) {
             return handleHttpError(res, "NO_VALID_FIELDS_TO_DELETE", 400);
         }
 
-        metadataDeletes["metadata.updatedAt"] = new Date().toISOString();
-        await User.update(id, metadataDeletes);
+        const now = new Date();
+        user.updateHistory.push({
+            timestamp: now.toISOString(),
+            changes: deleteLog.map(change => ({
+                ...change,
+                newValue: "DELETED"
+            }))
+        });
 
-        return res.status(200).json({ message: "METADATA_DELETED_SUCCESS", deletedFields: Object.keys(metadataDeletes) });
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+        user.updateHistory = user.updateHistory.filter(entry => new Date(entry.timestamp) > oneYearAgo);
+        metadataDeletes["metadata.updatedAt"] = now.toISOString();
+        metadataDeletes["updateHistory"] = user.updateHistory;
+
+        await User.update(id, metadataDeletes);
+        return res.status(200).json({ 
+            message: "METADATA_DELETED_SUCCESS", 
+            deletedFields: Object.keys(metadataDeletes),
+            updateHistory: user.updateHistory
+        });
     } catch (error) {
         console.error("Delete User Metadata Error:", error.message);
         return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
@@ -323,9 +372,11 @@ const updateAH = async (req, res) => {
     try {
         const { id } = req.user;
         const { grades } = req.body; 
+
         if (!Array.isArray(grades)) {
             return handleHttpError(res, "INVALID_INPUT", 400, "Se espera un array de notas.");
         }
+
         const user = await User.findById(id);
         if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
         if (!user.metadata) user.metadata = {};
@@ -347,10 +398,24 @@ const updateAH = async (req, res) => {
             }
         }
 
+        if (!user.updateHistory) user.updateHistory = []; 
+
+        const updateLog = [];
         const updatedSubjects = user.metadata.AH.subjects.map(subject => {
             const newGrade = grades.find(g => g.name === subject.name);
+            if (newGrade && newGrade.grade !== subject.grade) {
+                updateLog.push({
+                    field: subject.name,
+                    oldValue: subject.grade,
+                    newValue: newGrade.grade
+                });
+            }
             return newGrade ? { ...subject, grade: newGrade.grade } : subject;
         });
+
+        if (updateLog.length === 0) {
+            return handleHttpError(res, "NO_VALID_FIELDS_TO_UPDATE", 400);
+        }
 
         for (const subject of updatedSubjects) {
             if (subject.grade !== null && (subject.grade < 0 || subject.grade > 10)) {
@@ -358,26 +423,22 @@ const updateAH = async (req, res) => {
             }
         }
 
-        // Métricas
         const subjectsWithGrades = updatedSubjects.filter(subject => subject.grade !== null);
-        const totalCredits = updatedSubjects.reduce((acc, subject) => acc + subject.credits, 0) - 9; // -9 porque solo se eligen una optatuva y una asigntura de practicas
+        const totalCredits = updatedSubjects.reduce((acc, subject) => acc + subject.credits, 0);
         const totalCreditsWithGrades = subjectsWithGrades.reduce((acc, subject) => acc + subject.credits, 0);
         const averageGrade = subjectsWithGrades.length > 0
             ? subjectsWithGrades.reduce((acc, subject) => acc + subject.grade, 0) / subjectsWithGrades.length
             : null;
 
-        // Top 5 mejores asignaturas (solo notas entre 7-10)
         const top5BestSubjects = subjectsWithGrades
             .filter(subject => subject.grade >= 7 && subject.grade <= 10)
             .sort((a, b) => b.grade - a.grade)
             .slice(0, 5);
 
-        // Top 5 peores asignaturas
         const top5WorstSubjects = subjectsWithGrades
             .sort((a, b) => a.grade - b.grade)
             .slice(0, 5);
 
-        // Habilidades adquiridas (solo si la nota es > 5.0)
         const skillsSet = new Set();
         updatedSubjects.forEach(subject => {
             if (subject.grade !== null && subject.grade > 5.0) {
@@ -387,7 +448,6 @@ const updateAH = async (req, res) => {
 
         const acquiredSkills = Array.from(skillsSet);
 
-        // Años completados
         const yearsCompleted = [];
         const yearsGrouped = updatedSubjects.reduce((acc, subject) => {
             acc[subject.year] = acc[subject.year] || [];
@@ -405,7 +465,16 @@ const updateAH = async (req, res) => {
             }
         });
 
-        // actualizar metadata
+        const now = new Date();
+        user.updateHistory.push({
+            timestamp: now.toISOString(),
+            changes: updateLog
+        });
+
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+        user.updateHistory = user.updateHistory.filter(entry => new Date(entry.timestamp) > oneYearAgo);
+
         const metadataUpdates = {
             "metadata.AH.subjects": updatedSubjects,
             "metadata.AH.averageGrade": averageGrade,
@@ -414,9 +483,10 @@ const updateAH = async (req, res) => {
             "metadata.AH.top5BestSubjects": top5BestSubjects,
             "metadata.AH.top5WorstSubjects": top5WorstSubjects,
             "metadata.AH.yearsCompleted": yearsCompleted,
-            "metadata.AH.lastUpdatedAt": new Date().toISOString(),
+            "metadata.AH.lastUpdatedAt": now.toISOString(),
             "metadata.skills": acquiredSkills,
-            updatedAt: new Date().toISOString(),
+            "updateHistory": user.updateHistory,
+            updatedAt: now.toISOString(),
         };
 
         await User.update(id, metadataUpdates);
@@ -424,7 +494,8 @@ const updateAH = async (req, res) => {
         return res.status(200).json({ 
             message: "SUBJECTS_METADATA_UPDATED", 
             updatedSubjects, 
-            metadataUpdates 
+            metadataUpdates,
+            updateHistory: user.updateHistory
         });
     } catch (error) {
         console.error("Error updating subjects metadata:", error.message);
@@ -577,36 +648,38 @@ const deleteRoadmap = async (req, res) => {
         return res.status(500).json({ error: "Internal server error" });
     }
 };
-const addStudentToTeacher = async (req, res) => {
+
+const addTeacherToStudent = async (req, res) => {
     try {
-        const { id } = req.user;
-        const { studentId } = req.body;
+        const { id } = req.user; 
+        const { teacherId } = req.body; 
 
-        const teacher = await User.findById(id);
-        if (!teacher) return handleHttpError(res, "TEACHER_NOT_FOUND", 404);
 
-        const student = await User.findById(studentId);
+        const student = await User.findById(id);
         if (!student) return handleHttpError(res, "STUDENT_NOT_FOUND", 404);
-
-        if (teacher.role !== "TEACHER") return handleHttpError(res, "NOT_A_TEACHER", 403);
         if (student.role !== "STUDENT") return handleHttpError(res, "NOT_A_STUDENT", 403);
+        const teacher = await User.findById(teacherId);
+        if (!teacher) return handleHttpError(res, "TEACHER_NOT_FOUND", 404);
+        if (teacher.role !== "TEACHER") return handleHttpError(res, "NOT_A_TEACHER", 403);
 
-        const studentList = teacher.metadata.studentList || [];
-        if (studentList.includes(studentId)) return handleHttpError(res, "STUDENT_ALREADY_ADDED", 400);
+        const teacherList = student.metadata.teacherList || [];
+        if (teacherList.includes(teacherId)) {
+            return handleHttpError(res, "TEACHER_ALREADY_ADDED", 400);
+        }
 
-        studentList.push(studentId);
-        await User.update(id, { "metadata.studentList": studentList });
+        teacherList.push(teacherId);
+        await User.update(id, { "metadata.teacherList": teacherList });
 
-        return res.status(200).json({ message: "STUDENT_ADDED_TO_TEACHER", studentId });
+        return res.status(200).json({ message: "TEACHER_ADDED_TO_STUDENT", teacherId });
     } catch (error) {
-        console.error("Add Student To Teacher Error:", error.message);
+        console.error("Add Teacher To Student Error:", error.message);
         return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
     }
 };
 
-const getAllStudents = async (req, res) => {
+const getAllTeacher = async (req, res) => {
     try {
-        const users = await User.findByRole("STUDENT"); 
+        const users = await User.findByRole("TEACHER"); 
         return res.json(users);
     } catch (error) {
         console.error("Get All Users Error:", error.message);
@@ -614,18 +687,19 @@ const getAllStudents = async (req, res) => {
     }
 };
 
-const getAllTeacherStudents = async (req, res) => {
+const getAllStudents = async (req, res) => {
     try {
         const { id } = req.user;
-        const user = await User.findById(id);
-        if (!user) return handleHttpError(res, "TEACHER_NOT_FOUND", 404);
+        const teacher = await User.findById(id);
+        if (!teacher) return handleHttpError(res, "TEACHER_NOT_FOUND", 404);
+        if (teacher.role !== "TEACHER") return handleHttpError(res, "NOT_A_TEACHER", 403);
 
-        const studentIds = user.metadata.studentList || [];
-        if (studentIds.length === 0) return res.json([]);
+        const studentsSnapshot = await db
+            .collection("users")
+            .where("metadata.teacherList", "array-contains", id)
+            .get();
 
-        const studentsSnapshot = await db.collection("users").where("id", "in", studentIds).get();
         const students = studentsSnapshot.docs.map(doc => doc.data());
-
         return res.json(students);
     } catch (error) {
         console.error("Get All Teacher Students Error:", error.message);
@@ -633,14 +707,14 @@ const getAllTeacherStudents = async (req, res) => {
     }
 };
 
-const getSpecializationStudent = async (req, res) => {
+const getSpecializationTeacher = async (req, res) => {
     try {
         const { specialization } = req.query;
-        const users = await User.findByRole("STUDENT"); 
+        const users = await User.findByRole("TEACHER"); 
         const filteredUsers = users.filter(user => user.metadata.specialization === specialization);
         return res.json(filteredUsers);
     } catch (error) {
-        console.error("Get Specialization Student Error:", error.message);
+        console.error("Get specialization teacher Error:", error.message);
         return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
     }
 }
@@ -762,13 +836,10 @@ module.exports = {
     deleteUserMetadata,
     updateAH,
     getAH,
-    updateRoadmap,
-    getRoadmaps,
-    deleteRoadmap,
+    addTeacherToStudent,
+    getAllTeacher,
     getAllStudents,
-    addStudentToTeacher,
-    getAllTeacherStudents,
-    getSpecializationStudent,
+    getSpecializationTeacher,
     getStudent,
     createAdmin,
     getAllUsers,
