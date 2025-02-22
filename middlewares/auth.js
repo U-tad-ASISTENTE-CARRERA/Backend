@@ -23,26 +23,6 @@ const getTokenData = async (req, res) => {
     }
 };
 
-// const authUserMiddleware = async (req, res, next) => {
-//     try {
-//         const dataToken = await getTokenData(req, res);
-//         if (!dataToken) return;
-
-//         const { id } = dataToken;
-//         const userDoc = await db.collection("users").doc(id).get();
-
-//         if (!userDoc.exists) {
-//             return handleHttpError(res, "USER_NOT_FOUND", 404);
-//         }
-
-//         req.user = userDoc.data();
-//         next();
-//     } catch (err) {
-//         console.error("Auth Error:", err);
-//         return handleHttpError(res, "AUTHENTICATION_ERROR", 401);
-//     }
-// };
-
 const authUserMiddleware = async (req, res, next) => {
     try {
         const dataToken = await getTokenData(req, res);

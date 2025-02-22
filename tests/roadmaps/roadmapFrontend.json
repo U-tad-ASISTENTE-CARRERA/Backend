@@ -1,0 +1,44 @@
+{
+    "frontend": {
+        "basico": {
+            "HTML": {
+                "description": "Lenguaje de marcado utilizado para estructurar contenido en la web.",
+                "done": "enum('si', 'no')"
+            },
+            "CSS": {
+                "description": "Hojas de estilo en cascada utilizadas para diseñar y estilizar páginas web.",
+                "done": "enum('si', 'no')"
+            },
+            "JavaScript": {
+                "description": "Lenguaje de programación para agregar interactividad y dinamismo a las páginas web.",
+                "done": "enum('si', 'no')"
+            }
+        },
+        "frameworks": {
+            "React": {
+                "description": "Librería de JavaScript para construir interfaces de usuario interactivas.",
+                "done": "enum('si', 'no')"
+            },
+            "Tailwind CSS": {
+                "description": "Framework de CSS para diseñar rápidamente interfaces de usuario modernas.",
+                "done": "enum('si', 'no')"
+            }
+        },
+        "herramientas": {
+            "Git": {
+                "description": "Sistema de control de versiones distribuido para el seguimiento de cambios en el código fuente.",
+                "done": "enum('si', 'no')"
+            },
+            "Webpack": {
+                "node": {
+                    "description": "Herramienta de empaquetado de módulos para aplicaciones JavaScript modernas.",
+                    "done": "enum('si', 'no')"
+                }
+            },
+            "Testing": {
+                "description": "Pruebas unitarias, de integración y end-to-end con frameworks como Jest o Cypress.",
+                "done": "enum('si', 'no')"
+            }
+        }
+    }
+}

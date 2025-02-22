@@ -7,6 +7,14 @@ Content-Type: application/json
   "password": "SecurePass123!",
   "seedWord": "sash"
 }
+### login con railway
+POST https://backend-production-94e4.up.railway.app/login
+Content-Type: application/json
+
+{
+  "email": "alvaroVqz@live.u-tad.com",
+  "password": "SecurePass123!"
+}
 
 ### login
 POST http://localhost:3000/login
@@ -87,7 +95,7 @@ GET http://localhost:3000/AH
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxeGthRnE0UXZMMmJFIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDA3NzE2OSwiZXhwIjoxNzQwMTYzNTY5fQ.2QIk8GWO9zEbYQ76O7aFUIkDd6MHMZV0IQmMeJrwlpQ
 
-###
+### subir notas de un estudiante
 PATCH http://localhost:3000/AH
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxeGthRnE0UXZMMmJFIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDA3NzE2OSwiZXhwIjoxNzQwMTYzNTY5fQ.2QIk8GWO9zEbYQ76O7aFUIkDd6MHMZV0IQmMeJrwlpQ
@@ -99,3 +107,46 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxe
     { "name": "Álgebra", "grade": 6.8 }
   ]
 }
+
+### optener a los profesores
+GET http://localhost:3000/teacher
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxeGthRnE0UXZMMmJFIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDI0NjE4NywiZXhwIjoxNzQwMzMyNTg3fQ.hUIxrU_KeqZVYl58xZa6ThUkbWEtmAhDXbIcUz2tpaY
+
+### Un estudiante agrega a un profesor
+POST http://localhost:3000/student/teacher
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxeGthRnE0UXZMMmJFIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDI0NjE4NywiZXhwIjoxNzQwMzMyNTg3fQ.hUIxrU_KeqZVYl58xZa6ThUkbWEtmAhDXbIcUz2tpaY
+
+{
+  "teacherId": "ZN1U3pNxYFEXuQ7ZZFha"
+}
+
+### Ver a todos los profesores de un estudiante
+GET http://localhost:3000/student/teacher
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxeGthRnE0UXZMMmJFIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDI0NjE4NywiZXhwIjoxNzQwMzMyNTg3fQ.hUIxrU_KeqZVYl58xZa6ThUkbWEtmAhDXbIcUz2tpaY
+
+### Un estudiante enviar un notification a un profesor
+POST http://localhost:3000/student/teacher/notification
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxeGthRnE0UXZMMmJFIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDI0NjE4NywiZXhwIjoxNzQwMzMyNTg3fQ.hUIxrU_KeqZVYl58xZa6ThUkbWEtmAhDXbIcUz2tpaY
+
+{
+  "teacherId": "ZN1U3pNxYFEXuQ7ZZFha",
+  "message": "Hola, esto es un test"
+}
+
+### login teacher
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "email": "alvaro.vazquez@u-tad.com",
+  "password": "SecurePass123!"
+}
+
+### Ver todas las notificaciones de un profesor
+GET http://localhost:3000/student/teacher/notification
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlpOMVUzcE54WUZFWHVRN1paRmhhIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekB1LXRhZC5jb20iLCJyb2xlIjoiVEVBQ0hFUiIsImlhdCI6MTc0MDI0ODkyMSwiZXhwIjoxNzQwMzM1MzIxfQ.jFU6hq_9J9SBhrU2gXCIm0l0ebfBWwQoMaqP2-EqFxM

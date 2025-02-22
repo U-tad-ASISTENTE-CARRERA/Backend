@@ -1,0 +1,59 @@
+### Register Admin
+POST http://localhost:3000/admin
+Content-Type: application/json
+
+### Login Admin
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "email": "alvaro.vazquez.1716@gmail.com",
+  "password": "SecurePass@123"
+}
+
+### crear un roadmap (Admin)
+POST http://localhost:3000/roadmaps/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkxxMlU3aEhtMkhuR1RSOFdLZlg5IiwiZW1haWwiOiJhbHZhcm8udmF6cXVlei4xNzE2QGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc0MDI2NTg5MSwiZXhwIjoxNzQwMzUyMjkxfQ.83R_ZkGetqjxHU5x8x4GaAp3SbBzReTO4xCGF_UqkHk
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="file"; filename="roadmapDataAnalyst.json"
+Content-Type: application/json
+
+< ./roadmapDataAnalyst.json
+------WebKitFormBoundary--
+
+### obtener todos los roadmaps (admin)
+GET http://localhost:3000/roadmaps/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkxxMlU3aEhtMkhuR1RSOFdLZlg5IiwiZW1haWwiOiJhbHZhcm8udmF6cXVlei4xNzE2QGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc0MDI2NDI0NCwiZXhwIjoxNzQwMzUwNjQ0fQ.yYQYcNAIXjs_pbVpbj0WFEbA5pquQfai9ratpPZOsCQ
+
+### optener un roadmap por su nombre (admin)
+GET http://localhost:3000/roadmaps/Data Analyst
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkxxMlU3aEhtMkhuR1RSOFdLZlg5IiwiZW1haWwiOiJhbHZhcm8udmF6cXVlei4xNzE2QGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc0MDI2NTg5MSwiZXhwIjoxNzQwMzUyMjkxfQ.83R_ZkGetqjxHU5x8x4GaAp3SbBzReTO4xCGF_UqkHk
+
+### login de un estudiante
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "email": "alvaroVqz@live.u-tad.com",
+  "password": "SecurePass123!"
+}
+
+### obtener un roadmap por su nombre (estudiante)
+GET http://localhost:3000/roadmaps/student/Data Analyst
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxeGthRnE0UXZMMmJFIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDI2NTAyOCwiZXhwIjoxNzQwMzUxNDI4fQ.mFO_NXXmn2kXmM27ef5wqVxSy6WvuONPNCi57J9AOdI
+
+
+### actualizar un roadmap (Admin)
+PATCH http://localhost:3000/roadmaps/Data Analyst
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkxxMlU3aEhtMkhuR1RSOFdLZlg5IiwiZW1haWwiOiJhbHZhcm8udmF6cXVlei4xNzE2QGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc0MDI2NTg5MSwiZXhwIjoxNzQwMzUyMjkxfQ.83R_ZkGetqjxHU5x8x4GaAp3SbBzReTO4xCGF_UqkHk
+Content-Type: application/json
+
+{
+  "name": "Data Analyst updated",
+}
+
+### eliminar un roadmap (Admin)
+DELETE http://localhost:3000/roadmaps/Data Analyst
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkxxMlU3aEhtMkhuR1RSOFdLZlg5IiwiZW1haWwiOiJhbHZhcm8udmF6cXVlei4xNzE2QGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc0MDI2NTg5MSwiZXhwIjoxNzQwMzUyMjkxfQ.83R_ZkGetqjxHU5x8x4GaAp3SbBzReTO4xCGF_UqkHk

@@ -3,7 +3,7 @@ POST http://localhost:3000/register
 Content-Type: application/json
 
 {
-  "email": "Alvaro.vazquez@u-tad.com",
+  "email": "alvaro.vazquez@u-tad.com",
   "password": "SecurePass123!",
   "seedWord": "TEACHER"
 }

@@ -1,130 +1,136 @@
+const fs = require("fs/promises");
 const Roadmap = require("../models/Roadmap");
-const { validationResult } = require("express-validator");
+const path = require("path");
+const Joi = require("joi");
+const multer = require("multer");
+
+const roadmapSchema = Joi.object({
+  roadmap: Joi.object({
+    name: Joi.string().required(),
+    body: Joi.object().required(),
+  }).required(),
+});
 
 const createRoadmap = async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+    const filePath = req.file.path;
+    const data = await fs.readFile(filePath, "utf8");
+
+    let parsedData;
     try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-
-        const roadmap = new Roadmap(
-            req.body.name,
-            req.body.description,
-            req.body.label,
-            req.body.recommendedLabels,
-            req.body.link,
-            req.body.year,
-            req.body.mention
-        );
-        const savedRoadmap = await roadmap.save();
-        res.status(201).json(savedRoadmap);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+      parsedData = JSON.parse(data);
+    } catch (jsonError) {
+      return res.status(400).json({ error: "Invalid JSON format", details: jsonError.message });
     }
-};
 
-const createRoadmaps = async (req, res) => {
+    if (!parsedData.roadmap) return res.status(400).json({ error: "Roadmap object is missing in JSON" });
+    const { name, body } = parsedData.roadmap;
     try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-
-        const roadmapsData = Array.isArray(req.body) ? req.body : [req.body];
-        const savedRoadmaps = [];
-
-        for (const roadmapData of roadmapsData) {
-            const roadmap = new Roadmap(
-                roadmapData.name,
-                roadmapData.description,
-                roadmapData.label || [],
-                roadmapData.recommendedLabels || [],
-                roadmapData.link,
-                roadmapData.year,
-                roadmapData.mention || ""
-            );
-            const savedRoadmap = await roadmap.save();
-            savedRoadmaps.push(savedRoadmap);
-        }
-
-        res.status(201).json(savedRoadmaps);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+      await Roadmap.findByName(name);
+      return res.status(409).json({ error: "Roadmap already exists" });
+    } catch (err) {
+      if (err.message !== "Roadmap not found") {
+        return res.status(500).json({ error: err.message });
+      }
     }
+
+    const roadmap = new Roadmap(name, body);
+    const savedRoadmap = await roadmap.save();
+    await fs.unlink(filePath);
+    res.status(201).json({ message: "Roadmap saved successfully", ...savedRoadmap });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 const getAllRoadmaps = async (req, res) => {
-    try {
-        const roadmaps = await Roadmap.findAll();
-        res.json(roadmaps);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+  try {
+    const roadmaps = await Roadmap.findAll();
+    res.status(200).json(roadmaps);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
-const getRoadmapByLabelWithRecommended = async (req, res) => {
-    try {
-        const { label } = req.params;
-        const roadmaps = await Roadmap.findByLabelWithRecommended(label);
-        res.json(roadmaps);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
-
-const getRoadmapByYear = async (req, res) => {
-    try {
-        const { year } = req.params;
-        const roadmaps = await Roadmap.findByYear(parseInt(year));
-        res.json(roadmaps);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-};
-
-const getRoadmapByMention = async (req, res) => {
-    try {
-        const { mention } = req.params;
-        const roadmaps = await Roadmap.findByMention(mention);
-        res.json(roadmaps);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+const getRoadmapByName = async (req, res) => {
+  try {
+    const { name } = req.params;
+    const roadmap = await Roadmap.findByName(name);
+    res.status(200).json(roadmap);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
 };
 
 const updateRoadmap = async (req, res) => {
-    try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-        
-        const { roadmapId } = req.params;
-        const updatedRoadmap = await Roadmap.updateRoadmap(roadmapId, req.body);
-        res.json(updatedRoadmap);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+  try {
+    const { name } = req.params;
+    const updatedRoadmap = req.body;
+    const roadmap = await Roadmap.updateByName(name, updatedRoadmap);
+    res.status(200).json({ message: "Roadmap updated successfully", ...roadmap });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 const deleteRoadmap = async (req, res) => {
-    try {
-        const { roadmapId } = req.params;
-        const result = await Roadmap.deleteRoadmap(roadmapId);
-        res.json(result);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+  try {
+    const { name } = req.params;
+    const result = await Roadmap.deleteByName(name);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
-module.exports = {
-    createRoadmap,
-    createRoadmaps,
-    getAllRoadmaps,
-    getRoadmapByLabelWithRecommended,
-    getRoadmapByYear,
-    getRoadmapByMention,
-    updateRoadmap,
-    deleteRoadmap
+const updateRoadmapBodyContent = async (req, res) => {
+  try {
+    const { name } = req.params;
+    const { field, updates } = req.body;
+
+    if (!field || !updates) return res.status(400).json({ error: "Field name and updates are required" });
+    
+    const roadmap = await Roadmap.findByName(name);
+    if (!roadmap) return res.status(404).json({ error: "Roadmap not found" });
+    if (!roadmap.body[field]) return res.status(400).json({ error: "Field does not exist in roadmap body" });
+    
+    roadmap.body[field] = { ...roadmap.body[field], ...updates };
+    roadmap.updatedAt = new Date().toISOString();
+    await Roadmap.updateByName(name, roadmap);
+
+    res.status(200).json({ message: "Roadmap body updated successfully", ...roadmap });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const deleteRoadmapBodyContent = async (req, res) => {
+  try {
+    const { name } = req.params;
+    const { field } = req.body;
+    if (!field) return res.status(400).json({ error: "Field name is required for deletion" });
+
+    const roadmap = await Roadmap.findByName(name);
+    if (!roadmap) return res.status(404).json({ error: "Roadmap not found" });
+    if (!roadmap.body[field]) return res.status(400).json({ error: "Field does not exist in roadmap body" });
+    
+    delete roadmap.body[field];
+    roadmap.updatedAt = new Date().toISOString();
+    await Roadmap.updateByName(name, roadmap);
+
+    res.status(200).json({ message: "Roadmap body content deleted successfully", ...roadmap });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { 
+  createRoadmap, 
+  getAllRoadmaps,
+  getRoadmapByName, 
+  updateRoadmap, 
+  deleteRoadmap, 
+  updateRoadmapBodyContent, 
+  deleteRoadmapBodyContent 
 };

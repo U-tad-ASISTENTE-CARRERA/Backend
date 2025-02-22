@@ -1,0 +1,28 @@
+{
+    "backend": {
+        "basico": {
+            "Programming Languages": {
+                "description": "Lenguajes de programación utilizados en el desarrollo backend, como Python, Java, JavaScript (Node.js), y Go.",
+                "done": "enum('si', 'no')"
+            },
+            "Databases": {
+                "description": "Bases de datos relacionales (SQL) como PostgreSQL y MySQL, y NoSQL como MongoDB y Redis.",
+                "done": "enum('si', 'no')"
+            },
+            "APIs": {
+                "description": "Creación y consumo de APIs REST y GraphQL para la comunicación entre sistemas.",
+                "done": "enum('si', 'no')"
+            }
+        },
+        "frameworks": {
+            "Node.js": {
+                "description": "Entorno de ejecución para JavaScript en el servidor, utilizado con frameworks como Express.",
+                "done": "enum('si', 'no')"
+            }
+        },
+        "authentication": {
+            "description": "Autenticación y autorización utilizando JWT, OAuth, y autenticación basada en sesiones.",
+            "done": "enum('si', 'no')"
+        }
+    }
+}

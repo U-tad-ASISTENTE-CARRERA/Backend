@@ -2,27 +2,28 @@ const express = require("express");
 const router = express.Router();
 const {
     createRoadmap,
-    createRoadmaps,
     getAllRoadmaps,
-    getRoadmapByLabelWithRecommended,
-    getRoadmapByYear,
-    getRoadmapByMention,
+    getRoadmapByName,
     updateRoadmap,
-    deleteRoadmap
+    deleteRoadmap,
+    updateRoadmapBodyContent,
+    deleteRoadmapBodyContent
 } = require("../controllers/roadmapController");
-const { validateRoadmap } = require("../validators/roadmapValidator");
+const { validateRoadmap, validateRoadmapBody } = require("../validators/roadmapValidator");
 const { authUserMiddleware, checkRole } = require("../middlewares/auth");
+const { upload } = require("../utils/handleupload");
+
 
 // Admin routes 
-router.post("/", authUserMiddleware, checkRole("ADMIN"), validateRoadmap, createRoadmap);
-router.post("/many", authUserMiddleware, checkRole("ADMIN"), createRoadmaps);
-router.patch("/roadmaps/:roadmapId", authUserMiddleware, checkRole("ADMIN"), validateRoadmap, updateRoadmap);
-router.delete("/roadmaps/:roadmapId", authUserMiddleware, checkRole("ADMIN"), deleteRoadmap);
+router.post("/", authUserMiddleware, checkRole("ADMIN"), upload.single("file"), createRoadmap);
+router.get("/", authUserMiddleware, checkRole("ADMIN"), getAllRoadmaps);
+router.get("/:name", authUserMiddleware, checkRole("ADMIN"), getRoadmapByName);
+router.patch("/:name", authUserMiddleware, checkRole("ADMIN"), updateRoadmap);
+router.patch("/:name/body", authUserMiddleware, checkRole("ADMIN"), updateRoadmapBodyContent);
+router.delete("/:name", authUserMiddleware, checkRole("ADMIN"), deleteRoadmap);
+router.delete("/:name/body", authUserMiddleware, checkRole("ADMIN"), deleteRoadmapBodyContent);
 
-// Student routes
-router.get("/", getAllRoadmaps);
-router.get("/label/:label", authUserMiddleware, checkRole("STUDENT"), getRoadmapByLabelWithRecommended);
-router.get("/year/:year", authUserMiddleware, checkRole("STUDENT"), getRoadmapByYear);
-router.get("/mention/:mention", authUserMiddleware, checkRole("STUDENT"), getRoadmapByMention);
+// Student routes 
+router.get("/student/:name", authUserMiddleware, checkRole("STUDENT"), getRoadmapByName);
 
 module.exports = router;

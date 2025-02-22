@@ -1,10 +1,17 @@
 const express = require("express");
+const router = express.Router();
 const { authUserMiddleware, checkRole } = require("../middlewares/auth");
 const { validateSubject } = require("../validators/degreeValidator");
-const { createDegree, getAllDegrees, getDegreeByName, updateDegree, deleteDegree, updateSubjects, deleteSubjects } = require("../controllers/degreeController");
+const { 
+    createDegree, 
+    getAllDegrees, 
+    getDegreeByName, 
+    updateDegree, 
+    deleteDegree, 
+    updateSubjects, 
+    deleteSubjects 
+} = require("../controllers/degreeController");
 const { upload } = require("../utils/handleupload");
-
-const router = express.Router();
 
 router.post("/", authUserMiddleware, checkRole("ADMIN"), upload.single("file"), createDegree);
 router.get("/", authUserMiddleware, checkRole("ADMIN"), getAllDegrees);

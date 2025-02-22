@@ -3,7 +3,6 @@ const bcrypt = require("bcryptjs");
 const { generateToken } = require("../utils/handleJwt");
 const { handleHttpError } = require("../utils/handleError");
 const Degree = require("../models/Degree");
-// const { sendEmail } = require("../utils/handleResend");
 const { Resend } = require("resend");
 const User = require("../models/User");
 const Roadmap = require("../models/Roadmap");
@@ -591,26 +590,22 @@ const getRoadmaps = async (req, res) => {
         const user = await User.findById(id);
         if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
 
-        // Asegurar que metadata y roadmaps existen
         if (!user.metadata) user.metadata = {};
         if (!user.metadata.roadmaps) user.metadata.roadmaps = [];
 
         const userRoadmaps = user.metadata.roadmaps;
         if (userRoadmaps.length === 0) return res.json([]);
 
-        // Extraer solo los roadmapId que tiene el usuario
         const roadmapIds = userRoadmaps.map(r => r.roadmapId);
 
-        // Buscar solo los roadmaps con los IDs que tiene el usuario
         const roadmaps = await Roadmap.findAll({
             where: { id: roadmapIds }
         });
 
-        // Mapear para incluir el estado del roadmap
         const roadmapsWithStatus = roadmaps
-            .filter(r => roadmapIds.includes(r.id)) // Filtrar por seguridad
+            .filter(r => roadmapIds.includes(r.id))
             .map(r => ({
-                ...r, // No usamos toJSON() porque ya es un objeto
+                ...r, 
                 status: userRoadmaps.find(ur => ur.roadmapId === r.id)?.status || "TODO"
             }));
 
@@ -640,6 +635,8 @@ const deleteRoadmap = async (req, res) => {
             "metadata.updatedAt": new Date().toISOString(),
         };
 
+
+        
         await User.update(id, metadataUpdates);
 
         return res.json({ message: "Roadmap deleted successfully", roadmaps: newRoadmaps });
@@ -653,8 +650,6 @@ const addTeacherToStudent = async (req, res) => {
     try {
         const { id } = req.user; 
         const { teacherId } = req.body; 
-
-
         const student = await User.findById(id);
         if (!student) return handleHttpError(res, "STUDENT_NOT_FOUND", 404);
         if (student.role !== "STUDENT") return handleHttpError(res, "NOT_A_STUDENT", 403);
@@ -683,6 +678,77 @@ const getAllTeacher = async (req, res) => {
         return res.json(users);
     } catch (error) {
         console.error("Get All Users Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+const getTeachersOfStudent = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const user = await User.findById(id);
+        if (!user) return handleHttpError(res, "STUDENT_NOT_FOUND", 404);
+        if (user.role !== "STUDENT") return handleHttpError(res, "NOT_A_STUDENT", 403);
+
+        const teacherIds = user.metadata.teacherList || [];
+        if (teacherIds.length === 0) return res.status(200).json({ teachers: [] });
+        const teachers = await Promise.all(
+            teacherIds.map(async (teacherId) => {
+                const teacher = await User.findById(teacherId);
+                return teacher || null;
+            })
+        );
+
+        const validTeachers = teachers.filter(teacher => teacher !== null);
+        return res.status(200).json({ teachers: validTeachers });
+    } catch (error) {
+        console.error("Get Teachers of Student Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+const sendNotificationToTeacher = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { teacherId, message } = req.body;
+
+        const student = await User.findById(id);
+        if (!student) return handleHttpError(res, "STUDENT_NOT_FOUND", 404);
+        if (student.role !== "STUDENT") return handleHttpError(res, "NOT_A_STUDENT", 403);
+
+        const teacher = await User.findById(teacherId);
+        if (!teacher) return handleHttpError(res, "TEACHER_NOT_FOUND", 404);
+        if (teacher.role !== "TEACHER") return handleHttpError(res, "NOT_A_TEACHER", 403);
+
+        if (!student.metadata.teacherList.includes(teacherId)) return handleHttpError(res, "TEACHER_NOT_IN_STUDENT_LIST", 403);
+    
+        const notification = {
+            studentId: id,
+            message,
+            date: new Date().toISOString(),
+            status: "unread"
+        };
+
+        const notifications = teacher.metadata.notifications || [];
+        notifications.push(notification);
+        const metadataUpdates = {
+            "metadata.notifications": notifications,
+            updatedAt: new Date().toISOString()
+        };
+
+        await User.update(teacherId, metadataUpdates);
+
+        const emailSubject = "Nueva Notificación de un Estudiante";
+        const emailBody = `
+            <h2>Hola ${teacher.name}</h2>
+            <p>Has recibido un nuevo mensaje de <strong>${student.name}</strong>.</p>
+            <blockquote>${message}</blockquote>
+            <p>Por favor, revisa tu cuenta para más detalles.</p>
+        `;
+
+        await sendEmail(teacher.email, emailSubject, emailBody);
+        return res.status(200).json({ message: "NOTIFICATION_SENT", notification });
+    } catch (error) {
+        console.error("Send Notification Error:", error.message);
         return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
     }
 };
@@ -726,6 +792,22 @@ const getStudent = async (req, res) => {
         return res.json(user);
     } catch (error) {
         console.error("Get Student Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+const getTeacherNotifications = async (req, res) => {
+    try {
+        const { id } = req.user;
+
+        const user = await User.findById(id);
+        if (!user) return handleHttpError(res, "TEACHER_NOT_FOUND", 404);
+        if (user.role !== "TEACHER") return handleHttpError(res, "NOT_A_TEACHER", 403);
+
+        const notifications = user.metadata.notifications || [];
+        return res.status(200).json({ notifications });
+    } catch (error) {
+        console.error("Get Teacher Notifications Error:", error.message);
         return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
     }
 };
@@ -837,6 +919,9 @@ module.exports = {
     updateAH,
     getAH,
     addTeacherToStudent,
+    getTeachersOfStudent,
+    sendNotificationToTeacher,
+    getTeacherNotifications,
     getAllTeacher,
     getAllStudents,
     getSpecializationTeacher,

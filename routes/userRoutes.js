@@ -16,9 +16,12 @@ const {
     getAH,
     addTeacherToStudent,
     getAllTeacher,
+    getTeachersOfStudent,
     getAllStudents,
     getSpecializationTeacher,
+    getTeacherNotifications,
     getStudent,
+    sendNotificationToTeacher,
     createAdmin,
     getAllUsers,
     updateUserByAdmin,
@@ -54,6 +57,15 @@ router.delete("/metadata", authUserMiddleware, validateMetadata, deleteUserMetad
 router.get("/AH", authUserMiddleware, checkRole("STUDENT"), getAH);
 router.patch("/AH", authUserMiddleware, checkRole("STUDENT"), updateAH);
 
+// Teacher --- Student 
+router.get("/teacher", authUserMiddleware, checkRole("STUDENT"), getAllTeacher);
+router.get("/teacher/:specialization", authUserMiddleware, checkRole("STUDENT"), getSpecializationTeacher);
+
+router.get("/student/teacher", authUserMiddleware, checkRole("STUDENT"), getTeachersOfStudent);
+router.post("/student/teacher", authUserMiddleware, checkRole("STUDENT"), addTeacherToStudent);
+
+router.post("/student/teacher/notification", authUserMiddleware, checkRole("STUDENT"), sendNotificationToTeacher);
+router.get("/student/teacher/notification", authUserMiddleware, checkRole("TEACHER"), getTeacherNotifications);
 // router.get("/RoadmapStudent", authUserMiddleware, checkRole("STUDENT"), getRoadmaps);
 // router.patch("/RoadmapStudent", authUserMiddleware, checkRole("STUDENT"), updateRoadmap);
 // router.delete("/RoadmapStudent", authUserMiddleware, checkRole("STUDENT"), deleteRoadmap);

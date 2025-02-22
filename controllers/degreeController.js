@@ -44,7 +44,6 @@ const createDegree = async (req, res) => {
 
     const { name, subjects } = parsedData.degree;
 
-    // Verificar si el grado ya existe
     try {
       await Degree.findByName(name);
       return res.status(409).json({ error: "Degree already exists" });
@@ -54,7 +53,6 @@ const createDegree = async (req, res) => {
       }
     }
 
-    // Crear y guardar el nuevo grado
     const degree = new Degree(name, subjects);
     const savedDegree = await degree.save();
 
