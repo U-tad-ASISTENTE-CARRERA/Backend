@@ -63,10 +63,9 @@ const validateLogin = [
 
 const METADATA_FIELDS = {
     STUDENT: new Set([
-        "firstName", "lastName", "gender", "dni", "degree", "degree", "institution", "endDate",
-        "languages", "skills", "certifications", "workExperience"
+        "firstName", "lastName", "gender", "dni", "degree", "institution", "endDate",
+        "languages", "skills", "certifications", "workExperience", "academicHistory"
     ]),
-
     TEACHER: new Set([
         "firstName", "lastName", "birthDate", "dni", "specialization"
     ]),
@@ -76,6 +75,7 @@ const validateArrayObjects = (field, properties) => {
     return body(field)
         .if(body(field).exists())
         .isArray().withMessage(`${field} must be an array`)
+        .notEmpty().withMessage(`${field} cannot be empty`)
         .custom((items) => {
             for (const item of items) {
                 for (const prop of properties) {
@@ -109,13 +109,14 @@ const validateMetadata = [
         return true;
     }),
 
-    check("firstName").if(body("firstName").exists()).isString().withMessage("firstName must be a string"),
-    check("lastName").if(body("lastName").exists()).isString().withMessage("lastName must be a string"),
-    check("gender").if(body("gender").exists()).isString().withMessage("gender must be a string").isIn(["male", "female", "prefer not to say"]).withMessage("gender must be one of: male, female, or prefer not to say"),
-    check("dni").if(body("dni").exists()).isString().withMessage("dni must be a string"),
-    check("degree").if(body("degree").exists()).isString().withMessage("degree must be a string").isIn(["MAIS", "FIIS", "INSO_GAME", "INSO_DATA", "INSO_CYBER"]).withMessage("degree must be one of MAIS, FIIS, INSO_GAME, INSO_DATA, or INSO_CYBER"),
-    check("institution").if(body("institution").exists()).isString().withMessage("institution must be a string"),
-    check("endDate").if(body("endDate").exists()).isISO8601().withMessage("endDate must be a valid date"),
+    check("firstName").if(body("firstName").exists()).isString().notEmpty().withMessage("firstName must be a non-empty string"),
+    check("lastName").if(body("lastName").exists()).isString().notEmpty().withMessage("lastName must be a non-empty string"),
+    check("gender").if(body("gender").exists()).isString().isIn(["male", "female", "prefer not to say"]).withMessage("gender must be one of: male, female, or prefer not to say"),
+    check("dni").if(body("dni").exists()).matches(/^\d{8}[A-Z]$/).withMessage("dni must be in the format 12345678A"),
+    check("degree").if(body("degree").exists()).isString().isIn(["MAIS", "FIIS", "INSO_GAME", "INSO_DATA", "INSO_CYBER"]).withMessage("degree must be one of MAIS, FIIS, INSO_GAME, INSO_DATA, or INSO_CYBER"),
+    check("institution").if(body("institution").exists()).isString().notEmpty().withMessage("institution must be a non-empty string"),
+    check("endDate").if(body("endDate").exists()).isISO8601().toDate().withMessage("endDate must be a valid date"),
+    check("birthDate").if(body("birthDate").exists()).isISO8601().toDate().withMessage("birthDate must be a valid date"),
 
     validateArrayObjects("languages", [
         { name: "language", type: "string" },
@@ -126,14 +127,6 @@ const validateMetadata = [
         { name: "skill", type: "string" },
     ]),
 
-    validateArrayObjects("academicHistory", [
-        { name: "subject", type: "string" },
-        { name: "grade", type: "number" },
-        { name: "label", type: "string" },
-        { name: "credits", type: "number" },
-        { name: "updatedAt", type: "string" },
-    ]),
-
     validateArrayObjects("certifications", [
         { name: "name", type: "string" },
         { name: "date", type: "string" },
@@ -142,7 +135,7 @@ const validateMetadata = [
 
     validateArrayObjects("workExperience", [
         { name: "jobType", type: "string" },
-        { name: "startDate", type: "string" },
+        { name: "startDate", type: "string" }, 
         { name: "endDate", type: "string" },
         { name: "company", type: "string" },
         { name: "description", type: "string" },
@@ -153,7 +146,6 @@ const validateMetadata = [
         return validateResults(req, res, next);
     }
 ];
-
 
 module.exports = {
   validateUser,

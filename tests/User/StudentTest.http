@@ -7,6 +7,7 @@ Content-Type: application/json
   "password": "SecurePass123!",
   "seedWord": "sash"
 }
+
 ### login con railway
 POST https://backend-production-94e4.up.railway.app/login
 Content-Type: application/json
@@ -25,13 +26,13 @@ Content-Type: application/json
   "password": "SecurePass123!"
 }
 
-### Test para agregar metadata a un estudiante
+###
 PATCH http://localhost:3000/metadata
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxeGthRnE0UXZMMmJFIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDA3NzE2OSwiZXhwIjoxNzQwMTYzNTY5fQ.2QIk8GWO9zEbYQ76O7aFUIkDd6MHMZV0IQmMeJrwlpQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
 
 {
-    "firstName": "alvaro",
+    "firstName": "Alvaro",
     "lastName": "Vazquez",
     "gender": "male",
     "dni": "12345678A",
@@ -64,20 +65,105 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxe
     ]
 }
 
+###
+PATCH http://localhost:3000/metadata
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
+
+{
+    "firstName": "Alvaroo",
+    "lastName": "Vazquezz"
+}
+
+### 
+PATCH http://localhost:3000/metadata
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
+
+{
+    "skills": [
+        { "skill": "C++" },
+        { "skill": "Python" },
+        { "skill": "Rust" }
+    ]
+}
+
+###
+PATCH http://localhost:3000/metadata
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
+
+{
+    "certifications": [
+        { "name": "AWS Certified Developer", "date": "2024-01-15", "institution": "Amazon" },
+        { "name": "Microsoft Certified: Azure Developer Associate", "date": "2024-02-15", "institution": "Microsoft" },
+        { "name": "Google Professional Data Engineer", "date": "2024-03-15", "institution": "Google" },
+        { "name": "Oracle Certified Professional: Java SE 11 Developer", "date": "2024-04-15", "institution": "Oracle" },
+        { "name": "TensorFlow Developer Certificate", "date": "2025-01-10", "institution": "Google" }
+    ]
+}
+
+### 
+PATCH http://localhost:3000/metadata
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
+
+{
+    "workExperience": [
+        { 
+            "jobType": "Intern", 
+            "startDate": "2023-06-01", 
+            "endDate": "2023-12-31", 
+            "company": "Nvidia", 
+            "description": "AI Developer", 
+            "responsibilities": "AI development tasks" 
+        },
+        { 
+            "jobType": "Software Engineer", 
+            "startDate": "2024-02-01", 
+            "endDate": "2024-12-31", 
+            "company": "Google", 
+            "description": "Backend Developer", 
+            "responsibilities": "Developing scalable backend systems" 
+        }
+    ]
+}
+
+###
+PATCH http://localhost:3000/metadata
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
+
+{
+    "languages": [
+        { "language": "English", "level": "high" },
+        { "language": "Spanish", "level": "high" },
+        { "language": "German", "level": "medium" }
+    ]
+}
+
+###
+PATCH http://localhost:3000/metadata
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
+
+{
+    "institution": "MIT"
+}
+
 ### Test para obtener un estudiante
 GET http://localhost:3000/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxeGthRnE0UXZMMmJFIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDA3NzE2OSwiZXhwIjoxNzQwMTYzNTY5fQ.2QIk8GWO9zEbYQ76O7aFUIkDd6MHMZV0IQmMeJrwlpQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
 
 ### Test para obtener la metadata de un estudiante
 GET http://localhost:3000/metadata
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxeGthRnE0UXZMMmJFIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDA3NzE2OSwiZXhwIjoxNzQwMTYzNTY5fQ.2QIk8GWO9zEbYQ76O7aFUIkDd6MHMZV0IQmMeJrwlpQ
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzNjUzNywiZXhwIjoxNzQwNDIyOTM3fQ.KA9niP2a_j7MaiFt-WazXC5_NK2iBRUVX8qAJ9zJ-_4
 ###  Test para eliminar algun dato la metadata de un estudiante
 DELETE http://localhost:3000/metadata
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxeGthRnE0UXZMMmJFIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDA3NzE2OSwiZXhwIjoxNzQwMTYzNTY5fQ.2QIk8GWO9zEbYQ76O7aFUIkDd6MHMZV0IQmMeJrwlpQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
 
 {
     "workExperience": [
@@ -93,17 +179,17 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxe
 ### Test obtener el historial academico de un estudiante
 GET http://localhost:3000/AH
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxeGthRnE0UXZMMmJFIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDA3NzE2OSwiZXhwIjoxNzQwMTYzNTY5fQ.2QIk8GWO9zEbYQ76O7aFUIkDd6MHMZV0IQmMeJrwlpQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
 
 ### subir notas de un estudiante
 PATCH http://localhost:3000/AH
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxeGthRnE0UXZMMmJFIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDA3NzE2OSwiZXhwIjoxNzQwMTYzNTY5fQ.2QIk8GWO9zEbYQ76O7aFUIkDd6MHMZV0IQmMeJrwlpQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
 
 {
   "grades": [
     { "name": "Fundamentos de Desarrollo Web", "grade": 8.5 },
-    { "name": "Bases de Datos", "grade": 7.2 },
+    { "name": "Bases de Datos", "grade": 8.5 },
     { "name": "Álgebra", "grade": 6.8 }
   ]
 }
@@ -111,12 +197,12 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxe
 ### optener a los profesores
 GET http://localhost:3000/teacher
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxeGthRnE0UXZMMmJFIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDI0NjE4NywiZXhwIjoxNzQwMzMyNTg3fQ.hUIxrU_KeqZVYl58xZa6ThUkbWEtmAhDXbIcUz2tpaY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
 
 ### Un estudiante agrega a un profesor
 POST http://localhost:3000/student/teacher
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxeGthRnE0UXZMMmJFIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDI0NjE4NywiZXhwIjoxNzQwMzMyNTg3fQ.hUIxrU_KeqZVYl58xZa6ThUkbWEtmAhDXbIcUz2tpaY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
 
 {
   "teacherId": "ZN1U3pNxYFEXuQ7ZZFha"
@@ -125,12 +211,12 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxe
 ### Ver a todos los profesores de un estudiante
 GET http://localhost:3000/student/teacher
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxeGthRnE0UXZMMmJFIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDI0NjE4NywiZXhwIjoxNzQwMzMyNTg3fQ.hUIxrU_KeqZVYl58xZa6ThUkbWEtmAhDXbIcUz2tpaY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
 
 ### Un estudiante enviar un notification a un profesor
 POST http://localhost:3000/student/teacher/notification
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg3MmU2YUNxeGthRnE0UXZMMmJFIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDI0NjE4NywiZXhwIjoxNzQwMzMyNTg3fQ.hUIxrU_KeqZVYl58xZa6ThUkbWEtmAhDXbIcUz2tpaY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
 
 {
   "teacherId": "ZN1U3pNxYFEXuQ7ZZFha",
@@ -150,3 +236,27 @@ Content-Type: application/json
 GET http://localhost:3000/student/teacher/notification
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlpOMVUzcE54WUZFWHVRN1paRmhhIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekB1LXRhZC5jb20iLCJyb2xlIjoiVEVBQ0hFUiIsImlhdCI6MTc0MDI0ODkyMSwiZXhwIjoxNzQwMzM1MzIxfQ.jFU6hq_9J9SBhrU2gXCIm0l0ebfBWwQoMaqP2-EqFxM
+
+### 
+PATCH http://localhost:3000/userRoadmap/Data Analyst
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDM0Mzk3NSwiZXhwIjoxNzQwNDMwMzc1fQ.uyhDjOE567x9lZTZY6RnpD7Si5xAR8HSJQtFEmwwk2Y
+
+### 
+PATCH http://localhost:3000/userRoadmap/Data Analyst
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDM0Mzk3NSwiZXhwIjoxNzQwNDMwMzc1fQ.uyhDjOE567x9lZTZY6RnpD7Si5xAR8HSJQtFEmwwk2Y
+Content-Type: application/json
+
+{
+    "sectionName": "intro",
+    "topicName": "intro a ciencia de datos",
+    "newStatus": "done"
+}
+
+### Obtener el roadmap del usuario autenticado
+GET http://localhost:3000/userRoadmap
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDM0Mzk3NSwiZXhwIjoxNzQwNDMwMzc1fQ.uyhDjOE567x9lZTZY6RnpD7Si5xAR8HSJQtFEmwwk2Y
+
+### Eliminar el roadmap del usuario autenticado
+DELETE http://localhost:3000/userRoadmap
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDM0MDE2MiwiZXhwIjoxNzQwNDI2NTYyfQ.FlNEXGnVBwxFUzMDo7t2GCnnTE6b-x2__ggYlSFrIv0

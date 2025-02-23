@@ -14,14 +14,17 @@ const {
     deleteUserMetadata,
     updateAH,
     getAH,
+    updateRoadmap,
+    getRoadmap,
+    deleteRoadmap,
     addTeacherToStudent,
-    getAllTeacher,
     getTeachersOfStudent,
+    sendNotificationToTeacher,
+    getTeacherNotifications,
+    getAllTeacher,
     getAllStudents,
     getSpecializationTeacher,
-    getTeacherNotifications,
     getStudent,
-    sendNotificationToTeacher,
     createAdmin,
     getAllUsers,
     updateUserByAdmin,
@@ -57,6 +60,10 @@ router.delete("/metadata", authUserMiddleware, validateMetadata, deleteUserMetad
 router.get("/AH", authUserMiddleware, checkRole("STUDENT"), getAH);
 router.patch("/AH", authUserMiddleware, checkRole("STUDENT"), updateAH);
 
+router.get("/userRoadmap", authUserMiddleware, checkRole("STUDENT"), getRoadmap);
+router.patch("/userRoadmap/:roadmapName", authUserMiddleware, checkRole("STUDENT"), updateRoadmap);
+router.delete("/userRoadmap", authUserMiddleware, checkRole("STUDENT"), deleteRoadmap);
+
 // Teacher --- Student 
 router.get("/teacher", authUserMiddleware, checkRole("STUDENT"), getAllTeacher);
 router.get("/teacher/:specialization", authUserMiddleware, checkRole("STUDENT"), getSpecializationTeacher);
@@ -66,9 +73,6 @@ router.post("/student/teacher", authUserMiddleware, checkRole("STUDENT"), addTea
 
 router.post("/student/teacher/notification", authUserMiddleware, checkRole("STUDENT"), sendNotificationToTeacher);
 router.get("/student/teacher/notification", authUserMiddleware, checkRole("TEACHER"), getTeacherNotifications);
-// router.get("/RoadmapStudent", authUserMiddleware, checkRole("STUDENT"), getRoadmaps);
-// router.patch("/RoadmapStudent", authUserMiddleware, checkRole("STUDENT"), updateRoadmap);
-// router.delete("/RoadmapStudent", authUserMiddleware, checkRole("STUDENT"), deleteRoadmap);
 
 // Admin routes
 router.post("/admin", createAdmin);

@@ -206,62 +206,45 @@ const updateUserMetadata = async (req, res) => {
     try {
         const { id } = req.user;
         const updates = req.body;
-
         const user = await User.findById(id);
         if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
-
-        if (user.role === "ADMIN") {
-            return handleHttpError(res, "ADMIN_CANNOT_HAVE_METADATA", 400);
-        }
-
+        if (user.role === "ADMIN") return handleHttpError(res, "ADMIN_CANNOT_HAVE_METADATA", 400);
+       
         const METADATA_FIELDS = {
-            STUDENT: [
-                "firstName", "lastName", "gender", "dni", "degree", "institution", "endDate",
-                "languages", "skills", "certifications", "workExperience"
-            ],
-            TEACHER: [
-                "firstName", "lastName", "dni", "specialization"
-            ],
+            STUDENT: ["firstName", "lastName", "gender", "dni", "degree", "institution", "endDate", "languages", "skills", "certifications", "workExperience"],
+            TEACHER: ["firstName", "lastName", "dni", "specialization"],
         };
-
-        const validFields = METADATA_FIELDS[user.role];
+        const validFields = METADATA_FIELDS[user.role] || [];
         const metadataUpdates = {};
         const updateLog = [];
 
         if (!user.metadata) user.metadata = {};
-        if (!user.updateHistory) user.updateHistory = []; 
-
+        if (!user.updateHistory || !Array.isArray(user.updateHistory)) user.updateHistory = [];
         for (const key in updates) {
             if (validFields.includes(key)) {
                 const existingValue = user.metadata[key];
 
                 if (Array.isArray(updates[key]) && Array.isArray(existingValue)) {
-                    const mergedData = [...existingValue, ...updates[key]].reduce((acc, item) => {
-                        if (!acc.some(el => JSON.stringify(el) === JSON.stringify(item))) acc.push(item);
-                        return acc;
-                    }, []);
+                    const mergedData = [...new Set([...existingValue, ...updates[key]].map(JSON.stringify))].map(JSON.parse);
 
                     if (JSON.stringify(existingValue) !== JSON.stringify(mergedData)) {
                         metadataUpdates[`metadata.${key}`] = mergedData;
-                        updateLog.push({ field: key, oldValue: existingValue, newValue: mergedData });
+                        updateLog.push({ field: key, oldValue: existingValue ?? null, newValue: mergedData });
                     }
                 } else {
                     if (existingValue !== updates[key]) {
                         metadataUpdates[`metadata.${key}`] = updates[key];
-                        updateLog.push({ field: key, oldValue: existingValue, newValue: updates[key] });
+                        updateLog.push({ field: key, oldValue: existingValue ?? null, newValue: updates[key] });
                     }
                 }
             }
         }
 
-        if (updateLog.length === 0) {
-            return handleHttpError(res, "NO_VALID_FIELDS_TO_UPDATE", 400);
-        }
-
+        if (Object.keys(metadataUpdates).length === 0) return handleHttpError(res, "NO_VALID_FIELDS_TO_UPDATE", 400);
         const now = new Date();
         user.updateHistory.push({
             timestamp: now.toISOString(),
-            changes: updateLog
+            changes: updateLog.filter(change => change.oldValue !== undefined && change.newValue !== undefined)
         });
 
         const oneYearAgo = new Date();
@@ -269,16 +252,15 @@ const updateUserMetadata = async (req, res) => {
         user.updateHistory = user.updateHistory.filter(entry => new Date(entry.timestamp) > oneYearAgo);
         metadataUpdates["metadata.updatedAt"] = now.toISOString();
         metadataUpdates["updateHistory"] = user.updateHistory;
-
         await User.update(id, metadataUpdates);
 
-        return res.status(200).json({ 
-            message: "METADATA_UPDATED_SUCCESS", 
+        return res.status(200).json({
+            message: "METADATA_UPDATED_SUCCESS",
             updatedFields: metadataUpdates,
             updateHistory: user.updateHistory
         });
     } catch (error) {
-        console.error("Update User Metadata Error:", error.message);
+        console.error("Update User Metadata Error:", error);
         return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
     }
 };
@@ -287,22 +269,13 @@ const deleteUserMetadata = async (req, res) => {
     try {
         const { id } = req.user;
         const updates = req.body; 
-
         const user = await User.findById(id);
         if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
-
-        if (user.role === "ADMIN") {
-            return handleHttpError(res, "ADMIN_CANNOT_HAVE_METADATA", 400);
-        }
-
+        if (user.role === "ADMIN") return handleHttpError(res, "ADMIN_CANNOT_HAVE_METADATA", 400);
+        
         const METADATA_FIELDS = {
-            STUDENT: [
-                "firstName", "lastName", "gender", "dni", "degree", "institution", "endDate",
-                "languages", "skills", "certifications", "workExperience"
-            ],
-            TEACHER: [
-                "firstName", "lastName", "dni", "specialization"
-            ],
+            STUDENT: ["firstName", "lastName", "gender", "dni", "degree", "institution", "endDate", "languages", "skills", "certifications", "workExperience"],
+            TEACHER: ["firstName", "lastName", "dni", "specialization"],
         };
 
         const validFields = METADATA_FIELDS[user.role];
@@ -311,7 +284,6 @@ const deleteUserMetadata = async (req, res) => {
 
         if (!user.metadata) user.metadata = {};
         if (!user.updateHistory) user.updateHistory = []; 
-
         for (const key in updates) {
             if (validFields.includes(key)) {
                 if (Array.isArray(user.metadata[key]) && Array.isArray(updates[key])) {
@@ -336,10 +308,7 @@ const deleteUserMetadata = async (req, res) => {
             }
         }
 
-        if (deleteLog.length === 0) {
-            return handleHttpError(res, "NO_VALID_FIELDS_TO_DELETE", 400);
-        }
-
+        if (deleteLog.length === 0) return handleHttpError(res, "NO_VALID_FIELDS_TO_DELETE", 400);
         const now = new Date();
         user.updateHistory.push({
             timestamp: now.toISOString(),
@@ -545,101 +514,117 @@ const getAH = async (req, res) => {
 const updateRoadmap = async (req, res) => {
     try {
         const { id } = req.user;
-        const { roadmapId, status } = req.body;
-
-        const validStatuses = ["TODO", "DOING", "DONE"];
+        const { roadmapName } = req.params;
+        const { sectionName, topicName, newStatus } = req.body;
 
         const user = await User.findById(id);
-        if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
-        if (!user.metadata) user.metadata = {};
-        if (!user.metadata.roadmaps) user.metadata.roadmaps = [];
+        if (!user) return res.status(404).json({ error: "USER_NOT_FOUND" });
 
-        let roadmaps = user.metadata.roadmaps;
+        let roadmap = user.metadata.roadmap;
+        const acquiredSkills = new Set(user.metadata.skills || []);
+        const userSubjects = user.metadata.AH?.subjects || [];
 
-        const roadmapIndex = roadmaps.findIndex(r => r.roadmapId === roadmapId);
+        // Si el roadmap no está definido, intentar obtenerlo de la base de datos
+        if (!roadmap || roadmap.name !== roadmapName) {
+            try {
+                const roadmapData = await Roadmap.findByName(roadmapName);
+                if (!roadmapData) return res.status(404).json({ error: "ROADMAP_NOT_FOUND" });
 
-        if (roadmapIndex !== -1) {
-            if (status && validStatuses.includes(status)) roadmaps[roadmapIndex].status = status;
-            roadmaps[roadmapIndex].updatedAt = new Date().toISOString();
-        } else {
-            roadmaps.push({
-                roadmapId,
-                status: "TODO",
-                updatedAt: new Date().toISOString(),
-            });
+                roadmap = roadmapData;
+                user.metadata.roadmap = roadmap;
+            } catch (err) {
+                return res.status(500).json({ error: "ERROR_FETCHING_ROADMAP" });
+            }
         }
 
-        const metadataUpdates = {
-            "metadata.roadmaps": roadmaps,
-            "metadata.updatedAt": new Date().toISOString(),
+        let hasChanges = false;
+        const updatedRoadmapBody = { ...roadmap.body };
+
+        // **Auto-completar temas según las notas del usuario**
+        for (const [section, topics] of Object.entries(updatedRoadmapBody)) {
+            for (const [topic, topicData] of Object.entries(topics)) {
+                if (topicData?.subject) {
+                    const subjectMatch = userSubjects.find(
+                        (s) => s.name === topicData.subject && s.grade >= 5.0
+                    );
+
+                    if (subjectMatch && topicData.status !== "done") {
+                        topicData.status = "done";
+                        hasChanges = true;
+                        if (topicData.skill) acquiredSkills.add(topicData.skill);
+                    }
+                }
+            }
+        }
+
+        let metadataUpdates = {};
+        if (!sectionName || !topicName || !newStatus) {
+            if (hasChanges) {
+                metadataUpdates = {
+                    "metadata.roadmap.body": updatedRoadmapBody,
+                    "metadata.skills": Array.from(acquiredSkills),
+                    "metadata.roadmap.lastUpdatedAt": new Date().toISOString(),
+                    "updatedAt": new Date().toISOString(),
+                };
+                await User.update(id, metadataUpdates);
+                return res.status(200).json({ message: "Roadmap actualizado automáticamente" });
+            }
+            return res.status(400).json({ error: "NO_CHANGES_DETECTED" });
+        }
+
+        if (!updatedRoadmapBody[sectionName] || !updatedRoadmapBody[sectionName][topicName]) return res.status(404).json({ error: "SECTION_OR_TOPIC_NOT_FOUND" });
+        const topic = updatedRoadmapBody[sectionName][topicName];
+        if (topic.status === newStatus) return res.status(400).json({ error: "STATUS_ALREADY_SET" });
+        
+        topic.status = newStatus;
+        hasChanges = true;
+        if (newStatus === "done" && topic.skill) acquiredSkills.add(topic.skill);
+        metadataUpdates = {
+            [`metadata.roadmap.body.${sectionName}.${topicName}.status`]: newStatus,
+            "metadata.skills": Array.from(acquiredSkills),
+            "metadata.roadmap.lastUpdatedAt": new Date().toISOString(),
+            "updatedAt": new Date().toISOString(),
         };
 
-        await User.update(id, metadataUpdates);
+        if (hasChanges) {
+            await User.update(id, metadataUpdates);
+            return res.status(200).json({ message: "Roadmap actualizado correctamente" });
+        }
 
-        return res.json({ message: "Roadmap updated successfully", roadmaps });
+        return res.status(400).json({ error: "NO_CHANGES_DETECTED" });
     } catch (error) {
-        console.error("Error updating roadmap:", error.message);
-        return res.status(500).json({ error: "Internal server error" });
+        console.error("Error updating roadmap:", error);
+        res.status(500).json({ error: "Error updating roadmap" });
     }
 };
 
-const getRoadmaps = async (req, res) => {
+const getRoadmap = async (req, res) => {
     try {
         const { id } = req.user;
-
         const user = await User.findById(id);
         if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
-
-        if (!user.metadata) user.metadata = {};
-        if (!user.metadata.roadmaps) user.metadata.roadmaps = [];
-
-        const userRoadmaps = user.metadata.roadmaps;
-        if (userRoadmaps.length === 0) return res.json([]);
-
-        const roadmapIds = userRoadmaps.map(r => r.roadmapId);
-
-        const roadmaps = await Roadmap.findAll({
-            where: { id: roadmapIds }
-        });
-
-        const roadmapsWithStatus = roadmaps
-            .filter(r => roadmapIds.includes(r.id))
-            .map(r => ({
-                ...r, 
-                status: userRoadmaps.find(ur => ur.roadmapId === r.id)?.status || "TODO"
-            }));
-
-        res.json(roadmapsWithStatus);
+        if (!user.metadata || !user.metadata.roadmap) return res.status(404).json({ error: "ROADMAP_NOT_FOUND" });
+        return res.status(200).json({ roadmap: user.metadata.roadmap });
     } catch (error) {
-        console.error("Error fetching roadmaps:", error.message);
-        res.status(500).json({ error: "Internal server error" });
+        console.error("Error retrieving roadmap:", error.message);
+        return res.status(500).json({ error: "INTERNAL_SERVER_ERROR" });
     }
 };
 
 const deleteRoadmap = async (req, res) => {
     try {
         const { id } = req.user;
-        const { roadmapId } = req.body;
-        if (!roadmapId) return handleHttpError(res, "ROADMAP_ID_REQUIRED", 400);
         const user = await User.findById(id);
         if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
-        if (!user.metadata) user.metadata = {};
-        if (!user.metadata.roadmaps) user.metadata.roadmaps = [];
-        let roadmaps = user.metadata.roadmaps;
-
-        const newRoadmaps = roadmaps.filter(r => r.roadmapId !== roadmapId);
-        if (newRoadmaps.length === roadmaps.length) return handleHttpError(res, "ROADMAP_NOT_FOUND", 404);
+        if (!user.metadata || !user.metadata.roadmap) return handleHttpError(res, "ROADMAP_NOT_FOUND", 404);
         
         const metadataUpdates = {
-            "metadata.roadmaps": newRoadmaps,
+            "metadata.roadmap": admin.firestore.FieldValue.delete(),
             "metadata.updatedAt": new Date().toISOString(),
         };
 
-
-        
         await User.update(id, metadataUpdates);
-
-        return res.json({ message: "Roadmap deleted successfully", roadmaps: newRoadmaps });
+        return res.json({ message: "Roadmap deleted successfully" });
     } catch (error) {
         console.error("Error deleting roadmap:", error.message);
         return res.status(500).json({ error: "Internal server error" });
@@ -918,6 +903,9 @@ module.exports = {
     deleteUserMetadata,
     updateAH,
     getAH,
+    updateRoadmap,
+    getRoadmap,
+    deleteRoadmap,
     addTeacherToStudent,
     getTeachersOfStudent,
     sendNotificationToTeacher,
