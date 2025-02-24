@@ -63,7 +63,7 @@ const validateLogin = [
 
 const METADATA_FIELDS = {
     STUDENT: new Set([
-        "firstName", "lastName", "gender", "dni", "degree", "institution", "endDate",
+        "firstName", "lastName", "gender", "dni", "degree", "institution", "endDate", "specialization",
         "languages", "skills", "certifications", "workExperience", "academicHistory"
     ]),
     TEACHER: new Set([
@@ -116,6 +116,7 @@ const validateMetadata = [
     check("degree").if(body("degree").exists()).isString().isIn(["MAIS", "FIIS", "INSO_GAME", "INSO_DATA", "INSO_CYBER"]).withMessage("degree must be one of MAIS, FIIS, INSO_GAME, INSO_DATA, or INSO_CYBER"),
     check("institution").if(body("institution").exists()).isString().notEmpty().withMessage("institution must be a non-empty string"),
     check("endDate").if(body("endDate").exists()).isISO8601().toDate().withMessage("endDate must be a valid date"),
+    check("specialization").if(body("specialization").exists()).isString().notEmpty().withMessage("specialization must be a non-empty string"),
     check("birthDate").if(body("birthDate").exists()).isISO8601().toDate().withMessage("birthDate must be a valid date"),
 
     validateArrayObjects("languages", [

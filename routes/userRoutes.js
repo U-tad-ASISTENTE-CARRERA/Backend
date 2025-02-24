@@ -61,7 +61,7 @@ router.get("/AH", authUserMiddleware, checkRole("STUDENT"), getAH);
 router.patch("/AH", authUserMiddleware, checkRole("STUDENT"), updateAH);
 
 router.get("/userRoadmap", authUserMiddleware, checkRole("STUDENT"), getRoadmap);
-router.patch("/userRoadmap/:roadmapName", authUserMiddleware, checkRole("STUDENT"), updateRoadmap);
+router.patch("/userRoadmap", authUserMiddleware, checkRole("STUDENT"), updateRoadmap);
 router.delete("/userRoadmap", authUserMiddleware, checkRole("STUDENT"), deleteRoadmap);
 
 // Teacher --- Student 

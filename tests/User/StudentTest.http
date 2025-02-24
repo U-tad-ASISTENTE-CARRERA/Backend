@@ -29,7 +29,7 @@ Content-Type: application/json
 ###
 PATCH http://localhost:3000/metadata
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDQzMTUyOCwiZXhwIjoxNzQwNTE3OTI4fQ.M_31zRJXg9LDXCZIMU0AxkcFDJNbFUBfKemrjdHvyDM
 
 {
     "firstName": "Alvaro",
@@ -37,6 +37,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNO
     "gender": "male",
     "dni": "12345678A",
     "degree": "INSO_DATA",
+    "specialization": "Data Analyst",
     "institution": "U-Tad",
     "endDate": "2026-06-30",
     "languages": [
@@ -238,24 +239,24 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlpOMVUzcE54WUZFWHVRN1paRmhhIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekB1LXRhZC5jb20iLCJyb2xlIjoiVEVBQ0hFUiIsImlhdCI6MTc0MDI0ODkyMSwiZXhwIjoxNzQwMzM1MzIxfQ.jFU6hq_9J9SBhrU2gXCIm0l0ebfBWwQoMaqP2-EqFxM
 
 ### 
-PATCH http://localhost:3000/userRoadmap/Data Analyst
+PATCH http://localhost:3000/userRoadmap
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDM0Mzk3NSwiZXhwIjoxNzQwNDMwMzc1fQ.uyhDjOE567x9lZTZY6RnpD7Si5xAR8HSJQtFEmwwk2Y
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDQzMTUyOCwiZXhwIjoxNzQwNTE3OTI4fQ.M_31zRJXg9LDXCZIMU0AxkcFDJNbFUBfKemrjdHvyDM
 
 ### 
-PATCH http://localhost:3000/userRoadmap/Data Analyst
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDM0Mzk3NSwiZXhwIjoxNzQwNDMwMzc1fQ.uyhDjOE567x9lZTZY6RnpD7Si5xAR8HSJQtFEmwwk2Y
+PATCH http://localhost:3000/userRoadmap
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDQzMTUyOCwiZXhwIjoxNzQwNTE3OTI4fQ.M_31zRJXg9LDXCZIMU0AxkcFDJNbFUBfKemrjdHvyDM
 Content-Type: application/json
 
 {
-    "sectionName": "intro",
-    "topicName": "intro a ciencia de datos",
+    "sectionName": "Bases de Datos",
+    "topicName": "Bases de Datos NoSQL",
     "newStatus": "done"
 }
 
 ### Obtener el roadmap del usuario autenticado
 GET http://localhost:3000/userRoadmap
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDM0Mzk3NSwiZXhwIjoxNzQwNDMwMzc1fQ.uyhDjOE567x9lZTZY6RnpD7Si5xAR8HSJQtFEmwwk2Y
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDQzMTUyOCwiZXhwIjoxNzQwNTE3OTI4fQ.M_31zRJXg9LDXCZIMU0AxkcFDJNbFUBfKemrjdHvyDM
 
 ### Eliminar el roadmap del usuario autenticado
 DELETE http://localhost:3000/userRoadmap

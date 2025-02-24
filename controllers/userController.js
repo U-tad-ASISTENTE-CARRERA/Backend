@@ -211,7 +211,7 @@ const updateUserMetadata = async (req, res) => {
         if (user.role === "ADMIN") return handleHttpError(res, "ADMIN_CANNOT_HAVE_METADATA", 400);
        
         const METADATA_FIELDS = {
-            STUDENT: ["firstName", "lastName", "gender", "dni", "degree", "institution", "endDate", "languages", "skills", "certifications", "workExperience"],
+            STUDENT: ["firstName", "lastName", "gender", "dni", "degree", "specialization", "institution", "endDate", "languages", "skills", "certifications", "workExperience"],
             TEACHER: ["firstName", "lastName", "dni", "specialization"],
         };
         const validFields = METADATA_FIELDS[user.role] || [];
@@ -274,7 +274,7 @@ const deleteUserMetadata = async (req, res) => {
         if (user.role === "ADMIN") return handleHttpError(res, "ADMIN_CANNOT_HAVE_METADATA", 400);
         
         const METADATA_FIELDS = {
-            STUDENT: ["firstName", "lastName", "gender", "dni", "degree", "institution", "endDate", "languages", "skills", "certifications", "workExperience"],
+            STUDENT: ["firstName", "lastName", "gender", "dni", "degree","specialization", "institution", "endDate", "languages", "skills", "certifications", "workExperience"],
             TEACHER: ["firstName", "lastName", "dni", "specialization"],
         };
 
@@ -514,7 +514,6 @@ const getAH = async (req, res) => {
 const updateRoadmap = async (req, res) => {
     try {
         const { id } = req.user;
-        const { roadmapName } = req.params;
         const { sectionName, topicName, newStatus } = req.body;
 
         const user = await User.findById(id);
@@ -525,9 +524,10 @@ const updateRoadmap = async (req, res) => {
         const userSubjects = user.metadata.AH?.subjects || [];
 
         // Si el roadmap no está definido, intentar obtenerlo de la base de datos
-        if (!roadmap || roadmap.name !== roadmapName) {
+        if (!roadmap || roadmap.name !== user.metadata.specialization) {
             try {
-                const roadmapData = await Roadmap.findByName(roadmapName);
+                console.log(user.metadata.specialization);
+                const roadmapData = await Roadmap.findByName(user.metadata.specialization);
                 if (!roadmapData) return res.status(404).json({ error: "ROADMAP_NOT_FOUND" });
 
                 roadmap = roadmapData;
@@ -540,7 +540,7 @@ const updateRoadmap = async (req, res) => {
         let hasChanges = false;
         const updatedRoadmapBody = { ...roadmap.body };
 
-        // **Auto-completar temas según las notas del usuario**
+        // Auto-completar temas según las notas del usuario
         for (const [section, topics] of Object.entries(updatedRoadmapBody)) {
             for (const [topic, topicData] of Object.entries(topics)) {
                 if (topicData?.subject) {
