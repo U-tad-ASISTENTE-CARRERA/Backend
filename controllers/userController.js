@@ -738,22 +738,22 @@ const sendNotificationToTeacher = async (req, res) => {
     }
 };
 
-const getAllStudents = async (req, res) => {
+const getAllStudentsOfTeacher = async (req, res) => {
     try {
         const { id } = req.user;
         const teacher = await User.findById(id);
         if (!teacher) return handleHttpError(res, "TEACHER_NOT_FOUND", 404);
         if (teacher.role !== "TEACHER") return handleHttpError(res, "NOT_A_TEACHER", 403);
 
-        const studentsSnapshot = await db
-            .collection("users")
-            .where("metadata.teacherList", "array-contains", id)
-            .get();
+        const students = await User.findByRole("STUDENT");
+        const filteredStudents = students.filter(student => 
+            student.metadata?.teacherList?.includes(id)
+        );
 
-        const students = studentsSnapshot.docs.map(doc => doc.data());
-        return res.json(students);
+        if (filteredStudents.length === 0) return res.json({ message: "No students found" });
+        return res.json(filteredStudents);
     } catch (error) {
-        console.error("Get All Teacher Students Error:", error.message);
+        console.error("Get All Teacher Students Error:", error);
         return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
     }
 };
@@ -777,6 +777,25 @@ const getStudent = async (req, res) => {
         return res.json(user);
     } catch (error) {
         console.error("Get Student Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+const getStudentByTeacher = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { studentId } = req.body;
+        const teacher = await User.findById(id);
+        if (!teacher) return handleHttpError(res, "TEACHER_NOT_FOUND", 404);
+        if (teacher.role !== "TEACHER") return handleHttpError(res, "NOT_A_TEACHER", 403);
+        const student = await User.findById(studentId);
+        if (!student) return handleHttpError(res, "STUDENT_NOT_FOUND", 404);
+        if (student.role !== "STUDENT") return handleHttpError(res, "NOT_A_STUDENT", 403);
+
+        if (!student.metadata?.teacherList?.includes(id)) return handleHttpError(res, "STUDENT_NOT_ASSIGNED_TO_TEACHER", 403);
+        return res.json(student);
+    } catch (error) {
+        console.error("Get Student By Teacher Error:", error);
         return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
     }
 };
@@ -911,8 +930,9 @@ module.exports = {
     sendNotificationToTeacher,
     getTeacherNotifications,
     getAllTeacher,
-    getAllStudents,
+    getAllStudentsOfTeacher,
     getSpecializationTeacher,
+    getStudentByTeacher,
     getStudent,
     createAdmin,
     getAllUsers,

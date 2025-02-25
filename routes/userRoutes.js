@@ -22,13 +22,14 @@ const {
     sendNotificationToTeacher,
     getTeacherNotifications,
     getAllTeacher,
-    getAllStudents,
+    getAllStudentsOfTeacher,
     getSpecializationTeacher,
     getStudent,
     createAdmin,
     getAllUsers,
     updateUserByAdmin,
     deleteUserByAdmin,
+    getStudentByTeacher,
 } = require("../controllers/userController");
 
 const { 
@@ -73,6 +74,9 @@ router.post("/student/teacher", authUserMiddleware, checkRole("STUDENT"), addTea
 
 router.post("/student/teacher/notification", authUserMiddleware, checkRole("STUDENT"), sendNotificationToTeacher);
 router.get("/student/teacher/notification", authUserMiddleware, checkRole("TEACHER"), getTeacherNotifications);
+
+router.get("/student/teacher/getAllStudents", authUserMiddleware, checkRole("TEACHER"), getAllStudentsOfTeacher);
+router.get("/student/teacher/getStudent", authUserMiddleware, checkRole("TEACHER"), getStudentByTeacher);
 
 // Admin routes
 router.post("/admin", createAdmin);

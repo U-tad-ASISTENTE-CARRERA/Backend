@@ -162,6 +162,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNO
 GET http://localhost:3000/metadata
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzNjUzNywiZXhwIjoxNzQwNDIyOTM3fQ.KA9niP2a_j7MaiFt-WazXC5_NK2iBRUVX8qAJ9zJ-_4
+
 ###  Test para eliminar algun dato la metadata de un estudiante
 DELETE http://localhost:3000/metadata
 Content-Type: application/json
@@ -199,12 +200,12 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNO
 ### optener a los profesores
 GET http://localhost:3000/teacher
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDQ4ODQxMSwiZXhwIjoxNzQwNTc0ODExfQ.zfCPJclJBqcJ2XnkwEiZB-qzN3mqx6dmYC85RH6KFF0
 
 ### Un estudiante agrega a un profesor
 POST http://localhost:3000/student/teacher
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDQ4ODQxMSwiZXhwIjoxNzQwNTc0ODExfQ.zfCPJclJBqcJ2XnkwEiZB-qzN3mqx6dmYC85RH6KFF0
 
 {
   "teacherId": "ZN1U3pNxYFEXuQ7ZZFha"
@@ -213,7 +214,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNO
 ### Ver a todos los profesores de un estudiante
 GET http://localhost:3000/student/teacher
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDQ4ODQxMSwiZXhwIjoxNzQwNTc0ODExfQ.zfCPJclJBqcJ2XnkwEiZB-qzN3mqx6dmYC85RH6KFF0
 
 ### Un estudiante enviar un notification a un profesor
 POST http://localhost:3000/student/teacher/notification
@@ -234,17 +235,31 @@ Content-Type: application/json
   "password": "SecurePass123!"
 }
 
+###
+GET http://localhost:3000/student/teacher/getAllStudents
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlpOMVUzcE54WUZFWHVRN1paRmhhIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekB1LXRhZC5jb20iLCJyb2xlIjoiVEVBQ0hFUiIsImlhdCI6MTc0MDQ4ODU0OCwiZXhwIjoxNzQwNTc0OTQ4fQ.4o5zOfQfRt2u-E8DxdqY8DFlJPGCtRWB8O-FuejCRMQ
+
+###
+GET http://localhost:3000/student/teacher/getStudent
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlpOMVUzcE54WUZFWHVRN1paRmhhIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekB1LXRhZC5jb20iLCJyb2xlIjoiVEVBQ0hFUiIsImlhdCI6MTc0MDQ4ODU0OCwiZXhwIjoxNzQwNTc0OTQ4fQ.4o5zOfQfRt2u-E8DxdqY8DFlJPGCtRWB8O-FuejCRMQ
+
+{
+  "studentId": "9ueHQuHM8UAEM0QeyB0z"
+}
+
 ### Ver todas las notificaciones de un profesor
 GET http://localhost:3000/student/teacher/notification
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlpOMVUzcE54WUZFWHVRN1paRmhhIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekB1LXRhZC5jb20iLCJyb2xlIjoiVEVBQ0hFUiIsImlhdCI6MTc0MDI0ODkyMSwiZXhwIjoxNzQwMzM1MzIxfQ.jFU6hq_9J9SBhrU2gXCIm0l0ebfBWwQoMaqP2-EqFxM
 
-### 
+### Un alumno se le asigna un roadmap
 PATCH http://localhost:3000/userRoadmap
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDQzMTUyOCwiZXhwIjoxNzQwNTE3OTI4fQ.M_31zRJXg9LDXCZIMU0AxkcFDJNbFUBfKemrjdHvyDM
 
-### 
+### Un alumno actualiza el estado de un campo de su roadmap
 PATCH http://localhost:3000/userRoadmap
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDQzMTUyOCwiZXhwIjoxNzQwNTE3OTI4fQ.M_31zRJXg9LDXCZIMU0AxkcFDJNbFUBfKemrjdHvyDM
 Content-Type: application/json
