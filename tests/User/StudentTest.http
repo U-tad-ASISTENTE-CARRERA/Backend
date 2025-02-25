@@ -29,7 +29,7 @@ Content-Type: application/json
 ###
 PATCH http://localhost:3000/metadata
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDQzMTUyOCwiZXhwIjoxNzQwNTE3OTI4fQ.M_31zRJXg9LDXCZIMU0AxkcFDJNbFUBfKemrjdHvyDM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDQ3NTUxMSwiZXhwIjoxNzQwNTYxOTExfQ.u1Lvc7er9v9mGbDKcjoxJXtsSdQpQwola67vQC5SCZ8
 
 {
     "firstName": "Alvaro",
@@ -39,6 +39,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNO
     "degree": "INSO_DATA",
     "specialization": "Data Analyst",
     "institution": "U-Tad",
+    "birthDate": "1985-08-20",
     "endDate": "2026-06-30",
     "languages": [
         { "language": "English", "level": "high" },

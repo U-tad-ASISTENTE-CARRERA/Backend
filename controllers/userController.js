@@ -211,8 +211,8 @@ const updateUserMetadata = async (req, res) => {
         if (user.role === "ADMIN") return handleHttpError(res, "ADMIN_CANNOT_HAVE_METADATA", 400);
        
         const METADATA_FIELDS = {
-            STUDENT: ["firstName", "lastName", "gender", "dni", "degree", "specialization", "institution", "endDate", "languages", "skills", "certifications", "workExperience"],
-            TEACHER: ["firstName", "lastName", "dni", "specialization"],
+            STUDENT: ["firstName", "lastName", "birthDate", "gender", "dni", "degree", "specialization", "institution", "endDate", "languages", "skills", "certifications", "workExperience"],
+            TEACHER: ["firstName", "lastName", "dni", "gender", "specialization"],
         };
         const validFields = METADATA_FIELDS[user.role] || [];
         const metadataUpdates = {};
@@ -274,8 +274,8 @@ const deleteUserMetadata = async (req, res) => {
         if (user.role === "ADMIN") return handleHttpError(res, "ADMIN_CANNOT_HAVE_METADATA", 400);
         
         const METADATA_FIELDS = {
-            STUDENT: ["firstName", "lastName", "gender", "dni", "degree","specialization", "institution", "endDate", "languages", "skills", "certifications", "workExperience"],
-            TEACHER: ["firstName", "lastName", "dni", "specialization"],
+            STUDENT: ["firstName", "lastName", "birthDate", "gender", "dni", "degree","specialization", "institution", "endDate", "languages", "skills", "certifications", "workExperience"],
+            TEACHER: ["firstName", "lastName", "dni", "gender", "specialization"],
         };
 
         const validFields = METADATA_FIELDS[user.role];

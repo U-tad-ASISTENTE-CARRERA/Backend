@@ -63,11 +63,11 @@ const validateLogin = [
 
 const METADATA_FIELDS = {
     STUDENT: new Set([
-        "firstName", "lastName", "gender", "dni", "degree", "institution", "endDate", "specialization",
+        "firstName", "lastName", "birthDate", "gender", "dni", "degree", "institution", "endDate", "specialization",
         "languages", "skills", "certifications", "workExperience", "academicHistory"
     ]),
     TEACHER: new Set([
-        "firstName", "lastName", "birthDate", "dni", "specialization"
+        "firstName", "lastName", "gender", "dni", "specialization"
     ]),
 };
 

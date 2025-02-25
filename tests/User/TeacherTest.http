@@ -13,18 +13,19 @@ POST http://localhost:3000/login
 Content-Type: application/json
 
 {
-  "email": "Alvaro.vazquez@u-tad.com",
+  "email": "alvaro.vazquez@u-tad.com",
   "password": "SecurePass123!"
 }
 
 ### Test para agregar metadata a un profesors
 PATCH http://localhost:3000/metadata
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik9xQVp4NDU1SWNnckVQQjNFaExuIiwiZW1haWwiOiJBbHZhcm8udmF6cXVlekB1LXRhZC5jb20iLCJyb2xlIjoiVEVBQ0hFUiIsImlhdCI6MTczOTY0Mjk5MywiZXhwIjoxNzM5NzI5MzkzfQ.4aL173KYYJ99Nuwz1kkes-Mbo2V-yqxWPrPn6U1xnD0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlpOMVUzcE54WUZFWHVRN1paRmhhIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekB1LXRhZC5jb20iLCJyb2xlIjoiVEVBQ0hFUiIsImlhdCI6MTc0MDQ3NTM0MiwiZXhwIjoxNzQwNTYxNzQyfQ.O6hfK7L6wHHlMl9s9DUIgkTm9gRM0Lr7tuhomTVYCuY
 
 {
   "firstName": "Alvaro",
   "lastName": "Vazquez",
+  "gender" : "male",
   "birthDate": "1985-08-20",
   "dni": "87654321B",
   "specialization": "Data Science"
