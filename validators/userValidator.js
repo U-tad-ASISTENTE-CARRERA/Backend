@@ -63,8 +63,7 @@ const validateLogin = [
 
 const METADATA_FIELDS = {
     STUDENT: new Set([
-        "firstName", "lastName", "birthDate", "gender", "dni", "degree", "institution", "endDate", "specialization",
-        "languages", "skills", "certifications", "workExperience", "academicHistory"
+        "firstName", "lastName", "birthDate", "gender", "dni", "degree", "endDate", "specialization", "languages", "skills", "certifications", "workExperience", "academicHistory"
     ]),
     TEACHER: new Set([
         "firstName", "lastName", "gender", "dni", "specialization"
@@ -113,8 +112,7 @@ const validateMetadata = [
     check("lastName").if(body("lastName").exists()).isString().notEmpty().withMessage("lastName must be a non-empty string"),
     check("gender").if(body("gender").exists()).isString().isIn(["male", "female", "prefer not to say"]).withMessage("gender must be one of: male, female, or prefer not to say"),
     check("dni").if(body("dni").exists()).matches(/^\d{8}[A-Z]$/).withMessage("dni must be in the format 12345678A"),
-    check("degree").if(body("degree").exists()).isString().isIn(["MAIS", "FIIS", "INSO_GAME", "INSO_DATA", "INSO_CYBER"]).withMessage("degree must be one of MAIS, FIIS, INSO_GAME, INSO_DATA, or INSO_CYBER"),
-    check("institution").if(body("institution").exists()).isString().notEmpty().withMessage("institution must be a non-empty string"),
+    check("degree").if(body("degree").exists()).isString().isIn(["INSO_DATA"]).withMessage("degree must be one of MAIS, FIIS, INSO_GAME, INSO_DATA, or INSO_CYBER"),
     check("endDate").if(body("endDate").exists()).isISO8601().toDate().withMessage("endDate must be a valid date"),
     check("specialization").if(body("specialization").exists()).isString().notEmpty().withMessage("specialization must be a non-empty string"),
     check("birthDate").if(body("birthDate").exists()).isISO8601().toDate().withMessage("birthDate must be a valid date"),

@@ -211,7 +211,7 @@ const updateUserMetadata = async (req, res) => {
         if (user.role === "ADMIN") return handleHttpError(res, "ADMIN_CANNOT_HAVE_METADATA", 400);
        
         const METADATA_FIELDS = {
-            STUDENT: ["firstName", "lastName", "birthDate", "gender", "dni", "degree", "specialization", "institution", "endDate", "languages", "skills", "certifications", "workExperience"],
+            STUDENT: ["firstName", "lastName", "birthDate", "gender", "dni", "degree", "specialization", "endDate", "languages", "skills", "certifications", "workExperience"],
             TEACHER: ["firstName", "lastName", "dni", "gender", "specialization"],
         };
         const validFields = METADATA_FIELDS[user.role] || [];
@@ -274,7 +274,7 @@ const deleteUserMetadata = async (req, res) => {
         if (user.role === "ADMIN") return handleHttpError(res, "ADMIN_CANNOT_HAVE_METADATA", 400);
         
         const METADATA_FIELDS = {
-            STUDENT: ["firstName", "lastName", "birthDate", "gender", "dni", "degree","specialization", "institution", "endDate", "languages", "skills", "certifications", "workExperience"],
+            STUDENT: ["firstName", "lastName", "birthDate", "gender", "dni", "degree","specialization", "endDate", "languages", "skills", "certifications", "workExperience"],
             TEACHER: ["firstName", "lastName", "dni", "gender", "specialization"],
         };
 
@@ -450,9 +450,9 @@ const updateAH = async (req, res) => {
             "metadata.AH.totalCreditsWithGrades": totalCreditsWithGrades,
             "metadata.AH.top5BestSubjects": top5BestSubjects,
             "metadata.AH.top5WorstSubjects": top5WorstSubjects,
-            "metadata.AH.yearsCompleted": yearsCompleted,
             "metadata.AH.lastUpdatedAt": now.toISOString(),
             "metadata.skills": acquiredSkills,
+            "metadata.yearsCompleted": yearsCompleted, 
             "updateHistory": user.updateHistory,
             updatedAt: now.toISOString(),
         };

@@ -8,15 +8,6 @@ Content-Type: application/json
   "seedWord": "sash"
 }
 
-### login con railway
-POST https://backend-production-94e4.up.railway.app/login
-Content-Type: application/json
-
-{
-  "email": "alvaroVqz@live.u-tad.com",
-  "password": "SecurePass123!"
-}
-
 ### login
 POST http://localhost:3000/login
 Content-Type: application/json
@@ -29,7 +20,7 @@ Content-Type: application/json
 ###
 PATCH http://localhost:3000/metadata
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDQ3NTUxMSwiZXhwIjoxNzQwNTYxOTExfQ.u1Lvc7er9v9mGbDKcjoxJXtsSdQpQwola67vQC5SCZ8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlBwZjlUSjFPV0ZiY1VZMXdqUHd0IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDY1NTMwOSwiZXhwIjoxNzQwNzQxNzA5fQ.O8Jfj1MyXZjucTPj7zfmRf75V82hF2U6M9vetF6l05o
 
 {
     "firstName": "Alvaro",
@@ -38,7 +29,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNO
     "dni": "12345678A",
     "degree": "INSO_DATA",
     "specialization": "Data Analyst",
-    "institution": "U-Tad",
     "birthDate": "1985-08-20",
     "endDate": "2026-06-30",
     "languages": [
@@ -156,12 +146,12 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNO
 ### Test para obtener un estudiante
 GET http://localhost:3000/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlBwZjlUSjFPV0ZiY1VZMXdqUHd0IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDY1NTMwOSwiZXhwIjoxNzQwNzQxNzA5fQ.O8Jfj1MyXZjucTPj7zfmRf75V82hF2U6M9vetF6l05o
 
 ### Test para obtener la metadata de un estudiante
 GET http://localhost:3000/metadata
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzNjUzNywiZXhwIjoxNzQwNDIyOTM3fQ.KA9niP2a_j7MaiFt-WazXC5_NK2iBRUVX8qAJ9zJ-_4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlBwZjlUSjFPV0ZiY1VZMXdqUHd0IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDY1NTMwOSwiZXhwIjoxNzQwNzQxNzA5fQ.O8Jfj1MyXZjucTPj7zfmRf75V82hF2U6M9vetF6l05o
 
 ###  Test para eliminar algun dato la metadata de un estudiante
 DELETE http://localhost:3000/metadata
@@ -182,18 +172,71 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNO
 ### Test obtener el historial academico de un estudiante
 GET http://localhost:3000/AH
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlBwZjlUSjFPV0ZiY1VZMXdqUHd0IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDY1NTMwOSwiZXhwIjoxNzQwNzQxNzA5fQ.O8Jfj1MyXZjucTPj7zfmRf75V82hF2U6M9vetF6l05o
 
 ### subir notas de un estudiante
 PATCH http://localhost:3000/AH
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlBwZjlUSjFPV0ZiY1VZMXdqUHd0IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDY1NTMwOSwiZXhwIjoxNzQwNzQxNzA5fQ.O8Jfj1MyXZjucTPj7zfmRf75V82hF2U6M9vetF6l05o
 
 {
   "grades": [
     { "name": "Fundamentos de Desarrollo Web", "grade": 8.5 },
     { "name": "Bases de Datos", "grade": 8.5 },
     { "name": "Álgebra", "grade": 6.8 }
+  ]
+}
+
+###
+PATCH http://localhost:3000/AH
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlBwZjlUSjFPV0ZiY1VZMXdqUHd0IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDY1NTMwOSwiZXhwIjoxNzQwNzQxNzA5fQ.O8Jfj1MyXZjucTPj7zfmRf75V82hF2U6M9vetF6l05o
+
+{
+  "grades": [
+    { "name": "Fundamentos de Desarrollo Web", "grade": 9.3 },
+    { "name": "Introducción a la Programación I", "grade": 4.8 },
+    { "name": "Laboratorios de Redes y Sistemas Operativos", "grade": 7.1 },
+    { "name": "Lógica y Matemática Discreta", "grade": 5.5 },
+    { "name": "Pensamiento Creativo", "grade": 9.0 },
+    { "name": "Álgebra", "grade": 5.2 },
+    { "name": "Arquitectura de Ordenadores", "grade": 6.7 },
+    { "name": "Introducción a la Programación II", "grade": 2.9 },
+    { "name": "Laboratorio de Bases de Datos y Sistemas Distribuidos", "grade": 8.8 },
+    { "name": "Sociedad Digital", "grade": 7.4 },
+    { "name": "Proyectos I: Técnicas y Tecnologías Digitales", "grade": 5.9 }
+  ]
+}
+
+###
+PATCH http://localhost:3000/AH
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlBwZjlUSjFPV0ZiY1VZMXdqUHd0IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDY1NTMwOSwiZXhwIjoxNzQwNzQxNzA5fQ.O8Jfj1MyXZjucTPj7zfmRf75V82hF2U6M9vetF6l05o
+
+{
+  "grades": [
+    { "name": "Lógica y Matemática Discreta", "grade": 5.3 }
+  ]
+}
+
+###
+PATCH http://localhost:3000/AH
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlBwZjlUSjFPV0ZiY1VZMXdqUHd0IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDY1NTMwOSwiZXhwIjoxNzQwNzQxNzA5fQ.O8Jfj1MyXZjucTPj7zfmRf75V82hF2U6M9vetF6l05o
+
+{
+  "grades": [
+    { "name": "Fundamentos de Composición Visual", "grade": 1.3 },
+    { "name": "Probabilidad y Estadística", "grade": 8.3 },
+    { "name": "Programación Orientada a Objetos", "grade": 5.3 },
+    { "name": "Redes de Ordenadores", "grade": 6.3 },
+    { "name": "Sistemas Operativos", "grade": 9.3 },
+    { "name": "Análisis y Diseño de Algoritmos", "grade": 5.3 },
+    { "name": "Bases de Datos", "grade": 9.3 },
+    { "name": "Cálculo", "grade": 8.3 },
+    { "name": "Diseño de Software", "grade": 7.3 },
+    { "name": "Negocios y Modelos Digitales", "grade": 6.3 },
+    { "name": "Proyectos II: Tendencias de la Ingeniería del Software", "grade": 5.3 }
   ]
 }
 
