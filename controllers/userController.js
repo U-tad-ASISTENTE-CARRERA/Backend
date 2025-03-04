@@ -745,18 +745,36 @@ const getAllStudentsOfTeacher = async (req, res) => {
         if (!teacher) return handleHttpError(res, "TEACHER_NOT_FOUND", 404);
         if (teacher.role !== "TEACHER") return handleHttpError(res, "NOT_A_TEACHER", 403);
 
+        // Buscar todos los estudiantes
         const students = await User.findByRole("STUDENT");
+
+        // Filtrar solo los estudiantes que tengan el ID del profesor en su teacherList
         const filteredStudents = students.filter(student => 
             student.metadata?.teacherList?.includes(id)
         );
 
         if (filteredStudents.length === 0) return res.json({ message: "No students found" });
-        return res.json(filteredStudents);
+
+        // Construir la respuesta con los datos de metadata en lugar de updateHistory
+        const studentsData = filteredStudents.map(student => ({
+            id: student.id,
+            email: student.email,
+            firstName: student.metadata?.firstName || "No disponible",
+            lastName: student.metadata?.lastName || "No disponible",
+            dni: student.metadata?.dni || "No disponible",
+            degree: student.metadata?.degree || "No disponible",
+            specialization: student.metadata?.specialization || "No especificado",
+            gender: student.metadata?.gender || "No especificado",
+        }));
+
+        return res.json(studentsData);
+
     } catch (error) {
         console.error("Get All Teacher Students Error:", error);
         return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
     }
 };
+
 
 const getSpecializationTeacher = async (req, res) => {
     try {
