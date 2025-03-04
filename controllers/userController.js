@@ -211,7 +211,7 @@ const updateUserMetadata = async (req, res) => {
         if (user.role === "ADMIN") return handleHttpError(res, "ADMIN_CANNOT_HAVE_METADATA", 400);
        
         const METADATA_FIELDS = {
-            STUDENT: ["firstName", "lastName", "birthDate", "gender", "dni", "degree", "specialization", "endDate", "languages", "skills", "certifications", "workExperience"],
+            STUDENT: ["firstName", "lastName", "birthDate", "gender", "dni", "degree", "yearsCompleted", "specialization", "endDate", "languages", "skills", "certifications", "workExperience"],
             TEACHER: ["firstName", "lastName", "dni", "gender", "specialization"],
         };
         const validFields = METADATA_FIELDS[user.role] || [];
@@ -755,7 +755,7 @@ const getAllStudentsOfTeacher = async (req, res) => {
 
         if (filteredStudents.length === 0) return res.json({ message: "No students found" });
 
-        // Construir la respuesta con los datos de metadata en lugar de updateHistory
+        // Construir la respuesta con los datos de metadata
         const studentsData = filteredStudents.map(student => ({
             id: student.id,
             email: student.email,
@@ -764,7 +764,7 @@ const getAllStudentsOfTeacher = async (req, res) => {
             dni: student.metadata?.dni || "No disponible",
             degree: student.metadata?.degree || "No disponible",
             specialization: student.metadata?.specialization || "No especificado",
-            gender: student.metadata?.gender || "No especificado",
+            yearsCompleted: student.metadata?.yearsCompleted ?? "No especificado"
         }));
 
         return res.json(studentsData);
@@ -774,6 +774,7 @@ const getAllStudentsOfTeacher = async (req, res) => {
         return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
     }
 };
+
 
 
 const getSpecializationTeacher = async (req, res) => {
