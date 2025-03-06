@@ -6,7 +6,7 @@
         "intro a ciencia de datos" : {
             "description": "Este roadmap está diseñado para estudiantes que desean desarrollar habilidades en análisis de datos. Se enfoca en bases de datos, manipulación de datos, visualización, APIs, scraping y visión por computadora.",
             "status": "doing",
-            "skill": "",
+            "skill": "hello",
             "subject": "",
             "resources": [
               {
