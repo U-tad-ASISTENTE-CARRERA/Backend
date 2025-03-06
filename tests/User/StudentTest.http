@@ -20,7 +20,7 @@ Content-Type: application/json
 ###
 PATCH http://localhost:3000/metadata
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlBwZjlUSjFPV0ZiY1VZMXdqUHd0IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDY1NTMwOSwiZXhwIjoxNzQwNzQxNzA5fQ.O8Jfj1MyXZjucTPj7zfmRf75V82hF2U6M9vetF6l05o
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik9PWExvY1BxVU1OVWxqSTFvR3lUIiwiZW1haWwiOiJhbHZhcm9WcXoyQGxpdmUudS10YWQuY29tIiwicm9sZSI6IlNUVURFTlQiLCJzZWVkV29yZCI6InNhc2giLCJpYXQiOjE3NDEyMDAwOTAsImV4cCI6MTc0MTI4NjQ5MH0.h0978Xjk5y-1k5pwkqjxWeR_5p-67CY4pP9rZiKZbOE
 
 {
     "firstName": "Alvaro",
@@ -137,10 +137,10 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNO
 ###
 PATCH http://localhost:3000/metadata
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNLb3BFdG9SWFZHaUNLYlFzRFBaIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MTE4ODc4OSwiZXhwIjoxNzQxMjc1MTg5fQ.sLtl9UD6TaHuueB4dS_LQMqOIKYR-aXYacnzY-xiNcM
 
 {
-    "institution": "MIT"
+  "firstName": "MIT"
 }
 
 ### Test para obtener un estudiante
@@ -243,21 +243,21 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlBwZjlUSjFPV
 ### optener a los profesores
 GET http://localhost:3000/teacher
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDQ4ODQxMSwiZXhwIjoxNzQwNTc0ODExfQ.zfCPJclJBqcJ2XnkwEiZB-qzN3mqx6dmYC85RH6KFF0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNLb3BFdG9SWFZHaUNLYlFzRFBaIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MTI0NzM2MiwiZXhwIjoxNzQxMzMzNzYyfQ.7Ij5qcGY1ytmVJvBupw2aDCC86WloDDFeZNnpbgI310
 
 ### Un estudiante agrega a un profesor
 POST http://localhost:3000/student/teacher
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDQ4ODQxMSwiZXhwIjoxNzQwNTc0ODExfQ.zfCPJclJBqcJ2XnkwEiZB-qzN3mqx6dmYC85RH6KFF0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNLb3BFdG9SWFZHaUNLYlFzRFBaIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MTI0NzM2MiwiZXhwIjoxNzQxMzMzNzYyfQ.7Ij5qcGY1ytmVJvBupw2aDCC86WloDDFeZNnpbgI310
 
 {
-  "teacherId": "ZN1U3pNxYFEXuQ7ZZFha"
+  "teacherId": "UxhwFocRQN8JX6hNas8X"
 }
 
 ### Ver a todos los profesores de un estudiante
 GET http://localhost:3000/student/teacher
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDQ4ODQxMSwiZXhwIjoxNzQwNTc0ODExfQ.zfCPJclJBqcJ2XnkwEiZB-qzN3mqx6dmYC85RH6KFF0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNLb3BFdG9SWFZHaUNLYlFzRFBaIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MTE5OTkyNiwiZXhwIjoxNzQxMjg2MzI2fQ.tpcHd7ohox4Qngg9Ca47iHNFkRy8l0evIs4XllfE_0M
 
 ### Un estudiante enviar un notification a un profesor
 POST http://localhost:3000/student/teacher/notification
@@ -281,15 +281,15 @@ Content-Type: application/json
 ###
 GET http://localhost:3000/student/teacher/getAllStudents
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlpOMVUzcE54WUZFWHVRN1paRmhhIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekB1LXRhZC5jb20iLCJyb2xlIjoiVEVBQ0hFUiIsImlhdCI6MTc0MDQ4ODU0OCwiZXhwIjoxNzQwNTc0OTQ4fQ.4o5zOfQfRt2u-E8DxdqY8DFlJPGCtRWB8O-FuejCRMQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik90a2lDRmlNdVFJRXYwdFJBS2FoIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekB1LXRhZC5jb20iLCJyb2xlIjoiVEVBQ0hFUiIsImlhdCI6MTc0MTA4OTgzNywiZXhwIjoxNzQxMTc2MjM3fQ.6CoM_4yAZ1YfZpar1mprbG6Y78bA23ohKGuNDd3Tybo
 
 ###
 GET http://localhost:3000/student/teacher/getStudent
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlpOMVUzcE54WUZFWHVRN1paRmhhIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekB1LXRhZC5jb20iLCJyb2xlIjoiVEVBQ0hFUiIsImlhdCI6MTc0MDQ4ODU0OCwiZXhwIjoxNzQwNTc0OTQ4fQ.4o5zOfQfRt2u-E8DxdqY8DFlJPGCtRWB8O-FuejCRMQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik90a2lDRmlNdVFJRXYwdFJBS2FoIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekB1LXRhZC5jb20iLCJyb2xlIjoiVEVBQ0hFUiIsImlhdCI6MTc0MTA4OTgzNywiZXhwIjoxNzQxMTc2MjM3fQ.6CoM_4yAZ1YfZpar1mprbG6Y78bA23ohKGuNDd3Tybo
 
 {
-  "studentId": "9ueHQuHM8UAEM0QeyB0z"
+  "studentId": "klKZweAdancEgfaNbMA2"
 }
 
 ### Ver todas las notificaciones de un profesor
@@ -300,7 +300,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlpOMVUzcE54W
 ### Un alumno se le asigna un roadmap
 PATCH http://localhost:3000/userRoadmap
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDQzMTUyOCwiZXhwIjoxNzQwNTE3OTI4fQ.M_31zRJXg9LDXCZIMU0AxkcFDJNbFUBfKemrjdHvyDM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNLb3BFdG9SWFZHaUNLYlFzRFBaIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MTE5MDgyOSwiZXhwIjoxNzQxMjc3MjI5fQ.GXpzXYRcWTVuTcE6DS2KrKEeHfQObMhfep6X9O8oOfQ
 
 ### Un alumno actualiza el estado de un campo de su roadmap
 PATCH http://localhost:3000/userRoadmap
@@ -308,14 +308,14 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNO
 Content-Type: application/json
 
 {
-    "sectionName": "Bases de Datos",
-    "topicName": "Bases de Datos NoSQL",
-    "newStatus": "done"
+  "sectionName": "Bases de Datos",
+  "topicName": "Bases de Datos NoSQL",
+  "newStatus": "done"
 }
 
 ### Obtener el roadmap del usuario autenticado
 GET http://localhost:3000/userRoadmap
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDQzMTUyOCwiZXhwIjoxNzQwNTE3OTI4fQ.M_31zRJXg9LDXCZIMU0AxkcFDJNbFUBfKemrjdHvyDM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNLb3BFdG9SWFZHaUNLYlFzRFBaIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MTE5MDUzMywiZXhwIjoxNzQxMjc2OTMzfQ.rxUgFmw6PaUayu2O-BPn9qsYMB92hXpUO-SsZMvdDS8
 
 ### Eliminar el roadmap del usuario autenticado
 DELETE http://localhost:3000/userRoadmap

@@ -207,57 +207,61 @@ const updateUserMetadata = async (req, res) => {
         const { id } = req.user;
         const updates = req.body;
         const user = await User.findById(id);
+
         if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
         if (user.role === "ADMIN") return handleHttpError(res, "ADMIN_CANNOT_HAVE_METADATA", 400);
-       
+
         const METADATA_FIELDS = {
-            STUDENT: ["firstName", "lastName", "birthDate", "gender", "dni", "degree", "yearsCompleted", "specialization", "endDate", "languages", "skills", "certifications", "workExperience"],
+            STUDENT: ["firstName", "lastName", "birthDate", "gender", "dni", "specialization", "degree", "yearsCompleted", "endDate", "languages", "skills", "certifications", "workExperience"],
             TEACHER: ["firstName", "lastName", "dni", "gender", "specialization"],
         };
+
         const validFields = METADATA_FIELDS[user.role] || [];
         const metadataUpdates = {};
         const updateLog = [];
 
         if (!user.metadata) user.metadata = {};
         if (!user.updateHistory || !Array.isArray(user.updateHistory)) user.updateHistory = [];
+
         for (const key in updates) {
             if (validFields.includes(key)) {
                 const existingValue = user.metadata[key];
 
-                if (Array.isArray(updates[key]) && Array.isArray(existingValue)) {
-                    const mergedData = [...new Set([...existingValue, ...updates[key]].map(JSON.stringify))].map(JSON.parse);
-
-                    if (JSON.stringify(existingValue) !== JSON.stringify(mergedData)) {
-                        metadataUpdates[`metadata.${key}`] = mergedData;
-                        updateLog.push({ field: key, oldValue: existingValue ?? null, newValue: mergedData });
-                    }
+                if (Array.isArray(updates[key])) {
+                    const existingArray = Array.isArray(existingValue) ? existingValue : [];
+                    const mergedData = [...new Set([...existingArray, ...updates[key]].map(JSON.stringify))].map(JSON.parse);
+                    metadataUpdates[`metadata.${key}`] = mergedData;
+                    updateLog.push({ field: key, oldValue: existingValue ?? null, newValue: mergedData });
                 } else {
-                    if (existingValue !== updates[key]) {
-                        metadataUpdates[`metadata.${key}`] = updates[key];
-                        updateLog.push({ field: key, oldValue: existingValue ?? null, newValue: updates[key] });
-                    }
+                    metadataUpdates[`metadata.${key}`] = updates[key];
+                    updateLog.push({ field: key, oldValue: existingValue ?? null, newValue: updates[key] });
                 }
             }
         }
 
-        if (Object.keys(metadataUpdates).length === 0) return handleHttpError(res, "NO_VALID_FIELDS_TO_UPDATE", 400);
+        if (Object.keys(metadataUpdates).length === 0) {
+            return handleHttpError(res, "NO_VALID_FIELDS_TO_UPDATE", 400);
+        }
+
         const now = new Date();
         user.updateHistory.push({
             timestamp: now.toISOString(),
-            changes: updateLog.filter(change => change.oldValue !== undefined && change.newValue !== undefined)
+            changes: updateLog.filter(change => change.oldValue !== undefined && change.newValue !== undefined),
         });
 
         const oneYearAgo = new Date();
         oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
         user.updateHistory = user.updateHistory.filter(entry => new Date(entry.timestamp) > oneYearAgo);
+
         metadataUpdates["metadata.updatedAt"] = now.toISOString();
         metadataUpdates["updateHistory"] = user.updateHistory;
+
         await User.update(id, metadataUpdates);
 
         return res.status(200).json({
             message: "METADATA_UPDATED_SUCCESS",
             updatedFields: metadataUpdates,
-            updateHistory: user.updateHistory
+            updateHistory: user.updateHistory,
         });
     } catch (error) {
         console.error("Update User Metadata Error:", error);
@@ -511,6 +515,93 @@ const getAH = async (req, res) => {
     }
 };
 
+// const updateRoadmap = async (req, res) => {
+//     try {
+//         const { id } = req.user;
+//         const { sectionName, topicName, newStatus } = req.body;
+
+//         const user = await User.findById(id);
+//         if (!user) return res.status(404).json({ error: "USER_NOT_FOUND" });
+
+//         let roadmap = user.metadata.roadmap;
+//         const acquiredSkills = new Set(user.metadata.skills || []);
+//         const userSubjects = user.metadata.AH?.subjects || [];
+
+//         // Si el roadmap no está definido, intentar obtenerlo de la base de datos
+//         if (!roadmap || roadmap.name !== user.metadata.specialization) {
+//             try {
+//                 console.log(user.metadata.specialization);
+//                 const roadmapData = await Roadmap.findByName(user.metadata.specialization);
+//                 if (!roadmapData) return res.status(404).json({ error: "ROADMAP_NOT_FOUND" });
+
+//                 roadmap = roadmapData;
+//                 user.metadata.roadmap = roadmap;
+//             } catch (err) {
+//                 return res.status(500).json({ error: "ERROR_FETCHING_ROADMAP" });
+//             }
+//         }
+
+//         let hasChanges = false;
+//         const updatedRoadmapBody = { ...roadmap.body };
+
+//         // Auto-completar temas según las notas del usuario
+//         for (const [section, topics] of Object.entries(updatedRoadmapBody)) {
+//             for (const [topic, topicData] of Object.entries(topics)) {
+//                 if (topicData?.subject) {
+//                     const subjectMatch = userSubjects.find(
+//                         (s) => s.name === topicData.subject && s.grade >= 5.0
+//                     );
+
+//                     if (subjectMatch && topicData.status !== "done") {
+//                         topicData.status = "done";
+//                         hasChanges = true;
+//                         if (topicData.skill) acquiredSkills.add(topicData.skill);
+//                     }
+//                 }
+//             }
+//         }
+
+//         let metadataUpdates = {};
+//         if (!sectionName || !topicName || !newStatus) {
+//             if (hasChanges) {
+//                 metadataUpdates = {
+//                     "metadata.roadmap.body": updatedRoadmapBody,
+//                     "metadata.skills": Array.from(acquiredSkills),
+//                     "metadata.roadmap.lastUpdatedAt": new Date().toISOString(),
+//                     "updatedAt": new Date().toISOString(),
+//                 };
+//                 await User.update(id, metadataUpdates);
+//                 return res.status(200).json({ message: "Roadmap actualizado automáticamente" });
+//             }
+//             return res.status(400).json({ error: "NO_CHANGES_DETECTED" });
+//         }
+
+//         if (!updatedRoadmapBody[sectionName] || !updatedRoadmapBody[sectionName][topicName]) return res.status(404).json({ error: "SECTION_OR_TOPIC_NOT_FOUND" });
+//         const topic = updatedRoadmapBody[sectionName][topicName];
+//         if (topic.status === newStatus) return res.status(400).json({ error: "STATUS_ALREADY_SET" });
+        
+//         topic.status = newStatus;
+//         hasChanges = true;
+//         if (newStatus === "done" && topic.skill) acquiredSkills.add(topic.skill);
+//         metadataUpdates = {
+//             [`metadata.roadmap.body.${sectionName}.${topicName}.status`]: newStatus,
+//             "metadata.skills": Array.from(acquiredSkills),
+//             "metadata.roadmap.lastUpdatedAt": new Date().toISOString(),
+//             "updatedAt": new Date().toISOString(),
+//         };
+
+//         if (hasChanges) {
+//             await User.update(id, metadataUpdates);
+//             return res.status(200).json({ message: "Roadmap actualizado correctamente" });
+//         }
+
+//         return res.status(400).json({ error: "NO_CHANGES_DETECTED" });
+//     } catch (error) {
+//         console.error("Error updating roadmap:", error);
+//         res.status(500).json({ error: "Error updating roadmap" });
+//     }
+// };
+
 const updateRoadmap = async (req, res) => {
     try {
         const { id } = req.user;
@@ -523,15 +614,20 @@ const updateRoadmap = async (req, res) => {
         const acquiredSkills = new Set(user.metadata.skills || []);
         const userSubjects = user.metadata.AH?.subjects || [];
 
-        // Si el roadmap no está definido, intentar obtenerlo de la base de datos
+        // Si el roadmap no está definido o no coincide con la especialización, obtenerlo de la BD
         if (!roadmap || roadmap.name !== user.metadata.specialization) {
             try {
-                console.log(user.metadata.specialization);
                 const roadmapData = await Roadmap.findByName(user.metadata.specialization);
                 if (!roadmapData) return res.status(404).json({ error: "ROADMAP_NOT_FOUND" });
 
                 roadmap = roadmapData;
                 user.metadata.roadmap = roadmap;
+
+                // Guardar el roadmap en el usuario y responder directamente si no hay `body`
+                await User.update(id, { "metadata.roadmap": roadmap });
+                if (!req.body || Object.keys(req.body).length === 0) {
+                    return res.status(200).json({ message: "Roadmap asignado correctamente" });
+                }
             } catch (err) {
                 return res.status(500).json({ error: "ERROR_FETCHING_ROADMAP" });
             }
@@ -557,37 +653,38 @@ const updateRoadmap = async (req, res) => {
             }
         }
 
-        let metadataUpdates = {};
         if (!sectionName || !topicName || !newStatus) {
             if (hasChanges) {
-                metadataUpdates = {
+                await User.update(id, {
                     "metadata.roadmap.body": updatedRoadmapBody,
                     "metadata.skills": Array.from(acquiredSkills),
                     "metadata.roadmap.lastUpdatedAt": new Date().toISOString(),
                     "updatedAt": new Date().toISOString(),
-                };
-                await User.update(id, metadataUpdates);
+                });
                 return res.status(200).json({ message: "Roadmap actualizado automáticamente" });
             }
-            return res.status(400).json({ error: "NO_CHANGES_DETECTED" });
+            return res.status(200).json({ message: "No hay cambios que realizar" });
         }
 
-        if (!updatedRoadmapBody[sectionName] || !updatedRoadmapBody[sectionName][topicName]) return res.status(404).json({ error: "SECTION_OR_TOPIC_NOT_FOUND" });
+        if (!updatedRoadmapBody[sectionName] || !updatedRoadmapBody[sectionName][topicName]) {
+            return res.status(404).json({ error: "SECTION_OR_TOPIC_NOT_FOUND" });
+        }
         const topic = updatedRoadmapBody[sectionName][topicName];
-        if (topic.status === newStatus) return res.status(400).json({ error: "STATUS_ALREADY_SET" });
-        
+        if (topic.status === newStatus) {
+            return res.status(400).json({ error: "STATUS_ALREADY_SET" });
+        }
+
         topic.status = newStatus;
         hasChanges = true;
         if (newStatus === "done" && topic.skill) acquiredSkills.add(topic.skill);
-        metadataUpdates = {
-            [`metadata.roadmap.body.${sectionName}.${topicName}.status`]: newStatus,
-            "metadata.skills": Array.from(acquiredSkills),
-            "metadata.roadmap.lastUpdatedAt": new Date().toISOString(),
-            "updatedAt": new Date().toISOString(),
-        };
 
         if (hasChanges) {
-            await User.update(id, metadataUpdates);
+            await User.update(id, {
+                [`metadata.roadmap.body.${sectionName}.${topicName}.status`]: newStatus,
+                "metadata.skills": Array.from(acquiredSkills),
+                "metadata.roadmap.lastUpdatedAt": new Date().toISOString(),
+                "updatedAt": new Date().toISOString(),
+            });
             return res.status(200).json({ message: "Roadmap actualizado correctamente" });
         }
 

@@ -13,14 +13,14 @@ Content-Type: application/json
 
 ### crear un roadmap (Admin)
 POST http://localhost:3000/roadmaps/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkxxMlU3aEhtMkhuR1RSOFdLZlg5IiwiZW1haWwiOiJhbHZhcm8udmF6cXVlei4xNzE2QGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc0MDM0Mzg3MywiZXhwIjoxNzQwNDMwMjczfQ.1BA2bqxmko_J1brpocENRKrEMxvvAKv7TjTfaTkHp0s
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlNzV1F5N2JKR1BvVFFkbGg4RlRNIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlei4xNzE2QGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc0MTE3ODEzNCwiZXhwIjoxNzQxMjY0NTM0fQ.DV5u23M6bkUT4njRdGUgdCNMawxDsQqAUbsTi1_Ufjk
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
 
 ------WebKitFormBoundary
-Content-Disposition: form-data; name="file"; filename="roadmapDataAnalyst.json"
+Content-Disposition: form-data; name="file"; filename="roadmapFrontend.json"
 Content-Type: application/json
 
-< ./roadmapDataAnalyst.json
+< ./roadmapFrontend.json
 ------WebKitFormBoundary--
 
 ### obtener todos los roadmaps (admin)
@@ -28,8 +28,8 @@ GET http://localhost:3000/roadmaps/
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkxxMlU3aEhtMkhuR1RSOFdLZlg5IiwiZW1haWwiOiJhbHZhcm8udmF6cXVlei4xNzE2QGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc0MDM0MzIyMywiZXhwIjoxNzQwNDI5NjIzfQ.Ft3D9QzfJxAvrKL1cBBz0tZMYfd2IJiYYa5IZyCYtNw
 
 ### optener un roadmap por su nombre (admin)
-GET http://localhost:3000/roadmaps/Data Analyst
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkxxMlU3aEhtMkhuR1RSOFdLZlg5IiwiZW1haWwiOiJhbHZhcm8udmF6cXVlei4xNzE2QGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc0MDM0Mzg3MywiZXhwIjoxNzQwNDMwMjczfQ.1BA2bqxmko_J1brpocENRKrEMxvvAKv7TjTfaTkHp0s
+GET http://localhost:3000/roadmaps/Artificial Intelligence
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlNzV1F5N2JKR1BvVFFkbGg4RlRNIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlei4xNzE2QGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc0MTE5MDc4MywiZXhwIjoxNzQxMjc3MTgzfQ.3rJmK_dvN4l1UtlELNnXwnnjZHT70EGUYsS_Z_aLIaI
 
 ### login de un estudiante
 POST http://localhost:3000/login
