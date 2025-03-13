@@ -6,6 +6,7 @@
           "intro a desarrollo frontend": {
             "description": "Este roadmap está diseñado para estudiantes que desean desarrollar habilidades en desarrollo frontend. Se enfoca en fundamentos web, frameworks modernos, optimización de rendimiento y herramientas de desarrollo.",
             "status": "doing",
+            "programming_languages": "",
             "skill": "hello",
             "subject": "",
             "resources": [
@@ -20,6 +21,7 @@
           "HTML y CSS": {
             "description": "Aprende la estructura y el diseño de páginas web con HTML y CSS, incluyendo Flexbox y Grid.",
             "status": "doing",
+            "programming_languages": "HTML",
             "skill": "HTML",
             "subject": "Fundamentos de Desarrollo Web",
             "resources": [
@@ -32,6 +34,7 @@
           "JavaScript Básico": {
             "description": "Fundamentos de JavaScript, incluyendo variables, funciones, eventos y manipulación del DOM.",
             "status": "doing",
+            "programming_languages": "JavaScript",
             "skill": "JavaScript",
             "subject": "Fundamentos de Desarrollo Web",
             "resources": [
@@ -46,6 +49,7 @@
           "React": {
             "description": "Aprende React, la biblioteca más popular para la creación de interfaces de usuario interactivas.",
             "status": "doing",
+            "programming_languages": "JavaScript",
             "skill": "React",
             "subject": "Programación Web I, Cliente",
             "resources": [
@@ -58,6 +62,7 @@
           "Vue.js": {
             "description": "Conoce Vue.js, un framework progresivo para la construcción de interfaces de usuario.",
             "status": "doing",
+            "programming_languages": "JavaScript",
             "skill": "Vue.js",
             "subject": "Programación Web I, Cliente",
             "resources": [
@@ -72,7 +77,8 @@
           "Git y Control de Versiones": {
             "description": "Uso de Git y GitHub para manejar el control de versiones en proyectos frontend.",
             "status": "doing",
-            "skill": "Git",
+            "programming_languages": "Git",
+            "skill": "GitHub",
             "subject": "",
             "resources": [
               {
@@ -84,6 +90,7 @@
           "Optimización de Rendimiento": {
             "description": "Aprende técnicas para mejorar el rendimiento de las aplicaciones web.",
             "status": "doing",
+            "programming_languages": "",
             "skill": "Performance Optimization",
             "subject": "",
             "resources": [
@@ -98,6 +105,7 @@
           "Testing en Frontend": {
             "description": "Aprende a probar aplicaciones frontend con Jest y Cypress.",
             "status": "doing",
+            "programming_languages": "",
             "skill": "Web Testing",
             "subject": "Programación Web II, Servidor",
             "resources": [
@@ -110,6 +118,7 @@
           "Manejo de Estado con Redux": {
             "description": "Gestión de estado global en aplicaciones frontend usando Redux.",
             "status": "doing",
+            "programming_languages": "",
             "skill": "Redux",
             "subject": "",
             "resources": [

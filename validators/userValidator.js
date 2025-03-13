@@ -63,7 +63,7 @@ const validateLogin = [
 
 const METADATA_FIELDS = {
     STUDENT: new Set([
-        "firstName", "lastName", "birthDate", "gender", "dni", "degree", "endDate", "specialization", "languages", "skills", "certifications", "workExperience", "academicHistory"
+        "firstName", "lastName", "birthDate", "gender", "dni", "degree", "endDate", "specialization", "languages", "programming_languages", "skills", "certifications", "workExperience", "academicHistory"
     ]),
     TEACHER: new Set([
         "firstName", "lastName", "gender", "dni", "specialization"
@@ -119,6 +119,11 @@ const validateMetadata = [
 
     validateArrayObjects("languages", [
         { name: "language", type: "string" },
+        { name: "level", type: "string", enum: ["A1", "A2", "B1", "B2", "C1", "C2"] },
+    ]),
+
+    validateArrayObjects("programming_languages", [
+        { name: "name", type: "string" },
         { name: "level", type: "string", enum: ["low", "medium", "high"] },
     ]),
 

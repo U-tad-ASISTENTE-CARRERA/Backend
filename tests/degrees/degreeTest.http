@@ -13,7 +13,7 @@ Content-Type: application/json
 
 ### registrar un nuevo degree
 POST http://localhost:3000/degrees/ 
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlRiNndRbzJPZnFVVGNKSzNXbG8yIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlei4xNzE2QGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc0MDA3MzkzNCwiZXhwIjoxNzQwMTYwMzM0fQ.EXnoYdrmVi1OKOCk_rIxZ58nTn1WWneFlQZNkyPJbLM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkZwWVZWUU02a044eVAwdWRXVTZsIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlei4xNzE2QGdtYWlsLmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc0MTg3MTI5MiwiZXhwIjoxNzQxOTU3NjkyfQ.KSc5wrWMqIRvs8Pt_Q19IjViLpfeQn899DZKn9-b2CU
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
 
 ------WebKitFormBoundary

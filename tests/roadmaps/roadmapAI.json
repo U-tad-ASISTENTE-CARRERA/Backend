@@ -6,6 +6,7 @@
         "Introducción a la Inteligencia Artificial": {
           "description": "Este roadmap está diseñado para estudiantes interesados en el desarrollo de inteligencia artificial. Cubre fundamentos de IA, aprendizaje automático, deep learning, manipulación de datos y ética en IA.",
           "status": "doing",
+          "programming_languages": "",
           "skill": "hello",
           "subject": "",
           "resources": [
@@ -20,6 +21,7 @@
         "Python Básico": {
           "description": "Lenguaje de programación esencial para la inteligencia artificial, utilizado en aprendizaje automático y ciencia de datos.",
           "status": "doing",
+          "programming_languages": "Python",
           "skill": "Python",
           "subject": "",
           "resources": [
@@ -34,6 +36,7 @@
         "Conceptos de Machine Learning": {
           "description": "Fundamentos del aprendizaje automático, incluyendo modelos supervisados y no supervisados.",
           "status": "doing",
+          "programming_languages": "Python",
           "skill": "machine_learning",
           "subject": "Aprendizaje Automático I",
           "resources": [
@@ -48,6 +51,7 @@
         "Redes Neuronales Profundas": {
           "description": "Uso de frameworks como TensorFlow y PyTorch para el desarrollo de redes neuronales profundas.",
           "status": "doing",
+          "programming_languages": "Python",
           "skill": "deep_learning",
           "subject": "Aprendizaje Automático II",
           "resources": [
@@ -62,6 +66,7 @@
         "Uso de Datasets": {
           "description": "Búsqueda, limpieza y manipulación de datasets para entrenar modelos de IA.",
           "status": "doing",
+          "programming_languages": "Python",
           "skill": "data_analysis",
           "subject": "Procesamiento de Datos",
           "resources": [
@@ -76,6 +81,7 @@
         "Probabilidad y Estadística para IA": {
           "description": "Aplicación de estadística avanzada para entender y mejorar modelos de IA.",
           "status": "doing",
+          "programming_languages": "R",
           "skill": "maths",
           "subject": "Probabilidad y Estadística",
           "resources": [
@@ -90,6 +96,7 @@
         "Construcción y Entrenamiento de Redes Neuronales": {
           "description": "Construcción y entrenamiento de redes neuronales para la resolución de problemas complejos.",
           "status": "doing",
+          "programming_languages": "Python",
           "skill": "deep_learning",
           "subject": "Visión por Computador",
           "resources": [
@@ -104,6 +111,7 @@
         "Optimización de Modelos Preentrenados": {
           "description": "Ajuste y optimización de modelos preentrenados como GPT, BERT o ResNet para tareas específicas.",
           "status": "doing",
+          "programming_languages": "Python",
           "skill": "deep_learning",
           "subject": "Visión por Computador",
           "resources": [
@@ -118,6 +126,7 @@
         "Consideraciones Éticas en IA": {
           "description": "Exploración de los aspectos éticos en el desarrollo y aplicación de inteligencia artificial.",
           "status": "doing",
+          "programming_languages": "",
           "skill": "",
           "subject": "",
           "resources": [

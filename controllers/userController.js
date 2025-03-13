@@ -212,8 +212,8 @@ const updateUserMetadata = async (req, res) => {
         if (user.role === "ADMIN") return handleHttpError(res, "ADMIN_CANNOT_HAVE_METADATA", 400);
 
         const METADATA_FIELDS = {
-            STUDENT: ["firstName", "lastName", "birthDate", "gender", "dni", "specialization", "degree", "yearsCompleted", "endDate", "languages", "skills", "certifications", "workExperience"],
-            TEACHER: ["firstName", "lastName", "dni", "gender", "specialization"],
+            STUDENT: ["firstName", "lastName", "birthDate", "gender", "specialization", "degree", "yearsCompleted", "endDate", "languages", "programming_languages","skills", "certifications", "workExperience"],
+            TEACHER: ["firstName", "lastName", "gender", "specialization"],
         };
 
         const validFields = METADATA_FIELDS[user.role] || [];
@@ -278,8 +278,8 @@ const deleteUserMetadata = async (req, res) => {
         if (user.role === "ADMIN") return handleHttpError(res, "ADMIN_CANNOT_HAVE_METADATA", 400);
         
         const METADATA_FIELDS = {
-            STUDENT: ["firstName", "lastName", "birthDate", "gender", "dni", "degree","specialization", "endDate", "languages", "skills", "certifications", "workExperience"],
-            TEACHER: ["firstName", "lastName", "dni", "gender", "specialization"],
+            STUDENT: ["firstName", "lastName", "birthDate", "gender", "specialization", "degree", "yearsCompleted", "endDate", "languages", "programming_languages","skills", "certifications", "workExperience"],
+            TEACHER: ["firstName", "lastName", "gender", "specialization"],
         };
 
         const validFields = METADATA_FIELDS[user.role];
@@ -343,11 +343,7 @@ const deleteUserMetadata = async (req, res) => {
 const updateAH = async (req, res) => {
     try {
         const { id } = req.user;
-        const { grades } = req.body; 
-
-        if (!Array.isArray(grades)) {
-            return handleHttpError(res, "INVALID_INPUT", 400, "Se espera un array de notas.");
-        }
+        const { grades } = req.body;
 
         const user = await User.findById(id);
         if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
@@ -363,14 +359,29 @@ const updateAH = async (req, res) => {
 
                 user.metadata.AH.subjects = degree.subjects.map(subject => ({
                     ...subject,
-                    grade: null 
+                    grade: null,
                 }));
             } catch (error) {
                 return handleHttpError(res, "DEGREE_NOT_FOUND", 404, `No se encontró el grado '${userDegree}'.`);
             }
         }
 
-        if (!user.updateHistory) user.updateHistory = []; 
+        // Si no se envían notas, inicializamos AH y devolvemos la estructura
+        if (!grades) {
+            await User.update(id, { "metadata.AH": user.metadata.AH });
+            return res.status(200).json({
+                message: "AH_INITIALIZED",
+                metadataAH: user.metadata.AH,
+            });
+        }
+
+        // Validación de que grades es un array
+        if (!Array.isArray(grades)) {
+            return handleHttpError(res, "INVALID_INPUT", 400, "Se espera un array de notas.");
+        }
+
+        // Si se envían notas, continuamos con la actualización
+        if (!user.updateHistory) user.updateHistory = [];
 
         const updateLog = [];
         const updatedSubjects = user.metadata.AH.subjects.map(subject => {
@@ -379,7 +390,7 @@ const updateAH = async (req, res) => {
                 updateLog.push({
                     field: subject.name,
                     oldValue: subject.grade,
-                    newValue: newGrade.grade
+                    newValue: newGrade.grade,
                 });
             }
             return newGrade ? { ...subject, grade: newGrade.grade } : subject;
@@ -389,12 +400,14 @@ const updateAH = async (req, res) => {
             return handleHttpError(res, "NO_VALID_FIELDS_TO_UPDATE", 400);
         }
 
+        // Validación del rango de las notas
         for (const subject of updatedSubjects) {
             if (subject.grade !== null && (subject.grade < 0 || subject.grade > 10)) {
                 return handleHttpError(res, "INVALID_GRADE_RANGE", 400, `La nota de '${subject.name}' debe estar entre 0 y 10.`);
             }
         }
 
+        // Cálculo de métricas
         const subjectsWithGrades = updatedSubjects.filter(subject => subject.grade !== null);
         const totalCredits = updatedSubjects.reduce((acc, subject) => acc + subject.credits, 0);
         const totalCreditsWithGrades = subjectsWithGrades.reduce((acc, subject) => acc + subject.credits, 0);
@@ -411,15 +424,49 @@ const updateAH = async (req, res) => {
             .sort((a, b) => a.grade - b.grade)
             .slice(0, 5);
 
+        // Actualización de skills
         const skillsSet = new Set();
         updatedSubjects.forEach(subject => {
-            if (subject.grade !== null && subject.grade > 5.0) {
+            if (subject.grade !== null && subject.grade >= 5.0) {
                 subject.skills.forEach(skill => skillsSet.add(skill));
             }
         });
 
         const acquiredSkills = Array.from(skillsSet);
 
+        // Actualización de programming_languages (solo si la nota es >= 5)
+        if (!user.metadata.programming_languages) user.metadata.programming_languages = [];
+
+        const programmingLanguagesSet = new Set(user.metadata.programming_languages.map(pl => pl.name));
+        updatedSubjects.forEach(subject => {
+            if (subject.programming_languages && subject.grade !== null && subject.grade >= 5.0 && !programmingLanguagesSet.has(subject.programming_languages)) {
+                user.metadata.programming_languages.push({
+                    name: subject.programming_languages,
+                    level: "medium", // Nivel por defecto
+                });
+                programmingLanguagesSet.add(subject.programming_languages); // Evitar duplicados
+            }
+        });
+
+        // Actualización de completedFields (si todas las asignaturas con el mismo label tienen nota >= 5)
+        if (!user.metadata.completedFields) user.metadata.completedFields = [];
+
+        const labelsMap = new Map(); // Mapa para agrupar asignaturas por label
+        updatedSubjects.forEach(subject => {
+            if (!labelsMap.has(subject.label)) {
+                labelsMap.set(subject.label, []);
+            }
+            labelsMap.get(subject.label).push(subject);
+        });
+
+        labelsMap.forEach((subjects, label) => {
+            const allPassed = subjects.every(subject => subject.grade !== null && subject.grade >= 5.0);
+            if (allPassed && !user.metadata.completedFields.includes(label)) {
+                user.metadata.completedFields.push(label);
+            }
+        });
+
+        // Cálculo de años completados
         const yearsCompleted = [];
         const yearsGrouped = updatedSubjects.reduce((acc, subject) => {
             acc[subject.year] = acc[subject.year] || [];
@@ -437,16 +484,18 @@ const updateAH = async (req, res) => {
             }
         });
 
+        // Actualización del historial de cambios
         const now = new Date();
         user.updateHistory.push({
             timestamp: now.toISOString(),
-            changes: updateLog
+            changes: updateLog,
         });
 
         const oneYearAgo = new Date();
         oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
         user.updateHistory = user.updateHistory.filter(entry => new Date(entry.timestamp) > oneYearAgo);
 
+        // Preparación de las actualizaciones de metadata
         const metadataUpdates = {
             "metadata.AH.subjects": updatedSubjects,
             "metadata.AH.averageGrade": averageGrade,
@@ -456,18 +505,21 @@ const updateAH = async (req, res) => {
             "metadata.AH.top5WorstSubjects": top5WorstSubjects,
             "metadata.AH.lastUpdatedAt": now.toISOString(),
             "metadata.skills": acquiredSkills,
-            "metadata.yearsCompleted": yearsCompleted, 
+            "metadata.programming_languages": user.metadata.programming_languages,
+            "metadata.completedFields": user.metadata.completedFields,
+            "metadata.yearsCompleted": yearsCompleted,
             "updateHistory": user.updateHistory,
             updatedAt: now.toISOString(),
         };
 
+        // Guardar las actualizaciones en la base de datos
         await User.update(id, metadataUpdates);
 
-        return res.status(200).json({ 
-            message: "SUBJECTS_METADATA_UPDATED", 
-            updatedSubjects, 
+        return res.status(200).json({
+            message: "SUBJECTS_METADATA_UPDATED",
+            updatedSubjects,
             metadataUpdates,
-            updateHistory: user.updateHistory
+            updateHistory: user.updateHistory,
         });
     } catch (error) {
         console.error("Error updating subjects metadata:", error.message);
@@ -515,93 +567,6 @@ const getAH = async (req, res) => {
     }
 };
 
-// const updateRoadmap = async (req, res) => {
-//     try {
-//         const { id } = req.user;
-//         const { sectionName, topicName, newStatus } = req.body;
-
-//         const user = await User.findById(id);
-//         if (!user) return res.status(404).json({ error: "USER_NOT_FOUND" });
-
-//         let roadmap = user.metadata.roadmap;
-//         const acquiredSkills = new Set(user.metadata.skills || []);
-//         const userSubjects = user.metadata.AH?.subjects || [];
-
-//         // Si el roadmap no está definido, intentar obtenerlo de la base de datos
-//         if (!roadmap || roadmap.name !== user.metadata.specialization) {
-//             try {
-//                 console.log(user.metadata.specialization);
-//                 const roadmapData = await Roadmap.findByName(user.metadata.specialization);
-//                 if (!roadmapData) return res.status(404).json({ error: "ROADMAP_NOT_FOUND" });
-
-//                 roadmap = roadmapData;
-//                 user.metadata.roadmap = roadmap;
-//             } catch (err) {
-//                 return res.status(500).json({ error: "ERROR_FETCHING_ROADMAP" });
-//             }
-//         }
-
-//         let hasChanges = false;
-//         const updatedRoadmapBody = { ...roadmap.body };
-
-//         // Auto-completar temas según las notas del usuario
-//         for (const [section, topics] of Object.entries(updatedRoadmapBody)) {
-//             for (const [topic, topicData] of Object.entries(topics)) {
-//                 if (topicData?.subject) {
-//                     const subjectMatch = userSubjects.find(
-//                         (s) => s.name === topicData.subject && s.grade >= 5.0
-//                     );
-
-//                     if (subjectMatch && topicData.status !== "done") {
-//                         topicData.status = "done";
-//                         hasChanges = true;
-//                         if (topicData.skill) acquiredSkills.add(topicData.skill);
-//                     }
-//                 }
-//             }
-//         }
-
-//         let metadataUpdates = {};
-//         if (!sectionName || !topicName || !newStatus) {
-//             if (hasChanges) {
-//                 metadataUpdates = {
-//                     "metadata.roadmap.body": updatedRoadmapBody,
-//                     "metadata.skills": Array.from(acquiredSkills),
-//                     "metadata.roadmap.lastUpdatedAt": new Date().toISOString(),
-//                     "updatedAt": new Date().toISOString(),
-//                 };
-//                 await User.update(id, metadataUpdates);
-//                 return res.status(200).json({ message: "Roadmap actualizado automáticamente" });
-//             }
-//             return res.status(400).json({ error: "NO_CHANGES_DETECTED" });
-//         }
-
-//         if (!updatedRoadmapBody[sectionName] || !updatedRoadmapBody[sectionName][topicName]) return res.status(404).json({ error: "SECTION_OR_TOPIC_NOT_FOUND" });
-//         const topic = updatedRoadmapBody[sectionName][topicName];
-//         if (topic.status === newStatus) return res.status(400).json({ error: "STATUS_ALREADY_SET" });
-        
-//         topic.status = newStatus;
-//         hasChanges = true;
-//         if (newStatus === "done" && topic.skill) acquiredSkills.add(topic.skill);
-//         metadataUpdates = {
-//             [`metadata.roadmap.body.${sectionName}.${topicName}.status`]: newStatus,
-//             "metadata.skills": Array.from(acquiredSkills),
-//             "metadata.roadmap.lastUpdatedAt": new Date().toISOString(),
-//             "updatedAt": new Date().toISOString(),
-//         };
-
-//         if (hasChanges) {
-//             await User.update(id, metadataUpdates);
-//             return res.status(200).json({ message: "Roadmap actualizado correctamente" });
-//         }
-
-//         return res.status(400).json({ error: "NO_CHANGES_DETECTED" });
-//     } catch (error) {
-//         console.error("Error updating roadmap:", error);
-//         res.status(500).json({ error: "Error updating roadmap" });
-//     }
-// };
-
 const updateRoadmap = async (req, res) => {
     try {
         const { id } = req.user;
@@ -614,7 +579,7 @@ const updateRoadmap = async (req, res) => {
         const acquiredSkills = new Set(user.metadata.skills || []);
         const userSubjects = user.metadata.AH?.subjects || [];
 
-        // Si el roadmap no está definido o no coincide con la especialización, obtenerlo de la BD
+        // Si el roadmap no esta definido, obtenerlo de la BD a aprtir de la especialización del usuario
         if (!roadmap || roadmap.name !== user.metadata.specialization) {
             try {
                 const roadmapData = await Roadmap.findByName(user.metadata.specialization);
@@ -625,9 +590,9 @@ const updateRoadmap = async (req, res) => {
 
                 // Guardar el roadmap en el usuario y responder directamente si no hay `body`
                 await User.update(id, { "metadata.roadmap": roadmap });
-                if (!req.body || Object.keys(req.body).length === 0) {
-                    return res.status(200).json({ message: "Roadmap asignado correctamente" });
-                }
+                // if (!req.body || Object.keys(req.body).length === 0) {
+                //     return res.status(200).json({ message: "Roadmap asignado correctamente" });
+                // }
             } catch (err) {
                 return res.status(500).json({ error: "ERROR_FETCHING_ROADMAP" });
             }
@@ -636,12 +601,19 @@ const updateRoadmap = async (req, res) => {
         let hasChanges = false;
         const updatedRoadmapBody = { ...roadmap.body };
 
-        // Auto-completar temas según las notas del usuario
+        const normalizeName = (name) => name.trim().toLowerCase();
+        const normalizedUserSubjects = userSubjects.map(subject => ({
+            ...subject,
+            normalizedName: normalizeName(subject.name),
+        }));
+
+        // Auto-completar a partir del AH
         for (const [section, topics] of Object.entries(updatedRoadmapBody)) {
             for (const [topic, topicData] of Object.entries(topics)) {
                 if (topicData?.subject) {
-                    const subjectMatch = userSubjects.find(
-                        (s) => s.name === topicData.subject && s.grade >= 5.0
+                    const normalizedSubjectName = normalizeName(topicData.subject);
+                    const subjectMatch = normalizedUserSubjects.find(
+                        (s) => s.normalizedName === normalizedSubjectName && s.grade >= 5.0
                     );
 
                     if (subjectMatch && topicData.status !== "done") {
@@ -653,10 +625,32 @@ const updateRoadmap = async (req, res) => {
             }
         }
 
+        // Verificar si todas las asignaturas de un tema están completadas
+        for (const [section, topics] of Object.entries(updatedRoadmapBody)) {
+            for (const [topic, topicData] of Object.entries(topics)) {
+                if (topicData?.subject) {
+                    const normalizedSubjectName = normalizeName(topicData.subject);
+                    const subjectMatch = normalizedUserSubjects.find(
+                        (s) => s.normalizedName === normalizedSubjectName
+                    );
+
+                    // Si la asignatura no tiene nota >= 5, marcar el tema como "doing"
+                    if (!subjectMatch || subjectMatch.grade < 5.0) {
+                        if (topicData.status === "done") {
+                            topicData.status = "doing";
+                            hasChanges = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Si no se proporcionan sectionName, topicName o newStatus, solo autocompletar
         if (!sectionName || !topicName || !newStatus) {
             if (hasChanges) {
+                // Actualizar el roadmap y las habilidades en la base de datos
                 await User.update(id, {
-                    "metadata.roadmap.body": updatedRoadmapBody,
+                    "metadata.roadmap.body": updatedRoadmapBody, // Actualizar todo el cuerpo del roadmap
                     "metadata.skills": Array.from(acquiredSkills),
                     "metadata.roadmap.lastUpdatedAt": new Date().toISOString(),
                     "updatedAt": new Date().toISOString(),
@@ -666,21 +660,28 @@ const updateRoadmap = async (req, res) => {
             return res.status(200).json({ message: "No hay cambios que realizar" });
         }
 
+        // Validar que la sección y el tema existen
         if (!updatedRoadmapBody[sectionName] || !updatedRoadmapBody[sectionName][topicName]) {
             return res.status(404).json({ error: "SECTION_OR_TOPIC_NOT_FOUND" });
         }
+
+        // Obtener el tema específico
         const topic = updatedRoadmapBody[sectionName][topicName];
+
+        // Si el estado es el mismo, no hacer cambios
         if (topic.status === newStatus) {
-            return res.status(400).json({ error: "STATUS_ALREADY_SET" });
+            return res.status(200).json({ message: "No hay cambios que realizar (estado ya está actualizado)" });
         }
 
+        // Actualizar el estado del tema
         topic.status = newStatus;
         hasChanges = true;
         if (newStatus === "done" && topic.skill) acquiredSkills.add(topic.skill);
 
+        // Guardar los cambios si los hay
         if (hasChanges) {
             await User.update(id, {
-                [`metadata.roadmap.body.${sectionName}.${topicName}.status`]: newStatus,
+                "metadata.roadmap.body": updatedRoadmapBody, // Actualizar todo el cuerpo del roadmap
                 "metadata.skills": Array.from(acquiredSkills),
                 "metadata.roadmap.lastUpdatedAt": new Date().toISOString(),
                 "updatedAt": new Date().toISOString(),
@@ -871,8 +872,6 @@ const getAllStudentsOfTeacher = async (req, res) => {
         return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
     }
 };
-
-
 
 const getSpecializationTeacher = async (req, res) => {
     try {

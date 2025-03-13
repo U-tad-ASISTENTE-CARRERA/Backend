@@ -6,6 +6,7 @@
           "Introducción al Desarrollo Backend": {
             "description": "Este roadmap está diseñado para estudiantes interesados en el desarrollo backend. Cubre fundamentos de programación, bases de datos, APIs, arquitecturas y seguridad en backend.",
             "status": "doing",
+            "programming_languages": "",
             "skill": "hello",
             "subject": "",
             "resources": [
@@ -20,6 +21,7 @@
           "Programación con Python/JavaScript": {
             "description": "Lenguajes de programación esenciales para el desarrollo backend.",
             "status": "doing",
+            "programming_languages": "JavaScript",
             "skill": "programming",
             "subject": "",
             "resources": [
@@ -38,6 +40,7 @@
           "SQL y NoSQL": {
             "description": "Fundamentos de bases de datos relacionales y no relacionales.",
             "status": "doing",
+            "programming_languages": "SQL",
             "skill": "databases",
             "subject": "",
             "resources": [
@@ -60,6 +63,7 @@
           "Desarrollo de REST y GraphQL": {
             "description": "Creación y consumo de APIs REST y GraphQL para aplicaciones modernas.",
             "status": "doing",
+            "programming_languages": "JavaScript",
             "skill": "backend_development",
             "subject": "",
             "resources": [
@@ -74,6 +78,7 @@
           "Patrones de Diseño en Backend": {
             "description": "Uso de patrones de diseño y arquitecturas como MVC, Microservicios y Serverless.",
             "status": "doing",
+            "programming_languages": "JavaScript",
             "skill": "software_architecture",
             "subject": "",
             "resources": [
@@ -88,6 +93,7 @@
           "Autenticación y Autorización": {
             "description": "Mecanismos de autenticación como JWT, OAuth, y seguridad en APIs.",
             "status": "doing",
+            "programming_languages": "",
             "skill": "security",
             "subject": "",
             "resources": [
@@ -102,6 +108,7 @@
           "Docker y Kubernetes": {
             "description": "Contenerización y orquestación de aplicaciones backend.",
             "status": "doing",
+            "programming_languages": "",
             "skill": "devops",
             "subject": "",
             "resources": [

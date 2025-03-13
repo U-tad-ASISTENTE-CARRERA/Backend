@@ -6,6 +6,7 @@
         "intro a ciencia de datos" : {
             "description": "Este roadmap está diseñado para estudiantes que desean desarrollar habilidades en análisis de datos. Se enfoca en bases de datos, manipulación de datos, visualización, APIs, scraping y visión por computadora.",
             "status": "doing",
+            "programming_languages": "",
             "skill": "hello",
             "subject": "",
             "resources": [
@@ -20,6 +21,7 @@
           "Python Básico": {
             "description": "Aprende los fundamentos de Python, incluyendo estructuras de datos, funciones y manejo de archivos. Base esencial para el análisis de datos.",
             "status": "doing",
+            "programming_languages": "Python",
             "skill": "Python",
             "subject": "",
             "resources": [
@@ -32,7 +34,8 @@
           "Control de Versiones": {
             "description": "Uso de Git y GitHub para el control de versiones en proyectos de análisis de datos.",
             "status": "doing",
-            "skill": "Git",
+            "programming_languages": "Git",
+            "skill": "GitHub",
             "subject": "",
             "resources": [
               {
@@ -50,6 +53,7 @@
           "Introducción a SQL": {
             "description": "Fundamentos de bases de datos relacionales, escritura de consultas SQL y normalización.",
             "status": "doing",
+            "programming_languages": "SQL",
             "skill": "SQL",
             "subject": "Bases de Datos",
             "resources": [
@@ -66,6 +70,7 @@
           "Bases de Datos NoSQL": {
             "description": "Conceptos clave de NoSQL con MongoDB y Firebase Firestore, y su uso en análisis de datos.",
             "status": "doing",
+            "programming_languages": "NoSQL",
             "skill": "NoSQL",
             "subject": "Ampliación de Bases de Datos",
             "resources": [
@@ -84,6 +89,7 @@
           "Web Scraping": {
             "description": "Uso de BeautifulSoup, Scrapy y Selenium para extraer datos de páginas web de forma automática.",
             "status": "doing",
+            "programming_languages": "Python",
             "skill": "Python",
             "subject": "Búsqueda y Análisis de la Información",
             "resources": [
@@ -96,6 +102,7 @@
           "APIs y Consumo de Datos": {
             "description": "Cómo consumir APIs REST y GraphQL para obtener datos en tiempo real con Python.",
             "status": "doing",
+            "programming_languages": "Python",
             "skill": "Python",
             "subject": "Programación Web I, Cliente",
             "resources": [
@@ -110,6 +117,7 @@
           "Introducción a Pandas": {
             "description": "Manejo de DataFrames, limpieza y transformación de datos con Pandas.",
             "status": "doing",
+            "programming_languages": "Python",
             "skill": "Python",
             "subject": "Procesamiento de Datos",
             "resources": [
@@ -128,6 +136,7 @@
           "Exploratory Data Analysis (EDA)": {
             "description": "Uso de estadísticas descriptivas para identificar patrones y anomalías en los datos.",
             "status": "doing",
+            "programming_languages": "Python",
             "skill": "Python",
             "subject": "Procesamiento de Datos",
             "resources": [
@@ -146,6 +155,7 @@
           "Matplotlib y Seaborn": {
             "description": "Generación de gráficos para visualizar tendencias y patrones en los datos.",
             "status": "doing",
+            "programming_languages": "Python",
             "skill": "Python",
             "subject": "Visualización de Datos",
             "resources": [
@@ -160,20 +170,22 @@
           "Optimización de Código": {
             "description": "Mejora del rendimiento en tu código Python para análisis de datos.",
             "status": "doing",
+            "programming_languages": "Python",
+            "skill": "Python",
+            "subject": "",
             "resources": [
               {
                 "description": "Optimización en Python: Técnicas, Paquetes y Buenas Prácticas",
                 "link": "https://www.datacamp.com/es/tutorial/optimization-in-python"
               }
-            ],
-            "skill": "Python",
-            "subject": ""
+            ]
           }
         },
         "Manejo Avanzado de APIs": {
           "Construcción de APIs para Data": {
             "description": "Creación de APIs en Flask o FastAPI para exponer datos de análisis.",
             "status": "doing",
+            "programming_languages": "Python",
             "skill": "Python",
             "subject": "Programación Web II, Servidor",
             "resources": [
@@ -192,6 +204,7 @@
           "Procesamiento de Imágenes con OpenCV": {
             "description": "Manipulación de imágenes con OpenCV para preprocesamiento y transformación.",
             "status": "doing",
+            "programming_languages": "Python",
             "skill": "Python",
             "subject": "Visión por Computador",
             "resources": [
