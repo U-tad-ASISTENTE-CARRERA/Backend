@@ -22,7 +22,6 @@ Para utilizar este backend, siga los siguientes pasos:
 ### 1. Clonar el Repositorio
 ```sh
 git clone https://github.com/U-tad-ASISTENTE-CARRERA/Backend.git
-cd backend
 ```
 
 ### 2. Instalar Dependencias
