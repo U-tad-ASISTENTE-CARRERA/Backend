@@ -3,7 +3,15 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "jest --forceExit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:auth": "jest auth",
+    "test:profile": "jest profile",
+    "test:academic": "jest academic",
+    "test:roadmap": "jest roadmap",
+    "test:teachers": "jest teachers",
+    "test:students": "jest students",
     "start": "nodemon app.js"
   },
   "keywords": [],
