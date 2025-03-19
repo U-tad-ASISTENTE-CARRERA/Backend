@@ -1,43 +1,43 @@
-# Documentación de API - GPS Académico Backend (Revisada)
+# Documentación de API de Usuarios
 
-Esta documentación describe todas las rutas disponibles en el backend de GPS Académico, organizadas por categoría funcional.
+Este documento proporciona información detallada sobre todas las rutas relacionadas con usuarios en la API del Backend de GPS Académico.
 
 ## Índice
 
-- [Autenticación y Gestión de Usuarios](#autenticación-y-gestión-de-usuarios)
+- [Autenticación](#autenticación)
 - [Gestión de Perfiles](#gestión-de-perfiles)
+- [Gestión de Metadatos](#gestión-de-metadatos)
 - [Historial Académico](#historial-académico)
-- [Roadmaps](#roadmaps)
+- [Gestión de Roadmaps](#gestión-de-roadmaps)
 - [Interacción Estudiante-Profesor](#interacción-estudiante-profesor)
-- [Titulaciones (Degrees)](#titulaciones-degrees)
-- [Administración](#administración)
+- [Sistema de Notificaciones](#sistema-de-notificaciones)
+- [Operaciones de Administrador](#operaciones-de-administrador)
 
-## Autenticación y Gestión de Usuarios
+## Autenticación
 
 ### Registro de Usuario
+Crea una nueva cuenta de usuario basada en el dominio de correo electrónico (estudiantes: live.u-tad.com, profesores: u-tad.com).
 
 ```
 POST /register
 ```
 
-Registra un nuevo usuario (estudiante o profesor) en el sistema.
-
-**Cuerpo de la solicitud:**
+**Cuerpo de la Solicitud:**
 ```json
 {
   "email": "usuario@live.u-tad.com",
   "password": "ContraseñaSegura123!",
-  "seedWord": "palabra-semilla"
+  "seedWord": "mi-frase-recuperacion"
 }
 ```
 
-**Respuesta exitosa: (201 Created)**
+**Respuesta (201 Created):**
 ```json
 {
   "message": "USER_CREATED",
   "token": "jwt-token",
   "user": {
-    "id": "user-id",
+    "id": "id-usuario",
     "email": "usuario@live.u-tad.com",
     "role": "STUDENT"
   }
@@ -45,14 +45,13 @@ Registra un nuevo usuario (estudiante o profesor) en el sistema.
 ```
 
 ### Inicio de Sesión
+Autentica a un usuario y devuelve un token JWT.
 
 ```
 POST /login
 ```
 
-Autentica un usuario existente.
-
-**Cuerpo de la solicitud:**
+**Cuerpo de la Solicitud:**
 ```json
 {
   "email": "usuario@live.u-tad.com",
@@ -60,31 +59,33 @@ Autentica un usuario existente.
 }
 ```
 
-**Respuesta exitosa: (200 OK)**
+**Respuesta (200 OK):**
 ```json
 {
   "message": "LOGIN_SUCCESS",
   "token": "jwt-token",
   "user": {
-    "id": "user-id",
+    "id": "id-usuario",
     "email": "usuario@live.u-tad.com",
-    "role": "STUDENT"
+    "role": "STUDENT",
+    "updatedAt": "2023-01-01T00:00:00.000Z"
   }
 }
 ```
 
 ### Cierre de Sesión
+Cierra la sesión del usuario actual.
 
 ```
 POST /logout
 ```
 
-Cierra la sesión del usuario actual.
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-
-**Respuesta exitosa: (200 OK)**
+**Respuesta (200 OK):**
 ```json
 {
   "message": "LOGOUT_SUCCESS"
@@ -92,74 +93,88 @@ Cierra la sesión del usuario actual.
 ```
 
 ### Actualizar Contraseña
+Actualiza la contraseña de un usuario usando su palabra semilla.
 
 ```
 PUT /updatePassword
 ```
 
-Actualiza la contraseña de un usuario usando su seed word.
-
-**Cuerpo de la solicitud:**
+**Cuerpo de la Solicitud:**
 ```json
 {
   "email": "usuario@live.u-tad.com",
   "newPassword": "NuevaContraseñaSegura123!",
-  "seedWord": "palabra-semilla"
+  "seedWord": "mi-frase-recuperacion"
 }
 ```
 
-**Respuesta exitosa: (200 OK)**
+**Respuesta (200 OK):**
 ```json
 {
   "message": "PASSWORD_UPDATED_SUCCESS"
 }
 ```
 
-### Actualizar Seed Word
+## Gestión de Perfiles
+
+### Obtener Perfil de Usuario
+Recupera el perfil completo del usuario autenticado.
 
 ```
-PATCH /
+GET /
 ```
 
-Actualiza la palabra semilla (seed word) del usuario.
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-
-**Cuerpo de la solicitud:**
+**Respuesta (200 OK):**
 ```json
 {
-  "seedWord": "nueva-palabra-semilla"
-}
-```
-
-**Respuesta exitosa: (200 OK)**
-```json
-{
-  "message": "SEED_WORD_UPDATED_SUCCESS"
+  "user": {
+    "id": "id-usuario",
+    "email": "usuario@live.u-tad.com",
+    "role": "STUDENT",
+    "metadata": {
+      "firstName": "Juan",
+      "lastName": "Pérez",
+      "degree": "INSO_DATA",
+      "specialization": "Frontend Developer"
+    }
+  }
 }
 ```
 
 ### Actualizar Usuario
+Actualiza la información general del usuario.
 
 ```
 PATCH /
 ```
 
-Actualiza información general del usuario autenticado.
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
+**Opciones:**
 
-**Cuerpo de la solicitud:**
+1. **Actualizar Email:**
 ```json
 {
   "email": "nuevo-email@live.u-tad.com"
-  // Otros campos actualizables
 }
 ```
 
-**Respuesta exitosa: (200 OK)**
+2. **Actualizar Palabra Semilla:**
+```json
+{
+  "seedWord": "nueva-frase-recuperacion"
+}
+```
+
+**Respuesta (200 OK):**
 ```json
 {
   "message": "USER_UPDATED",
@@ -170,71 +185,44 @@ Actualiza información general del usuario autenticado.
 ```
 
 ### Eliminar Usuario
+Elimina la cuenta del usuario autenticado.
 
 ```
 DELETE /
 ```
 
-Elimina la cuenta del usuario autenticado.
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-
-**Respuesta exitosa: (200 OK)**
+**Respuesta (200 OK):**
 ```json
 {
   "message": "USER_DELETED"
 }
 ```
 
-## Gestión de Perfiles
+## Gestión de Metadatos
 
-### Obtener Perfil
-
-```
-GET /
-```
-
-Obtiene el perfil completo del usuario autenticado.
-
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-
-**Respuesta exitosa: (200 OK)**
-```json
-{
-  "user": {
-    "id": "user-id",
-    "email": "usuario@live.u-tad.com",
-    "role": "STUDENT",
-    "metadata": {
-      "firstName": "Nombre",
-      "lastName": "Apellido",
-      "degree": "INSO_DATA",
-      "specialization": "Frontend Developer",
-      "skills": ["HTML", "CSS", "JavaScript"]
-    }
-  }
-}
-```
-
-### Obtener Metadatos
+### Obtener Metadatos del Usuario
+Recupera solo los metadatos del usuario autenticado.
 
 ```
 GET /metadata
 ```
 
-Obtiene solo los metadatos del usuario autenticado.
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-
-**Respuesta exitosa: (200 OK)**
+**Respuesta (200 OK):**
 ```json
 {
   "metadata": {
-    "firstName": "Nombre",
-    "lastName": "Apellido",
+    "firstName": "Juan",
+    "lastName": "Pérez",
     "degree": "INSO_DATA",
     "specialization": "Frontend Developer",
     "skills": ["HTML", "CSS", "JavaScript"]
@@ -242,54 +230,104 @@ Obtiene solo los metadatos del usuario autenticado.
 }
 ```
 
-### Actualizar Metadatos
+### Actualizar Metadatos del Usuario
+Actualiza campos específicos de metadatos para el usuario autenticado.
 
 ```
 PATCH /metadata
 ```
 
-Actualiza los metadatos del usuario autenticado.
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
+**Opciones:**
 
-**Cuerpo de la solicitud (estudiante):**
+1. **Actualizar Información Personal (Estudiante):**
 ```json
 {
-  "firstName": "Nuevo Nombre",
-  "lastName": "Nuevo Apellido",
+  "firstName": "Juan",
+  "lastName": "Pérez",
+  "birthDate": "1995-05-15",
+  "gender": "male",
+  "dni": "12345678A"
+}
+```
+
+2. **Actualizar Información Académica (Estudiante):**
+```json
+{
   "degree": "INSO_DATA",
   "specialization": "Frontend Developer",
-  "skills": [
-    { "skill": "JavaScript" },
-    { "skill": "React" }
-  ],
-  "languages": [
-    { "language": "English", "level": "C1" }
-  ],
+  "endDate": "2025-06-30"
+}
+```
+
+3. **Actualizar Habilidades (Estudiante):**
+```json
+{
+  "skills": [{"skill": "JavaScript"}, {"skill": "React"}]
+}
+```
+
+4. **Actualizar Idiomas (Estudiante):**
+```json
+{
+  "languages": [{"language": "English", "level": "C1"}, {"language": "French", "level": "A2"}]
+}
+```
+
+5. **Actualizar Lenguajes de Programación (Estudiante):**
+```json
+{
+  "programming_languages": [{"name": "Python", "level": "medium"}, {"name": "JavaScript", "level": "high"}]
+}
+```
+
+6. **Actualizar Certificaciones (Estudiante):**
+```json
+{
   "certifications": [
-    { "name": "AWS Certified Developer", "date": "2024-01-15", "institution": "Amazon" }
+    {"name": "AWS Certified Developer", "date": "2024-01-15", "institution": "Amazon"},
+    {"name": "Microsoft Azure Developer", "date": "2024-02-15", "institution": "Microsoft"}
   ]
 }
 ```
 
-**Cuerpo de la solicitud (profesor):**
+7. **Actualizar Experiencia Laboral (Estudiante):**
 ```json
 {
-  "firstName": "Nuevo Nombre",
-  "lastName": "Nuevo Apellido",
-  "gender": "male",
-  "specialization": "Frontend Developer"
+  "workExperience": [
+    {
+      "jobType": "Intern",
+      "startDate": "2023-06-01",
+      "endDate": "2023-12-31",
+      "company": "TechCorp",
+      "description": "Frontend Development",
+      "responsibilities": "Developing user interfaces"
+    }
+  ]
 }
 ```
 
-**Respuesta exitosa: (200 OK)**
+8. **Actualizar Información de Profesor:**
+```json
+{
+  "firstName": "María",
+  "lastName": "Gómez",
+  "gender": "female",
+  "specialization": "Data Science"
+}
+```
+
+**Respuesta (200 OK):**
 ```json
 {
   "message": "METADATA_UPDATED_SUCCESS",
   "updatedFields": {
-    "metadata.firstName": "Nuevo Nombre",
-    "metadata.lastName": "Nuevo Apellido"
+    "metadata.firstName": "Juan",
+    "metadata.lastName": "Pérez"
   },
   "updateHistory": [
     {
@@ -297,8 +335,13 @@ Actualiza los metadatos del usuario autenticado.
       "changes": [
         {
           "field": "firstName",
-          "oldValue": "Nombre",
-          "newValue": "Nuevo Nombre"
+          "oldValue": "Nombre Anterior",
+          "newValue": "Juan"
+        },
+        {
+          "field": "lastName",
+          "oldValue": "Apellido Anterior",
+          "newValue": "Pérez"
         }
       ]
     }
@@ -306,38 +349,57 @@ Actualiza los metadatos del usuario autenticado.
 }
 ```
 
-### Eliminar Metadatos
+### Eliminar Metadatos del Usuario
+Elimina campos específicos de metadatos del perfil del usuario.
 
 ```
 DELETE /metadata
 ```
 
-Elimina campos específicos de los metadatos.
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
+**Opciones:**
 
-**Cuerpo de la solicitud:**
+1. **Eliminar Experiencia Laboral:**
 ```json
 {
   "workExperience": [
-    { 
-      "jobType": "Intern", 
-      "startDate": "2023-06-01", 
-      "endDate": "2023-12-31", 
-      "company": "Nvidia", 
-      "description": "AI Developer", 
-      "responsibilities": "AI development tasks" 
+    {
+      "jobType": "Intern",
+      "startDate": "2023-06-01",
+      "endDate": "2023-12-31",
+      "company": "TechCorp",
+      "description": "Frontend Development",
+      "responsibilities": "Developing user interfaces"
     }
   ]
 }
 ```
 
-**Respuesta exitosa: (200 OK)**
+2. **Eliminar Certificaciones:**
+```json
+{
+  "certifications": [
+    {"name": "AWS Certified Developer", "date": "2024-01-15", "institution": "Amazon"}
+  ]
+}
+```
+
+3. **Eliminar Idiomas:**
+```json
+{
+  "languages": [{"language": "French", "level": "A2"}]
+}
+```
+
+**Respuesta (200 OK):**
 ```json
 {
   "message": "METADATA_DELETED_SUCCESS",
-  "deletedFields": ["metadata.workExperience"],
+  "deletedFields": ["metadata.workExperience", "metadata.certifications"],
   "updateHistory": [
     {
       "timestamp": "2023-01-01T00:00:00.000Z",
@@ -356,30 +418,35 @@ Elimina campos específicos de los metadatos.
 ## Historial Académico
 
 ### Obtener Historial Académico
+Recupera el historial académico de un estudiante.
 
 ```
 GET /AH
 ```
 
-Obtiene el historial académico (Academic History) del estudiante.
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
+**Rol Requerido:** STUDENT
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: STUDENT
-
-**Respuesta exitosa: (200 OK)**
+**Respuesta (200 OK):**
 ```json
 {
   "subjects": [
     {
       "name": "Fundamentos de Desarrollo Web",
       "credits": 6,
+      "label": "frontend",
+      "type": "B",
       "skills": ["HTML", "CSS", "JavaScript"],
       "grade": 8.5
     },
     {
       "name": "Introducción a la Programación I",
       "credits": 6,
+      "label": "software",
+      "type": "B",
       "skills": ["C"],
       "grade": 7.0
     }
@@ -388,19 +455,25 @@ Obtiene el historial académico (Academic History) del estudiante.
 }
 ```
 
-### Inicializar Historial Académico
+### Inicializar/Actualizar Historial Académico
+Inicializa o actualiza el historial académico de un estudiante.
 
 ```
 PATCH /AH
 ```
 
-Inicializa el historial académico del estudiante (sin enviar calificaciones).
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
+**Rol Requerido:** STUDENT
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: STUDENT
+**Opciones:**
 
-**Respuesta exitosa: (200 OK)**
+1. **Inicializar Historial Académico (Sin Cuerpo):**  
+Sin cuerpo de solicitud, solo inicializa la estructura con asignaturas basadas en el grado del estudiante.
+
+**Respuesta (200 OK):**
 ```json
 {
   "message": "AH_INITIALIZED",
@@ -423,29 +496,18 @@ Inicializa el historial académico del estudiante (sin enviar calificaciones).
 }
 ```
 
-### Actualizar Calificaciones
-
-```
-PATCH /AH
-```
-
-Actualiza las calificaciones del estudiante.
-
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: STUDENT
-
-**Cuerpo de la solicitud:**
+2. **Actualizar Calificaciones:**
 ```json
 {
   "grades": [
-    { "name": "Fundamentos de Desarrollo Web", "grade": 8.5 },
-    { "name": "Introducción a la Programación I", "grade": 7.5 }
+    {"name": "Fundamentos de Desarrollo Web", "grade": 8.5},
+    {"name": "Introducción a la Programación I", "grade": 7.5},
+    {"name": "Bases de Datos", "grade": 9.0}
   ]
 }
 ```
 
-**Respuesta exitosa: (200 OK)**
+**Respuesta (200 OK):**
 ```json
 {
   "message": "SUBJECTS_METADATA_UPDATED",
@@ -461,40 +523,42 @@ Actualiza las calificaciones del estudiante.
       "credits": 6,
       "skills": ["C"],
       "grade": 7.5
+    },
+    {
+      "name": "Bases de Datos",
+      "credits": 6,
+      "skills": ["SQL"],
+      "grade": 9.0
     }
   ],
   "metadataUpdates": {
     "metadata.AH.subjects": [...],
-    "metadata.AH.averageGrade": 8.0,
-    "metadata.AH.totalCredits": 12,
-    "metadata.AH.totalCreditsWithGrades": 12,
-    "metadata.AH.top5BestSubjects": [...],
-    "metadata.AH.top5WorstSubjects": [...],
-    "metadata.AH.lastUpdatedAt": "2023-01-01T00:00:00.000Z",
-    "metadata.skills": ["HTML", "CSS", "JavaScript", "C"],
+    "metadata.AH.averageGrade": 8.33,
+    "metadata.AH.totalCredits": 18,
+    "metadata.skills": ["HTML", "CSS", "JavaScript", "C", "SQL"],
     "metadata.programming_languages": [...],
     "metadata.completedFields": [...],
-    "metadata.yearsCompleted": [1]
-  },
-  "updateHistory": [...]
+    "metadata.yearsCompleted": [...]
+  }
 }
 ```
 
-## Roadmaps
+## Gestión de Roadmaps
 
-### Obtener Roadmap de Usuario
+### Obtener Roadmap del Usuario
+Recupera el roadmap asignado al estudiante.
 
 ```
 GET /userRoadmap
 ```
 
-Obtiene el roadmap asignado al estudiante.
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
+**Rol Requerido:** STUDENT
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: STUDENT
-
-**Respuesta exitosa: (200 OK)**
+**Respuesta (200 OK):**
 ```json
 {
   "roadmap": {
@@ -503,13 +567,19 @@ Obtiene el roadmap asignado al estudiante.
       "intro": {
         "intro a desarrollo frontend": {
           "status": "doing",
-          "description": "Introducción al desarrollo frontend"
+          "description": "Introducción al desarrollo frontend",
+          "skill": "",
+          "subject": "",
+          "resources": [...]
         }
       },
       "fundamentos": {
         "HTML y CSS": {
           "status": "done",
-          "description": "Fundamentos de HTML y CSS"
+          "description": "Fundamentos de HTML y CSS",
+          "skill": "HTML",
+          "subject": "Fundamentos de Desarrollo Web",
+          "resources": [...]
         }
       }
     }
@@ -517,57 +587,32 @@ Obtiene el roadmap asignado al estudiante.
 }
 ```
 
-### Asignar/Inicializar Roadmap
+### Inicializar/Auto-actualizar Roadmap
+Asigna o auto-actualiza un roadmap para el estudiante basado en su especialización e historial académico.
 
 ```
 PATCH /userRoadmap
 ```
 
-Asigna o inicializa un roadmap para el estudiante basado en su especialización (sin parámetros adicionales).
-
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: STUDENT
-
-**Respuesta exitosa: (200 OK)**
-```json
-{
-  "message": "Roadmap asignado correctamente"
-}
+**Cabeceras:**
 ```
-
-### Autocompletar Roadmap
-
+Authorization: Bearer jwt-token
 ```
-PATCH /userRoadmap
-```
+**Rol Requerido:** STUDENT
 
-Actualiza automáticamente el roadmap según el historial académico del estudiante (sin modificar un tema específico).
+**Opciones:**
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: STUDENT
+1. **Inicializar/Auto-actualizar (Sin Cuerpo):**  
+Sin cuerpo de solicitud, asigna o actualiza automáticamente el roadmap basado en la especialización y el historial académico.
 
-**Respuesta exitosa: (200 OK)**
+**Respuesta (200 OK):**
 ```json
 {
   "message": "Roadmap actualizado automáticamente"
 }
 ```
 
-### Actualizar Estado de Tema en Roadmap
-
-```
-PATCH /userRoadmap
-```
-
-Actualiza el estado de un tema específico en el roadmap del estudiante.
-
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: STUDENT
-
-**Cuerpo de la solicitud:**
+2. **Actualizar Estado de un Tema Específico:**
 ```json
 {
   "sectionName": "fundamentos",
@@ -576,7 +621,7 @@ Actualiza el estado de un tema específico en el roadmap del estudiante.
 }
 ```
 
-**Respuesta exitosa: (200 OK)**
+**Respuesta (200 OK):**
 ```json
 {
   "message": "Roadmap actualizado correctamente"
@@ -584,18 +629,19 @@ Actualiza el estado de un tema específico en el roadmap del estudiante.
 ```
 
 ### Eliminar Roadmap
+Elimina el roadmap del perfil del estudiante.
 
 ```
 DELETE /userRoadmap
 ```
 
-Elimina el roadmap asignado al estudiante.
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
+**Rol Requerido:** STUDENT
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: STUDENT
-
-**Respuesta exitosa: (200 OK)**
+**Respuesta (200 OK):**
 ```json
 {
   "message": "Roadmap deleted successfully"
@@ -605,55 +651,67 @@ Elimina el roadmap asignado al estudiante.
 ## Interacción Estudiante-Profesor
 
 ### Obtener Todos los Profesores
+Recupera todos los profesores disponibles.
 
 ```
 GET /teacher
 ```
 
-Obtiene la lista de todos los profesores disponibles.
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
+**Rol Requerido:** STUDENT
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: STUDENT
-
-**Respuesta exitosa: (200 OK)**
+**Respuesta (200 OK):**
 ```json
 [
   {
-    "id": "teacher-id",
-    "email": "profesor@u-tad.com",
+    "id": "id-profesor-1",
+    "email": "profesor1@u-tad.com",
     "role": "TEACHER",
     "metadata": {
-      "firstName": "Nombre",
-      "lastName": "Apellido",
+      "firstName": "María",
+      "lastName": "Gómez",
       "specialization": "Frontend Developer"
+    }
+  },
+  {
+    "id": "id-profesor-2",
+    "email": "profesor2@u-tad.com",
+    "role": "TEACHER",
+    "metadata": {
+      "firstName": "Carlos",
+      "lastName": "Rodríguez",
+      "specialization": "Data Science"
     }
   }
 ]
 ```
 
 ### Obtener Profesores por Especialización
+Recupera profesores filtrados por especialización.
 
 ```
 GET /teacher/:specialization
 ```
 
-Obtiene la lista de profesores filtrados por especialización.
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
+**Rol Requerido:** STUDENT
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: STUDENT
-
-**Respuesta exitosa: (200 OK)**
+**Respuesta (200 OK):**
 ```json
 [
   {
-    "id": "teacher-id",
-    "email": "profesor@u-tad.com",
+    "id": "id-profesor-1",
+    "email": "profesor1@u-tad.com",
     "role": "TEACHER",
     "metadata": {
-      "firstName": "Nombre",
-      "lastName": "Apellido",
+      "firstName": "María",
+      "lastName": "Gómez",
       "specialization": "Frontend Developer"
     }
   }
@@ -661,28 +719,29 @@ Obtiene la lista de profesores filtrados por especialización.
 ```
 
 ### Obtener Profesores Asignados
+Recupera los profesores asignados al estudiante.
 
 ```
 GET /student/teacher
 ```
 
-Obtiene la lista de profesores asignados al estudiante.
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
+**Rol Requerido:** STUDENT
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: STUDENT
-
-**Respuesta exitosa: (200 OK)**
+**Respuesta (200 OK):**
 ```json
 {
   "teachers": [
     {
-      "id": "teacher-id",
-      "email": "profesor@u-tad.com",
+      "id": "id-profesor-1",
+      "email": "profesor1@u-tad.com",
       "role": "TEACHER",
       "metadata": {
-        "firstName": "Nombre",
-        "lastName": "Apellido",
+        "firstName": "María",
+        "lastName": "Gómez",
         "specialization": "Frontend Developer"
       }
     }
@@ -690,148 +749,131 @@ Obtiene la lista de profesores asignados al estudiante.
 }
 ```
 
-### Añadir Profesor
+### Añadir Profesor a Estudiante
+Añade un profesor a la lista de profesores asignados del estudiante.
 
 ```
 POST /student/teacher
 ```
 
-Añade un profesor a la lista del estudiante.
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
+**Rol Requerido:** STUDENT
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: STUDENT
-
-**Cuerpo de la solicitud:**
+**Cuerpo de la Solicitud:**
 ```json
 {
-  "teacherId": "teacher-id"
+  "teacherId": "id-profesor-1"
 }
 ```
 
-**Respuesta exitosa: (200 OK)**
+**Respuesta (200 OK):**
 ```json
 {
   "message": "TEACHER_ADDED_TO_STUDENT",
-  "teacherId": "teacher-id"
+  "teacherId": "id-profesor-1"
 }
 ```
 
-### Enviar Notificación a Profesor
+### Eliminar Profesor de Estudiante
+Elimina un profesor de la lista de profesores asignados del estudiante.
 
 ```
-POST /student/teacher/notification
+DELETE /student/teacher
 ```
 
-Envía una notificación a un profesor asignado.
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
+**Rol Requerido:** STUDENT
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: STUDENT
-
-**Cuerpo de la solicitud:**
+**Cuerpo de la Solicitud:**
 ```json
 {
-  "teacherId": "teacher-id",
-  "message": "Consulta sobre programación"
+  "teacherId": "id-profesor-1"
 }
 ```
 
-**Respuesta exitosa: (200 OK)**
+**Respuesta (200 OK):**
 ```json
 {
-  "message": "NOTIFICATION_SENT",
-  "notification": {
-    "studentId": "student-id",
-    "message": "Consulta sobre programación",
-    "date": "2023-01-01T00:00:00.000Z",
-    "status": "unread"
-  }
+  "message": "TEACHER_REMOVED_FROM_STUDENT",
+  "teacherId": "id-profesor-1",
+  "remainingTeachers": 0
 }
 ```
 
-### Obtener Notificaciones (Profesor)
-
-```
-GET /student/teacher/notification
-```
-
-Obtiene las notificaciones recibidas por el profesor.
-
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: TEACHER
-
-**Respuesta exitosa: (200 OK)**
-```json
-{
-  "notifications": [
-    {
-      "studentId": "student-id",
-      "message": "Consulta sobre programación",
-      "date": "2023-01-01T00:00:00.000Z",
-      "status": "unread"
-    }
-  ]
-}
-```
-
-### Obtener Estudiantes (Profesor)
+### Obtener Todos los Estudiantes (Profesor)
+Recupera todos los estudiantes asignados al profesor.
 
 ```
 GET /student/teacher/getAllStudents
 ```
 
-Obtiene la lista de estudiantes asignados al profesor.
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
+**Rol Requerido:** TEACHER
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: TEACHER
-
-**Respuesta exitosa: (200 OK)**
+**Respuesta (200 OK):**
 ```json
 [
   {
-    "id": "student-id",
-    "email": "estudiante@live.u-tad.com",
-    "firstName": "Nombre",
-    "lastName": "Apellido",
+    "id": "id-estudiante-1",
+    "email": "estudiante1@live.u-tad.com",
+    "firstName": "Juan",
+    "lastName": "Pérez",
     "dni": "12345678A",
     "degree": "INSO_DATA",
     "specialization": "Frontend Developer",
     "yearsCompleted": [1, 2]
+  },
+  {
+    "id": "id-estudiante-2",
+    "email": "estudiante2@live.u-tad.com",
+    "firstName": "Ana",
+    "lastName": "Martínez",
+    "dni": "87654321B",
+    "degree": "INSO_DATA",
+    "specialization": "Data Science",
+    "yearsCompleted": [1]
   }
 ]
 ```
 
 ### Obtener Estudiante Específico (Profesor)
+Recupera información detallada sobre un estudiante específico.
 
 ```
 GET /student/teacher/getStudent
 ```
 
-Obtiene la información detallada de un estudiante específico.
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
+**Rol Requerido:** TEACHER
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: TEACHER
-
-**Cuerpo de la solicitud:**
+**Cuerpo de la Solicitud:**
 ```json
 {
-  "studentId": "student-id"
+  "studentId": "id-estudiante-1"
 }
 ```
 
-**Respuesta exitosa: (200 OK)**
+**Respuesta (200 OK):**
 ```json
 {
-  "id": "student-id",
-  "email": "estudiante@live.u-tad.com",
+  "id": "id-estudiante-1",
+  "email": "estudiante1@live.u-tad.com",
   "role": "STUDENT",
   "metadata": {
-    "firstName": "Nombre",
-    "lastName": "Apellido",
+    "firstName": "Juan",
+    "lastName": "Pérez",
     "degree": "INSO_DATA",
     "specialization": "Frontend Developer",
     "AH": {
@@ -841,492 +883,388 @@ Obtiene la información detallada de un estudiante específico.
 }
 ```
 
-## Titulaciones (Degrees)
+## Sistema de Notificaciones
 
-### Crear Titulación
+### Enviar Notificación a Profesor
+Envía una notificación de un estudiante a un profesor asignado.
 
 ```
-POST /degrees
+POST /student/teacher/notification
 ```
 
-Crea una nueva titulación.
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
+**Rol Requerido:** STUDENT
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: ADMIN
-
-**Formato:** multipart/form-data
-- `file`: Archivo JSON con la estructura de la titulación
-
-**Respuesta exitosa: (201 Created)**
+**Cuerpo de la Solicitud:**
 ```json
 {
-  "message": "Degree saved successfully",
-  "name": "INSO_DATA",
-  "subjects": [...]
+  "teacherId": "id-profesor-1",
+  "message": "Tengo una duda sobre la tarea de estructuras de datos"
 }
 ```
 
-### Obtener Todas las Titulaciones
-
-```
-GET /degrees
-```
-
-Obtiene todas las titulaciones disponibles.
-
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: ADMIN
-
-**Respuesta exitosa: (200 OK)**
+**Respuesta (200 OK):**
 ```json
-[
-  {
-    "id": "INSO_DATA",
-    "name": "INSO_DATA",
-    "subjects": [...]
+{
+  "message": "NOTIFICATION_SENT",
+  "notification": {
+    "id": "id-notificacion",
+    "senderId": "id-estudiante-1",
+    "senderName": "Juan Pérez",
+    "senderEmail": "estudiante1@live.u-tad.com",
+    "senderRole": "STUDENT",
+    "receiverId": "id-profesor-1",
+    "title": "Nuevo mensaje de estudiante",
+    "body": "Tengo una duda sobre la tarea de estructuras de datos",
+    "timestamp": "2023-01-01T00:00:00.000Z",
+    "read": false
   }
-]
-```
-
-### Obtener Titulación por Nombre
-
-```
-GET /degrees/:name
-```
-
-Obtiene una titulación específica por su nombre.
-
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: STUDENT o ADMIN
-
-**Respuesta exitosa: (200 OK)**
-```json
-{
-  "id": "INSO_DATA",
-  "name": "INSO_DATA",
-  "subjects": [...]
 }
 ```
 
-### Actualizar Titulación
+### Obtener Notificaciones de Profesor
+Recupera todas las notificaciones recibidas por el profesor.
 
 ```
-PATCH /degrees/:name
+GET /student/teacher/notification
 ```
 
-Actualiza una titulación completa.
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
+**Rol Requerido:** TEACHER
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: ADMIN
+**Parámetros de Consulta:**
+- `limit`: Número máximo de notificaciones a devolver (por defecto: 20)
+- `startAfter`: ID de la última notificación de la página anterior para paginación
+- `onlyUnread`: Filtrar solo notificaciones no leídas (true/false)
 
-**Cuerpo de la solicitud:**
+**Respuesta (200 OK):**
 ```json
 {
-  "name": "INSO_DATA",
-  "subjects": [...]
-}
-```
-
-**Respuesta exitosa: (200 OK)**
-```json
-{
-  "id": "INSO_DATA",
-  "name": "INSO_DATA",
-  "subjects": [...],
-  "updatedAt": "2023-01-01T00:00:00.000Z"
-}
-```
-
-### Actualizar Asignaturas
-
-```
-PATCH /degrees/subjects/:name
-```
-
-Actualiza asignaturas específicas de una titulación.
-
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: ADMIN
-
-**Cuerpo de la solicitud:**
-```json
-{
-  "subjects": [
+  "notifications": [
     {
-      "name": "Fundamentos de Desarrollo Web",
-      "credits": 7,
-      "label": "frontend",
-      "type": "B",
-      "skills": ["HTML", "CSS", "JavaScript"],
-      "year": 1
+      "id": "id-notificacion-1",
+      "senderId": "id-estudiante-1",
+      "senderName": "Juan Pérez",
+      "senderEmail": "estudiante1@live.u-tad.com",
+      "title": "Nuevo mensaje de estudiante",
+      "body": "Tengo una duda sobre la tarea de estructuras de datos",
+      "timestamp": "2023-01-01T00:00:00.000Z",
+      "read": false
+    },
+    {
+      "id": "id-notificacion-2",
+      "senderId": "id-estudiante-2",
+      "senderName": "Ana Martínez",
+      "senderEmail": "estudiante2@live.u-tad.com",
+      "title": "Nuevo mensaje de estudiante",
+      "body": "¿Podemos programar una reunión para discutir mi proyecto?",
+      "timestamp": "2023-01-02T00:00:00.000Z",
+      "read": true
     }
-  ]
-}
-```
-
-**Respuesta exitosa: (200 OK)**
-```json
-{
-  "message": "Subjects updated successfully",
-  "updatedSubjects": ["Fundamentos de Desarrollo Web"],
-  "degree": {
-    "name": "INSO_DATA",
-    "subjects": [...]
+  ],
+  "pagination": {
+    "total": 10,
+    "unreadCount": 5,
+    "hasMore": true,
+    "nextCursor": "id-notificacion-2"
   }
 }
 ```
 
-### Eliminar Asignaturas
+### Obtener Notificaciones de Profesor por Estudiante
+Recupera notificaciones de un estudiante específico.
 
 ```
-DELETE /degrees/subjects/:name
+GET /student/teacher/notification/byStudent
 ```
 
-Elimina asignaturas específicas de una titulación.
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
+**Rol Requerido:** TEACHER
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: ADMIN
+**Parámetros de Consulta:**
+- `studentId`: ID del estudiante
+- `limit`: Número máximo de notificaciones a devolver (por defecto: 20)
+- `startAfter`: ID de la última notificación de la página anterior para paginación
+- `onlyUnread`: Filtrar solo notificaciones no leídas (true/false)
 
-**Cuerpo de la solicitud:**
+**Respuesta (200 OK):**
 ```json
 {
-  "subjects": ["Fundamentos de Desarrollo Web"]
-}
-```
-
-**Respuesta exitosa: (200 OK)**
-```json
-{
-  "message": "Subjects deleted successfully",
-  "deletedSubjects": ["Fundamentos de Desarrollo Web"],
-  "degree": {
-    "name": "INSO_DATA",
-    "subjects": [...]
-  }
-}
-```
-
-### Eliminar Titulación
-
-```
-DELETE /degrees/:name
-```
-
-Elimina una titulación completa.
-
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: ADMIN
-
-**Respuesta exitosa: (200 OK)**
-```json
-{
-  "message": "Degree deleted",
-  "id": "INSO_DATA"
-}
-```
-
-## Roadmaps (Administración)
-
-### Crear Roadmap
-
-```
-POST /roadmaps
-```
-
-Crea un nuevo roadmap.
-
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: ADMIN
-
-**Formato:** multipart/form-data
-- `file`: Archivo JSON con la estructura del roadmap
-
-**Respuesta exitosa: (201 Created)**
-```json
-{
-  "message": "Roadmap saved successfully",
-  "name": "Frontend Developer",
-  "body": {...}
-}
-```
-
-### Obtener Todos los Roadmaps
-
-```
-GET /roadmaps
-```
-
-Obtiene todos los roadmaps disponibles.
-
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: ADMIN
-
-**Respuesta exitosa: (200 OK)**
-```json
-[
-  {
-    "name": "Frontend Developer",
-    "body": {...}
-  }
-]
-```
-
-### Obtener Roadmap por Nombre (Admin)
-
-```
-GET /roadmaps/:name
-```
-
-Obtiene un roadmap específico por su nombre.
-
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: ADMIN
-
-**Respuesta exitosa: (200 OK)**
-```json
-{
-  "name": "Frontend Developer",
-  "body": {...}
-}
-```
-
-### Obtener Roadmap por Nombre (Estudiante)
-
-```
-GET /roadmaps/student/:name
-```
-
-Obtiene un roadmap específico por su nombre (acceso para estudiantes).
-
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: STUDENT
-
-**Respuesta exitosa: (200 OK)**
-```json
-{
-  "name": "Frontend Developer",
-  "body": {...}
-}
-```
-
-### Actualizar Roadmap
-
-```
-PATCH /roadmaps/:name
-```
-
-Actualiza un roadmap completo.
-
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: ADMIN
-
-**Cuerpo de la solicitud:**
-```json
-{
-  "name": "Frontend Developer",
-  "body": {...}
-}
-```
-
-**Respuesta exitosa: (200 OK)**
-```json
-{
-  "message": "Roadmap updated successfully",
-  "name": "Frontend Developer",
-  "body": {...}
-}
-```
-
-### Actualizar Contenido Específico del Roadmap
-
-```
-PATCH /roadmaps/:name/body
-```
-
-Actualiza una sección específica de un roadmap.
-
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: ADMIN
-
-**Cuerpo de la solicitud:**
-```json
-{
-  "field": "intro",
-  "updates": {
-    "intro a desarrollo frontend": {
-      "description": "Descripción actualizada",
-      "status": "done"
+  "notifications": [
+    {
+      "id": "id-notificacion-1",
+      "senderId": "id-estudiante-1",
+      "senderName": "Juan Pérez",
+      "title": "Nuevo mensaje de estudiante",
+      "body": "Tengo una duda sobre la tarea de estructuras de datos",
+      "timestamp": "2023-01-01T00:00:00.000Z",
+      "read": false
     }
+  ],
+  "pagination": {
+    "total": 5,
+    "unreadCount": 3,
+    "hasMore": true,
+    "nextCursor": "id-notificacion-1"
   }
 }
 ```
 
-**Respuesta exitosa: (200 OK)**
+### Actualizar Estado de Notificación
+Actualiza el estado de lectura de una notificación.
+
+```
+PATCH /student/teacher/notification
+```
+
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
+**Rol Requerido:** TEACHER
+
+**Cuerpo de la Solicitud:**
 ```json
 {
-  "message": "Roadmap body updated successfully",
-  "name": "Frontend Developer",
-  "body": {...}
+  "notificationId": "id-notificacion-1",
+  "read": true
 }
 ```
 
-### Eliminar Contenido Específico del Roadmap
-
-```
-DELETE /roadmaps/:name/body
-```
-
-Elimina una sección específica de un roadmap.
-
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: ADMIN
-
-**Cuerpo de la solicitud:**
+**Respuesta (200 OK):**
 ```json
 {
-  "field": "avanzado"
+  "message": "NOTIFICATION_MARKED_AS_READ",
+  "notification": {
+    "id": "id-notificacion-1",
+    "read": true,
+    "readAt": "2023-01-03T00:00:00.000Z"
+  }
 }
 ```
 
-**Respuesta exitosa: (200 OK)**
+### Marcar Todas las Notificaciones como Leídas
+Marca todas las notificaciones como leídas para un profesor.
+
+```
+POST /student/teacher/notification/read-all
+```
+
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
+**Rol Requerido:** TEACHER
+
+**Respuesta (200 OK):**
 ```json
 {
-  "message": "Roadmap body content deleted successfully",
-  "name": "Frontend Developer",
-  "body": {...}
+  "message": "ALL_NOTIFICATIONS_MARKED_AS_READ",
+  "unreadCount": 0
 }
 ```
 
-### Eliminar Roadmap
+### Eliminar Notificación
+Elimina una notificación específica.
 
 ```
-DELETE /roadmaps/:name
+DELETE /student/teacher/notification/:notificationId
 ```
 
-Elimina un roadmap completo.
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
+**Rol Requerido:** TEACHER
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: ADMIN
-
-**Respuesta exitosa: (200 OK)**
+**Respuesta (200 OK):**
 ```json
 {
-  "message": "Roadmap deleted",
-  "name": "Frontend Developer"
+  "message": "NOTIFICATION_DELETED",
+  "notificationId": "id-notificacion-1"
 }
 ```
 
-## Administración
+## Operaciones de Administrador
 
-### Crear Admin
+### Crear Administrador
+Crea un usuario administrador predefinido.
 
 ```
 POST /admin
 ```
 
-Crea un usuario administrador hardcodeado.
-
-**Respuesta exitosa: (201 Created)**
+**Respuesta (201 Created):**
 ```json
 {
   "message": "HARDCODED_ADMIN_CREATED",
   "token": "jwt-token",
   "user": {
-    "email": "alvaro.vazquez.1716@gmail.com",
+    "email": "admin@u-tad.com",
     "role": "ADMIN"
   }
 }
 ```
 
 ### Obtener Todos los Usuarios
+Recupera todos los usuarios en el sistema.
 
 ```
 GET /admin
 ```
 
-Obtiene la lista de todos los usuarios registrados.
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
+**Rol Requerido:** ADMIN
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: ADMIN
-
-**Respuesta exitosa: (200 OK)**
+**Respuesta (200 OK):**
 ```json
 [
   {
-    "id": "user-id",
-    "email": "usuario@live.u-tad.com",
+    "id": "id-usuario-1",
+    "email": "estudiante1@live.u-tad.com",
     "role": "STUDENT",
+    "metadata": {...}
+  },
+  {
+    "id": "id-usuario-2",
+    "email": "profesor1@u-tad.com",
+    "role": "TEACHER",
     "metadata": {...}
   }
 ]
 ```
 
-### Actualizar Usuario por ID
+### Obtener Estudiante Específico (Admin)
+Recupera un estudiante específico por ID.
 
 ```
-PATCH /admin/:id
+GET /admin/student
 ```
 
-Actualiza un usuario específico por su ID.
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
+**Rol Requerido:** ADMIN
 
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: ADMIN
+**Parámetros de Consulta:**
+- `id`: ID del Estudiante
 
-**Cuerpo de la solicitud:**
+**Respuesta (200 OK):**
 ```json
 {
-  "email": "nuevo-email@live.u-tad.com",
-  "password": "NuevaContraseña123!",
+  "id": "id-estudiante-1",
+  "email": "estudiante1@live.u-tad.com",
   "role": "STUDENT",
   "metadata": {...}
 }
 ```
 
-**Respuesta exitosa: (200 OK)**
+### Actualizar Usuario (Admin)
+Actualiza un usuario por ID.
+```
+PATCH /admin/:id
+```
+
+**Cabeceras:**
+```
+Authorization: Bearer jwt-token
+```
+
+**Rol Requerido:** ADMIN
+
+**Descripción:**
+Este endpoint permite a los administradores actualizar diferentes aspectos de un usuario existente. Soporta actualizaciones parciales, lo que significa que no es necesario proporcionar todos los campos en cada solicitud.
+
+**Tipos de Actualización:**
+
+1. **Actualizar Email y Rol:**
 ```json
 {
-  "message": "USER_UPDATED_SUCCESSFULLY",
-  "updatedUser": {
-    "id": "user-id",
     "email": "nuevo-email@live.u-tad.com",
-    "role": "STUDENT",
-    "metadata": {...}
-  }
+    "role": "STUDENT"
 }
 ```
 
-### Eliminar Usuario por ID
-
-```
-DELETE /admin/:id
-```
-
-Elimina un usuario específico por su ID.
-
-**Encabezados requeridos:**
-- `Authorization: Bearer jwt-token`
-- Requiere rol: ADMIN
-
-**Respuesta exitosa: (200 OK)**
+2. **Actualizar Contraseña:**
 ```json
 {
-  "message": "USER_DELETED_SUCCESSFULLY"
+    "password": "NuevaContraseñaSegura123!"
 }
 ```
+
+3. **Actualizar Metadatos:**
+```json
+{
+    "metadata": {
+        "firstName": "Nombre Actualizado",
+        "lastName": "Apellido Actualizado"
+    }
+}
+```
+
+4. **Actualización Completa:**
+```json
+{
+    "email": "nuevo-email@live.u-tad.com",
+    "password": "NuevaContraseñaSegura123!",
+    "role": "STUDENT",
+    "metadata": {
+        "firstName": "Nombre Actualizado",
+        "lastName": "Apellido Actualizado"
+    }
+}
+```
+
+**Parámetros:**
+- `id` (requerido): ID del usuario a actualizar (en la URL)
+- `email` (opcional): Nuevo correo electrónico del usuario
+- `password` (opcional): Nueva contraseña del usuario
+- `role` (opcional): Nuevo rol del usuario
+- `metadata` (opcional): Nuevos metadatos del usuario
+
+**Validaciones:**
+- El token JWT debe ser válido y pertenecer a un usuario con rol ADMIN
+- El `email` debe ser un formato de correo electrónico válido
+- La `password` debe cumplir con los requisitos de seguridad definidos
+- El `role` debe ser uno de los roles predefinidos en el sistema
+- Los campos de `metadata` deben cumplir con la estructura esperada
+
+**Respuesta Exitosa (200 OK):**
+```json
+{
+    "message": "USER_UPDATED_SUCCESSFULLY",
+    "updatedUser": {
+        "id": "id-usuario-1",
+        "email": "nuevo-email@live.u-tad.com",
+        "role": "STUDENT",
+        "metadata": {
+            "firstName": "Nombre Actualizado",
+            "lastName": "Apellido Actualizado"
+        }
+    }
+}
+```
+
+**Posibles Errores:**
+- `401 Unauthorized`: Token JWT inválido o expirado
+- `403 Forbidden`: El usuario no tiene permisos de administrador
+- `404 Not Found`: El usuario con el ID especificado no existe
+- `400 Bad Request`: Datos de actualización inválidos (formato de email incorrecto, contraseña débil, etc.)
+
+**Notas:**
+- Solo se actualizarán los campos proporcionados en la solicitud
+- La contraseña se hashea antes de almacenarla
+- Los metadatos se pueden actualizar parcial o totalmente
