@@ -1,43 +1,133 @@
-### register teacher
-POST http://localhost:3000/register
+###
+@apiUrl = http://localhost:3000
+@studentToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InE3QkNRb292ZnMwSUl5THZlbGlCIiwiZW1haWwiOiJzdHVkZW50QGxpdmUudS10YWQuY29tIiwicm9sZSI6IlNUVURFTlQiLCJpYXQiOjE3NDIzODA0ODUsImV4cCI6MTc0MjQ2Njg4NX0.PqjqqFoDxcmtdENe0HfWfTNRYvdPM32fLZvymGmiFcc
+@teacherToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IllRa0pjZ296cWE4TXNjMFNLeEVYIiwiZW1haWwiOiJ0ZWFjaGVyQHUtdGFkLmNvbSIsInJvbGUiOiJURUFDSEVSIiwiaWF0IjoxNzQyMzgwNTI5LCJleHAiOjE3NDI0NjY5Mjl9.aoOKWXP1-ivVn3m5j8jL-PVenBHCrshf--Eh6I3sh9E
+@studentId = q7BCQoovfs0IIyLveliB
+@teacherId = YQkJcgozqa8Msc0SKxEX
+
+### AUTHENTICATION & BASIC USER OPERATIONS
+
+### Register a student
+POST {{apiUrl}}/register
 Content-Type: application/json
 
 {
-  "email": "alvaro.vazquez@u-tad.com",
+  "email": "student@live.u-tad.com",
   "password": "SecurePass123!",
-  "seedWord": "TEACHER"
+  "seedWord": "apple"
 }
 
-### login teacher
-POST http://localhost:3000/login
+### Register a teacher
+POST {{apiUrl}}/register
 Content-Type: application/json
 
 {
-  "email": "alvaro.vazquez@u-tad.com",
+  "email": "teacher@u-tad.com",
+  "password": "SecurePass123!",
+  "seedWord": "orange"
+}
+
+### Login as student
+POST {{apiUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "student@live.u-tad.com",
   "password": "SecurePass123!"
 }
 
-### Test para agregar metadata a un profesors
-PATCH http://localhost:3000/metadata
+### Login as teacher
+POST {{apiUrl}}/login
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlpOMVUzcE54WUZFWHVRN1paRmhhIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekB1LXRhZC5jb20iLCJyb2xlIjoiVEVBQ0hFUiIsImlhdCI6MTc0MDQ3NTM0MiwiZXhwIjoxNzQwNTYxNzQyfQ.O6hfK7L6wHHlMl9s9DUIgkTm9gRM0Lr7tuhomTVYCuY
 
 {
-  "firstName": "Alvaro",
-  "lastName": "Vazquez",
-  "gender" : "male",
-  "birthDate": "1985-08-20",
-  "dni": "87654321B",
-  "specialization": "Data Science"
+  "email": "teacher@u-tad.com",
+  "password": "SecurePass123!"
 }
 
-###
-GET http://localhost:3000/teacher/students
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlpOMVUzcE54WUZFWHVRN1paRmhhIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekB1LXRhZC5jb20iLCJyb2xlIjoiVEVBQ0hFUiIsImlhdCI6MTc0MDQ4ODMzNSwiZXhwIjoxNzQwNTc0NzM1fQ.ukm-3FyJNmHfA2VX_ALjIAN5Dvh2y9gOSjlzJV1JkQg
+### Get student profile
+GET {{apiUrl}}/
+Authorization: Bearer {{studentToken}}
 
-###
-GET http://localhost:3000/teacher
+### Get teacher profile
+GET {{apiUrl}}/
+Authorization: Bearer {{teacherToken}}
+
+### TEACHER-STUDENT RELATIONSHIP MANAGEMENT
+
+### Get all teachers (student view)
+GET {{apiUrl}}/teacher
+Authorization: Bearer {{studentToken}}
+
+### Get teachers by specialization (student view)
+GET {{apiUrl}}/teacher/Frontend%20Developer
+Authorization: Bearer {{studentToken}}
+
+### Add a teacher to a student
+POST {{apiUrl}}/student/teacher
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik9xQVp4NDU1SWNnckVQQjNFaExuIiwiZW1haWwiOiJBbHZhcm8udmF6cXVlekB1LXRhZC5jb20iLCJyb2xlIjoiVEVBQ0hFUiIsImlhdCI6MTczOTY0MzI2NSwiZXhwIjoxNzM5NzI5NjY1fQ.GDsXh_cKH2VoZDm04IfpQbUfQKrgcZyDlexg8AXKlrA
+Authorization: Bearer {{studentToken}}
+
+{
+  "teacherId": "{{teacherId}}"
+}
+
+### Get teachers assigned to a student
+GET {{apiUrl}}/student/teacher
+Authorization: Bearer {{studentToken}}
+
+### Get all students assigned to a teacher
+GET {{apiUrl}}/student/teacher/getAllStudents
+Authorization: Bearer {{teacherToken}}
+
+### Get specific student info (by teacher)
+GET {{apiUrl}}/student/teacher/getStudent
+Content-Type: application/json
+Authorization: Bearer {{teacherToken}}
+
+{
+  "studentId": "{{studentId}}"
+}
+
+### NOTIFICATION SYSTEM
+
+### Student sends a notification to teacher
+POST {{apiUrl}}/student/teacher/notification
+Content-Type: application/json
+Authorization: Bearer {{studentToken}}
+
+{
+  "teacherId": "{{teacherId}}",
+  "message": "Hello teacher, I have a question about the assignment on data structures."
+}
+
+### Teacher gets all notifications
+GET {{apiUrl}}/student/teacher/notification
+Authorization: Bearer {{teacherToken}}
+
+### Teacher gets notifications with pagination and filtering
+GET {{apiUrl}}/student/teacher/notification?limit=10&onlyUnread=true
+Authorization: Bearer {{teacherToken}}
+
+### Teacher gets notifications from a specific student
+GET {{apiUrl}}/student/teacher/notification/byStudent?studentId={{studentId}}
+Authorization: Bearer {{teacherToken}}
+
+### Teacher marks a notification as read
+PATCH {{apiUrl}}/student/teacher/notification
+Content-Type: application/json
+Authorization: Bearer {{teacherToken}}
+
+{
+  "notificationId": "m8fsl4ldgkkdl11opoh",
+  "read": true
+}
+
+### Teacher marks all notifications as read
+POST {{apiUrl}}/student/teacher/notification/read-all
+Authorization: Bearer {{teacherToken}}
+
+### Teacher deletes a notification
+DELETE {{apiUrl}}/student/teacher/notification/m8fsl4ldgkkdl11opoh
+Authorization: Bearer {{teacherToken}}
 

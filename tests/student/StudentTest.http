@@ -3,7 +3,7 @@ POST http://localhost:3000/register
 Content-Type: application/json
 
 {
-  "email": "alvaroVqz@live.u-tad.com",
+  "email": "alvaroVqz@u-tad.com",
   "password": "SecurePass123!",
   "seedWord": "sash"
 }
@@ -20,7 +20,7 @@ Content-Type: application/json
 ###
 PATCH http://localhost:3000/metadata
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InV1SlkxTDh4Y1A5VG41ZUlKWm1PIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsInNlZWRXb3JkIjoic2FzaCIsImlhdCI6MTc0MTg3MTMyOCwiZXhwIjoxNzQxOTU3NzI4fQ.pB2H_bVLoq_OJ_sLz8uzdR0lsVhRtWqQqZ-SQAe1zg0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InB4ZTR1eHhzeG5WOGRYME5zaXJQIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MjM3ODE4NSwiZXhwIjoxNzQyNDY0NTg1fQ.-Gy6Ucz_wQlu2_dTQPEgESovGBrTD0DOZjlvqGtjOLU
 
 {
     "firstName": "Alvaro",
@@ -149,7 +149,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNLb3BFdG9SW
 ### Test para obtener un estudiante
 GET http://localhost:3000/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlBwZjlUSjFPV0ZiY1VZMXdqUHd0IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDY1NTMwOSwiZXhwIjoxNzQwNzQxNzA5fQ.O8Jfj1MyXZjucTPj7zfmRf75V82hF2U6M9vetF6l05o
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InB4ZTR1eHhzeG5WOGRYME5zaXJQIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MjM3ODE4NSwiZXhwIjoxNzQyNDY0NTg1fQ.-Gy6Ucz_wQlu2_dTQPEgESovGBrTD0DOZjlvqGtjOLU
 
 ### Test para obtener la metadata de un estudiante
 GET http://localhost:3000/metadata
@@ -290,29 +290,38 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlBwZjlUSjFPV
 ### optener a los profesores
 GET http://localhost:3000/teacher
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNLb3BFdG9SWFZHaUNLYlFzRFBaIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MTI0NzM2MiwiZXhwIjoxNzQxMzMzNzYyfQ.7Ij5qcGY1ytmVJvBupw2aDCC86WloDDFeZNnpbgI310
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InB4ZTR1eHhzeG5WOGRYME5zaXJQIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MjM3ODE4NSwiZXhwIjoxNzQyNDY0NTg1fQ.-Gy6Ucz_wQlu2_dTQPEgESovGBrTD0DOZjlvqGtjOLU
 
 ### Un estudiante agrega a un profesor
 POST http://localhost:3000/student/teacher
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNLb3BFdG9SWFZHaUNLYlFzRFBaIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MTI0NzM2MiwiZXhwIjoxNzQxMzMzNzYyfQ.7Ij5qcGY1ytmVJvBupw2aDCC86WloDDFeZNnpbgI310
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InB4ZTR1eHhzeG5WOGRYME5zaXJQIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MjM3ODE4NSwiZXhwIjoxNzQyNDY0NTg1fQ.-Gy6Ucz_wQlu2_dTQPEgESovGBrTD0DOZjlvqGtjOLU
 
 {
-  "teacherId": "UxhwFocRQN8JX6hNas8X"
+  "teacherId": "MkzK0SfwGdbHdh4XOgfJ"
+}
+
+###
+DELETE http://localhost:3000/student/teacher
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InB4ZTR1eHhzeG5WOGRYME5zaXJQIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MjM3ODE4NSwiZXhwIjoxNzQyNDY0NTg1fQ.-Gy6Ucz_wQlu2_dTQPEgESovGBrTD0DOZjlvqGtjOLU
+
+{
+  "teacherId": "MkzK0SfwGdbHdh4XOgfJ"
 }
 
 ### Ver a todos los profesores de un estudiante
 GET http://localhost:3000/student/teacher
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNLb3BFdG9SWFZHaUNLYlFzRFBaIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MTE5OTkyNiwiZXhwIjoxNzQxMjg2MzI2fQ.tpcHd7ohox4Qngg9Ca47iHNFkRy8l0evIs4XllfE_0M
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InB4ZTR1eHhzeG5WOGRYME5zaXJQIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MjM3ODE4NSwiZXhwIjoxNzQyNDY0NTg1fQ.-Gy6Ucz_wQlu2_dTQPEgESovGBrTD0DOZjlvqGtjOLU
 
 ### Un estudiante enviar un notification a un profesor
 POST http://localhost:3000/student/teacher/notification
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InB4ZTR1eHhzeG5WOGRYME5zaXJQIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MjM3ODE4NSwiZXhwIjoxNzQyNDY0NTg1fQ.-Gy6Ucz_wQlu2_dTQPEgESovGBrTD0DOZjlvqGtjOLU
 
 {
-  "teacherId": "ZN1U3pNxYFEXuQ7ZZFha",
+  "teacherId": "MkzK0SfwGdbHdh4XOgfJ",
   "message": "Hola, esto es un test"
 }
 
@@ -321,28 +330,39 @@ POST http://localhost:3000/login
 Content-Type: application/json
 
 {
-  "email": "alvaro.vazquez@u-tad.com",
+  "email": "alvaroVqz@u-tad.com",
   "password": "SecurePass123!"
 }
 
 ###
 GET http://localhost:3000/student/teacher/getAllStudents
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik90a2lDRmlNdVFJRXYwdFJBS2FoIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekB1LXRhZC5jb20iLCJyb2xlIjoiVEVBQ0hFUiIsImlhdCI6MTc0MTA4OTgzNywiZXhwIjoxNzQxMTc2MjM3fQ.6CoM_4yAZ1YfZpar1mprbG6Y78bA23ohKGuNDd3Tybo
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik1rekswU2Z3R2RiSGRoNFhPZ2ZKIiwiZW1haWwiOiJhbHZhcm9WcXpAdS10YWQuY29tIiwicm9sZSI6IlRFQUNIRVIiLCJpYXQiOjE3NDIzNzg1MTIsImV4cCI6MTc0MjQ2NDkxMn0.bpRbyndZl_Qlaqyxhm6sMDSrQWfmDsP_j6f5zzpAenQ
 
 ###
 GET http://localhost:3000/student/teacher/getStudent
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik90a2lDRmlNdVFJRXYwdFJBS2FoIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekB1LXRhZC5jb20iLCJyb2xlIjoiVEVBQ0hFUiIsImlhdCI6MTc0MTA4OTgzNywiZXhwIjoxNzQxMTc2MjM3fQ.6CoM_4yAZ1YfZpar1mprbG6Y78bA23ohKGuNDd3Tybo
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik1rekswU2Z3R2RiSGRoNFhPZ2ZKIiwiZW1haWwiOiJhbHZhcm9WcXpAdS10YWQuY29tIiwicm9sZSI6IlRFQUNIRVIiLCJpYXQiOjE3NDIzNzg1MTIsImV4cCI6MTc0MjQ2NDkxMn0.bpRbyndZl_Qlaqyxhm6sMDSrQWfmDsP_j6f5zzpAenQ
 
 {
-  "studentId": "klKZweAdancEgfaNbMA2"
+  "studentId": "pxe4uxxsxnV8dX0NsirP"
 }
 
 ### Ver todas las notificaciones de un profesor
 GET http://localhost:3000/student/teacher/notification
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlpOMVUzcE54WUZFWHVRN1paRmhhIiwiZW1haWwiOiJhbHZhcm8udmF6cXVlekB1LXRhZC5jb20iLCJyb2xlIjoiVEVBQ0hFUiIsImlhdCI6MTc0MDI0ODkyMSwiZXhwIjoxNzQwMzM1MzIxfQ.jFU6hq_9J9SBhrU2gXCIm0l0ebfBWwQoMaqP2-EqFxM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik1rekswU2Z3R2RiSGRoNFhPZ2ZKIiwiZW1haWwiOiJhbHZhcm9WcXpAdS10YWQuY29tIiwicm9sZSI6IlRFQUNIRVIiLCJpYXQiOjE3NDIzNzg1MTIsImV4cCI6MTc0MjQ2NDkxMn0.bpRbyndZl_Qlaqyxhm6sMDSrQWfmDsP_j6f5zzpAenQ
+
+### cambiar el estado de una notificacion
+PATCH http://localhost:3000/student/teacher/notification
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik1rekswU2Z3R2RiSGRoNFhPZ2ZKIiwiZW1haWwiOiJhbHZhcm9WcXpAdS10YWQuY29tIiwicm9sZSI6IlRFQUNIRVIiLCJpYXQiOjE3NDIzNzg1MTIsImV4cCI6MTc0MjQ2NDkxMn0.bpRbyndZl_Qlaqyxhm6sMDSrQWfmDsP_j6f5zzpAenQ
+
+{
+  "notificationId": "MkzK0SfwGdbHdh4XOgfJ",
+  "newStatus": "read"
+}
+
 
 ### Un alumno se le asigna un roadmap
 PATCH http://localhost:3000/userRoadmap

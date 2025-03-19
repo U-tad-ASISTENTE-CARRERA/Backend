@@ -755,12 +755,46 @@ const addTeacherToStudent = async (req, res) => {
     }
 };
 
+const deleteTeacherFromStudent = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { teacherId } = req.body;
+      
+        const student = await User.findById(id);
+        if (!student) return handleHttpError(res, "STUDENT_NOT_FOUND", 404);
+        if (student.role !== "STUDENT") return handleHttpError(res, "NOT_A_STUDENT", 403);
+      
+        const teacher = await User.findById(teacherId);
+        if (!teacher) return handleHttpError(res, "TEACHER_NOT_FOUND", 404);
+        if (teacher.role !== "TEACHER") return handleHttpError(res, "NOT_A_TEACHER", 403);
+      
+        const teacherList = student.metadata.teacherList || [];
+      
+        if (!teacherList.includes(teacherId)) return handleHttpError(res, "TEACHER_NOT_IN_LIST", 400);
+            
+        const updatedTeacherList = teacherList.filter(id => id !== teacherId);
+        await User.update(id, { "metadata.teacherList": updatedTeacherList });
+      
+        return res.status(200).json({ 
+            message: "TEACHER_REMOVED_FROM_STUDENT", 
+            teacherId,
+            remainingTeachers: updatedTeacherList.length 
+        });
+      
+    } catch (error) {
+        console.error("Remove Teacher From Student Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
 const getAllTeacher = async (req, res) => {
     try {
-        const users = await User.findByRole("TEACHER"); 
+        const users = await User.findByRole("TEACHER");
+        if (!users || users.length === 0) return res.status(404).json({ message: "No teachers found" });
+      
         return res.json(users);
     } catch (error) {
-        console.error("Get All Users Error:", error.message);
+        console.error("Get All Teachers Error:", error.message);
         return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
     }
 };
@@ -793,41 +827,58 @@ const sendNotificationToTeacher = async (req, res) => {
     try {
         const { id } = req.user;
         const { teacherId, message } = req.body;
-
+        
         const student = await User.findById(id);
         if (!student) return handleHttpError(res, "STUDENT_NOT_FOUND", 404);
         if (student.role !== "STUDENT") return handleHttpError(res, "NOT_A_STUDENT", 403);
-
+        
         const teacher = await User.findById(teacherId);
         if (!teacher) return handleHttpError(res, "TEACHER_NOT_FOUND", 404);
         if (teacher.role !== "TEACHER") return handleHttpError(res, "NOT_A_TEACHER", 403);
-
-        if (!student.metadata.teacherList.includes(teacherId)) return handleHttpError(res, "TEACHER_NOT_IN_STUDENT_LIST", 403);
-    
+        
+        if (!student.metadata?.teacherList?.includes(teacherId)) return handleHttpError(res, "TEACHER_NOT_IN_STUDENT_LIST", 403);
+        
+        const notificationId = Date.now().toString(36) + Math.random().toString(36).substring(2);
+        const currentTimestamp = new Date().toISOString();
+        
         const notification = {
+            id: notificationId,
+            senderId: id,
+            senderName: `${student.metadata.firstName || ''} ${student.metadata.lastName || ''}`.trim(),
+            senderEmail: student.email,
+            senderRole: 'STUDENT',
+            receiverId: teacherId,
+            title: 'Nuevo mensaje de estudiante',
+            body: message,
+            data: {
+            type: 'student_message',
             studentId: id,
-            message,
-            date: new Date().toISOString(),
-            status: "unread"
+            redirectTo: `/student/profile/${id}`
+            },
+            timestamp: currentTimestamp, 
+            createdAt: currentTimestamp,
+            read: false,
+            priority: 'normal'
         };
-
+        
         const notifications = teacher.metadata.notifications || [];
         notifications.push(notification);
+        
         const metadataUpdates = {
             "metadata.notifications": notifications,
             updatedAt: new Date().toISOString()
         };
-
+        
         await User.update(teacherId, metadataUpdates);
-
+        
         const emailSubject = "Nueva Notificación de un Estudiante";
         const emailBody = `
-            <h2>Hola ${teacher.name}</h2>
-            <p>Has recibido un nuevo mensaje de <strong>${student.name}</strong>.</p>
+            <h2>Hola ${teacher.metadata?.firstName || ''}</h2>
+            <p>Has recibido un nuevo mensaje de <strong>${student.metadata?.firstName || ''} ${student.metadata?.lastName || ''}</strong>.</p>
             <blockquote>${message}</blockquote>
             <p>Por favor, revisa tu cuenta para más detalles.</p>
         `;
-
+        
         await sendEmail(teacher.email, emailSubject, emailBody);
         return res.status(200).json({ message: "NOTIFICATION_SENT", notification });
     } catch (error) {
@@ -918,22 +969,226 @@ const getStudentByTeacher = async (req, res) => {
 const getTeacherNotifications = async (req, res) => {
     try {
         const { id } = req.user;
-
-        const user = await User.findById(id);
-        if (!user) return handleHttpError(res, "TEACHER_NOT_FOUND", 404);
-        if (user.role !== "TEACHER") return handleHttpError(res, "NOT_A_TEACHER", 403);
-
-        const notifications = user.metadata.notifications || [];
-        return res.status(200).json({ notifications });
+        const { 
+            limit = 20, 
+            startAfter = null,
+            onlyUnread = false 
+        } = req.query;
+      
+        const teacher = await User.findById(id);
+        if (!teacher) return handleHttpError(res, "TEACHER_NOT_FOUND", 404);
+        if (teacher.role !== "TEACHER") return handleHttpError(res, "NOT_A_TEACHER", 403);
+        
+        let notifications = teacher.metadata.notifications || [];
+        if (onlyUnread === 'true') notifications = notifications.filter(notif => !notif.read);
+      
+        notifications.sort((a, b) => {
+            const dateA = new Date(b.timestamp || b.createdAt);
+            const dateB = new Date(a.timestamp || a.createdAt);
+            return dateA - dateB;
+        });
+      
+        let startIndex = 0;
+        if (startAfter) {
+            const startAfterIndex = notifications.findIndex(notif => notif.id === startAfter);
+            if (startAfterIndex !== -1) {
+            startIndex = startAfterIndex + 1;
+            }
+        }
+      
+        const paginatedNotifications = notifications.slice(startIndex, startIndex + parseInt(limit));
+        const hasMore = startIndex + parseInt(limit) < notifications.length;
+        const nextCursor = hasMore ? paginatedNotifications[paginatedNotifications.length - 1].id : null;
+      
+        const unreadCount = notifications.filter(notif => !notif.read).length;
+      
+        return res.status(200).json({
+            notifications: paginatedNotifications,
+            pagination: {
+            total: notifications.length,
+            unreadCount,
+            hasMore,
+            nextCursor
+            }
+        });
     } catch (error) {
         console.error("Get Teacher Notifications Error:", error.message);
         return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
     }
 };
 
+const getTeacherNotificationsByStudent = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { 
+            studentId, 
+            limit = 20, 
+            startAfter = null,
+            onlyUnread = false 
+        } = req.query;
+      
+        const teacher = await User.findById(id);
+        if (!teacher) return handleHttpError(res, "TEACHER_NOT_FOUND", 404);
+        if (teacher.role !== "TEACHER") return handleHttpError(res, "NOT_A_TEACHER", 403);
+      
+        let notifications = teacher.metadata.notifications || [];
+      
+     
+        if (studentId) {
+            notifications = notifications.filter(notif => notif.data?.studentId === studentId || notif.senderId === studentId);
+        }
+      
+        if (onlyUnread === 'true') {
+            notifications = notifications.filter(notif => !notif.read);
+        }
+      
+        notifications.sort((a, b) => {
+            const dateA = new Date(b.timestamp || b.createdAt);
+            const dateB = new Date(a.timestamp || a.createdAt);
+            return dateA - dateB;
+        });
+      
+        let startIndex = 0;
+        if (startAfter) {
+            const startAfterIndex = notifications.findIndex(notif => notif.id === startAfter);
+            if (startAfterIndex !== -1) startIndex = startAfterIndex + 1;
+        }
+      
+      
+        const paginatedNotifications = notifications.slice(startIndex, startIndex + parseInt(limit));
+        const hasMore = startIndex + parseInt(limit) < notifications.length;
+        const nextCursor = hasMore ? paginatedNotifications[paginatedNotifications.length - 1].id : null;
+        const unreadCount = notifications.filter(notif => !notif.read).length;
+      
+        return res.status(200).json({
+            notifications: paginatedNotifications,
+            pagination: {
+                total: notifications.length,
+                unreadCount,
+                hasMore,
+                nextCursor
+            }
+        });
+    } catch (error) {
+        console.error("Get Teacher Notifications Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+const markAllNotificationsAsRead = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const teacher = await User.findById(id);
+        if (!teacher) return handleHttpError(res, "TEACHER_NOT_FOUND", 404);
+        if (teacher.role !== "TEACHER") return handleHttpError(res, "NOT_A_TEACHER", 403);
+        
+        const notifications = teacher.metadata.notifications || [];
+        if (notifications.length === 0) return res.status(200).json({ message: "NO_NOTIFICATIONS_TO_UPDATE" });
+        
+        const readTimestamp = new Date().toISOString();
+        const updatedNotifications = notifications.map(notif => {
+            if (!notif.read) {
+                return {
+                    ...notif,
+                    read: true,
+                    readAt: readTimestamp
+                };
+            }
+            return notif;
+        });
+        
+        const metadataUpdates = {
+            "metadata.notifications": updatedNotifications,
+            updatedAt: new Date().toISOString()
+        };
+        
+        await User.update(id, metadataUpdates);
+        return res.status(200).json({ 
+            message: "ALL_NOTIFICATIONS_MARKED_AS_READ",
+            unreadCount: 0
+        });
+    } catch (error) {
+        console.error("Mark All Notifications As Read Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+const updateNotificationStatus = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { notificationId, read } = req.body;
+      
+        if (!notificationId) return handleHttpError(res, "MISSING_NOTIFICATION_ID", 400);
+        if (typeof read !== 'boolean') return handleHttpError(res, "INVALID_READ_VALUE", 400, "Read status must be a boolean value");
+      
+        const teacher = await User.findById(id);
+        if (!teacher) return handleHttpError(res, "TEACHER_NOT_FOUND", 404);
+        if (teacher.role !== "TEACHER") return handleHttpError(res, "NOT_A_TEACHER", 403);
+      
+        const notifications = teacher.metadata.notifications || [];
+        const notificationIndex = notifications.findIndex(notif => notif.id === notificationId);
+        if (notificationIndex === -1) return handleHttpError(res, "NOTIFICATION_NOT_FOUND", 404);
+      
+        notifications[notificationIndex].read = read;
+      
+        if (read) {
+            notifications[notificationIndex].readAt = new Date().toISOString();
+        } else {
+            delete notifications[notificationIndex].readAt;
+        }
+      
+        const metadataUpdates = {
+            "metadata.notifications": notifications,
+            updatedAt: new Date().toISOString()
+        };
+      
+        await User.update(id, metadataUpdates);
+        
+        return res.status(200).json({ 
+            message: read ? "NOTIFICATION_MARKED_AS_READ" : "NOTIFICATION_MARKED_AS_UNREAD", 
+            notification: notifications[notificationIndex] 
+        });
+    } catch (error) {
+        console.error("Update Notification Status Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+const deleteNotification = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { notificationId } = req.params;
+    
+        if (!notificationId) return handleHttpError(res, "MISSING_NOTIFICATION_ID", 400);
+        
+        const teacher = await User.findById(id);
+        if (!teacher) return handleHttpError(res, "TEACHER_NOT_FOUND", 404);
+        if (teacher.role !== "TEACHER") return handleHttpError(res, "NOT_A_TEACHER", 403);
+        
+        const notifications = teacher.metadata.notifications || [];
+        const notificationIndex = notifications.findIndex(notif => notif.id === notificationId);
+        if (notificationIndex === -1) return handleHttpError(res, "NOTIFICATION_NOT_FOUND", 404);
+        
+        notifications.splice(notificationIndex, 1);
+        const metadataUpdates = {
+            "metadata.notifications": notifications,
+            updatedAt: new Date().toISOString()
+        };
+        
+        await User.update(id, metadataUpdates);
+        return res.status(200).json({ 
+            message: "NOTIFICATION_DELETED",
+            notificationId
+        });
+    } catch (error) {
+      console.error("Delete Notification Error:", error.message);
+      return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
 const createAdmin = async (req, res) => {
     try {
-        const email = "alvaro.vazquez.1716@gmail.com";
+        const email = "admin@u-tad.com";
         const password = "SecurePass@123";
         const seedWord = "securityphrase";
 
@@ -1041,9 +1296,14 @@ module.exports = {
     getRoadmap,
     deleteRoadmap,
     addTeacherToStudent,
+    deleteTeacherFromStudent,
     getTeachersOfStudent,
     sendNotificationToTeacher,
+    updateNotificationStatus,
     getTeacherNotifications,
+    getTeacherNotificationsByStudent,
+    markAllNotificationsAsRead,
+    deleteNotification,
     getAllTeacher,
     getAllStudentsOfTeacher,
     getSpecializationTeacher,
