@@ -938,9 +938,16 @@ const getSpecializationTeacher = async (req, res) => {
 
 const getStudent = async (req, res) => {
     try {
-        const { id } = req.params;
-        const user = await User.findById(id);
-        return res.json(user);
+        const { studentId } = req.query; 
+        
+        if (!studentId) {
+            return handleHttpError(res, "STUDENT_ID_REQUIRED", 400);
+        }
+
+        const student = await User.findById(studentId);
+        if (!student) return handleHttpError(res, "STUDENT_NOT_FOUND", 404);
+
+        return res.json(student);
     } catch (error) {
         console.error("Get Student Error:", error.message);
         return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
