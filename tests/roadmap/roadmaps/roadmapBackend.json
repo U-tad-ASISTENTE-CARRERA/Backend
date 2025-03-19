@@ -3,6 +3,7 @@
       "name": "Backend Development",
       "body": {
         "intro": {
+          "order": 1,
           "Introducción al Desarrollo Backend": {
             "description": "Este roadmap está diseñado para estudiantes interesados en el desarrollo backend. Cubre fundamentos de programación, bases de datos, APIs, arquitecturas y seguridad en backend.",
             "status": "doing",
@@ -18,6 +19,7 @@
           }
         },
         "Fundamentos": {
+          "order": 2,
           "Programación con Python/JavaScript": {
             "description": "Lenguajes de programación esenciales para el desarrollo backend.",
             "status": "doing",
@@ -37,6 +39,7 @@
           }
         },
         "Bases de Datos": {
+          "order": 3,
           "SQL y NoSQL": {
             "description": "Fundamentos de bases de datos relacionales y no relacionales.",
             "status": "doing",
@@ -60,6 +63,7 @@
           }
         },
         "APIs y Servicios Web": {
+          "order": 4,
           "Desarrollo de REST y GraphQL": {
             "description": "Creación y consumo de APIs REST y GraphQL para aplicaciones modernas.",
             "status": "doing",
@@ -75,6 +79,7 @@
           }
         },
         "Arquitectura de Software": {
+          "order": 5,
           "Patrones de Diseño en Backend": {
             "description": "Uso de patrones de diseño y arquitecturas como MVC, Microservicios y Serverless.",
             "status": "doing",
@@ -90,6 +95,7 @@
           }
         },
         "Seguridad en Backend": {
+          "order": 6,
           "Autenticación y Autorización": {
             "description": "Mecanismos de autenticación como JWT, OAuth, y seguridad en APIs.",
             "status": "doing",
@@ -105,6 +111,7 @@
           }
         },
         "Despliegue y DevOps": {
+          "order": 7,
           "Docker y Kubernetes": {
             "description": "Contenerización y orquestación de aplicaciones backend.",
             "status": "doing",

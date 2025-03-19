@@ -32,6 +32,7 @@ Registra un nuevo roadmap de aprendizaje en el sistema.
     "name": "Frontend Developer",
     "body": {
       "intro": {
+        "order": 1
         "intro a desarrollo frontend": {
           "description": "Este roadmap está diseñado para estudiantes que desean desarrollar habilidades en desarrollo frontend.",
           "status": "doing",
@@ -46,6 +47,7 @@ Registra un nuevo roadmap de aprendizaje en el sistema.
         }
       },
       "Fundamentos": {
+        "order": 2
         "HTML y CSS": {
           "description": "Aprende la estructura y el diseño de páginas web con HTML y CSS.",
           "status": "doing",
