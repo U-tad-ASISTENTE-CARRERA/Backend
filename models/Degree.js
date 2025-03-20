@@ -34,8 +34,14 @@ class Degree {
   }
 
   static async delete(name) {
-    await db.collection("degrees").doc(name).delete();
-    return { message: "Degree deleted", id: name };
+    if (!name || typeof name !== 'string' || name.trim() === '') {
+      throw new Error('Invalid degree name');
+    }
+  
+    const trimmedName = name.trim();
+  
+    await db.collection("degrees").doc(trimmedName).delete();
+    return { message: "Degree deleted", id: trimmedName };
   }
 }
 

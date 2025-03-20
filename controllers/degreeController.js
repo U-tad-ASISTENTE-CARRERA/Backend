@@ -98,7 +98,13 @@ const updateDegree = async (req, res) => {
 
 const deleteDegree = async (req, res) => {
   try {
-    const response = await Degree.delete(req.params.id);
+    const { name } = req.params;
+    
+    if (!name || name.trim() === '') {
+      return res.status(400).json({ error: "Invalid degree name" });
+    }
+
+    const response = await Degree.delete(name.trim());
     res.status(200).json(response);
   } catch (error) {
     res.status(500).json({ error: error.message });

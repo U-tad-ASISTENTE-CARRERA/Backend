@@ -1,9 +1,9 @@
 ###
 @apiUrl = http://localhost:3000
-@studentToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InE3QkNRb292ZnMwSUl5THZlbGlCIiwiZW1haWwiOiJzdHVkZW50QGxpdmUudS10YWQuY29tIiwicm9sZSI6IlNUVURFTlQiLCJpYXQiOjE3NDIzODA0ODUsImV4cCI6MTc0MjQ2Njg4NX0.PqjqqFoDxcmtdENe0HfWfTNRYvdPM32fLZvymGmiFcc
+@studentToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InB4ZTR1eHhzeG5WOGRYME5zaXJQIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MjQ4NDk5NiwiZXhwIjoxNzQyNTcxMzk2fQ.H1qKaMNtkSa7rEuDEls-CDkrhCvUPdd57hC1l5jTa-s
 @teacherToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IllRa0pjZ296cWE4TXNjMFNLeEVYIiwiZW1haWwiOiJ0ZWFjaGVyQHUtdGFkLmNvbSIsInJvbGUiOiJURUFDSEVSIiwiaWF0IjoxNzQyMzgwNTI5LCJleHAiOjE3NDI0NjY5Mjl9.aoOKWXP1-ivVn3m5j8jL-PVenBHCrshf--Eh6I3sh9E
 @studentId = q7BCQoovfs0IIyLveliB
-@teacherId = YQkJcgozqa8Msc0SKxEX
+@teacherId = MkzK0SfwGdbHdh4XOgfJ
 
 ### AUTHENTICATION & BASIC USER OPERATIONS
 
@@ -76,6 +76,14 @@ Authorization: Bearer {{studentToken}}
 GET {{apiUrl}}/student/teacher
 Authorization: Bearer {{studentToken}}
 
+### Delete a teacher from a student
+DELETE {{apiUrl}}/student/teacher
+Content-Type: application/json
+Authorization: Bearer {{studentToken}}
+
+{
+  "teacherId": "{{teacherId}}"
+}
 ### Get all students assigned to a teacher
 GET {{apiUrl}}/student/teacher/getAllStudents
 Authorization: Bearer {{teacherToken}}
