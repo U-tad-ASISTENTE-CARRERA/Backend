@@ -1231,36 +1231,43 @@ const getAllUsers = async (req, res) => {
 
 const updateUserByAdmin = async (req, res) => {
     try {
-        const { id } = req.params; 
-        const updates = req.body;
-
-        const user = await User.findById(id);
-        if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
-
-        if (user.role === "ADMIN") return handleHttpError(res, "CANNOT_UPDATE_ADMIN", 403);
-
-        if (updates.password) updates.password = await bcrypt.hash(updates.password, 10);
-        
-        const allowedUpdates = ["email", "password", "seedWord", "role", "metadata"];
-        const filteredUpdates = {};
-
-        Object.keys(updates).forEach(key => {
-            if (allowedUpdates.includes(key)) {
-                filteredUpdates[key] = updates[key];
-            }
-        });
-
-        if (Object.keys(filteredUpdates).length === 0) {
-            return handleHttpError(res, "NO_VALID_FIELDS_TO_UPDATE", 400);
+      const { id } = req.params;
+      const updates = req.body;
+      
+      const user = await User.findById(id);
+      if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
+      if (user.role === "ADMIN") return handleHttpError(res, "CANNOT_UPDATE_ADMIN", 403);
+      
+      if (updates.password) {
+        updates.password = await bcrypt.hash(updates.password, 10);
+      }
+      
+      const allowedUpdates = ["email", "password", "seedWord", "role", "metadata"];
+      const filteredUpdates = {};
+      
+      Object.keys(updates).forEach(key => {
+        if (allowedUpdates.includes(key)) {
+          if (key === "metadata" && updates.metadata) {
+            filteredUpdates[key] = { ...user.metadata, ...updates.metadata };
+          } else {
+            filteredUpdates[key] = updates[key];
+          }
         }
-
-        const updatedUser = await User.findByIdAndUpdate(id, filteredUpdates, { new: true });
-        return res.status(200).json({ message: "USER_UPDATED_SUCCESSFULLY", updatedUser });
+      });
+      
+      if (Object.keys(filteredUpdates).length === 0) {
+        return handleHttpError(res, "NO_VALID_FIELDS_TO_UPDATE", 400);
+      }
+      
+      const mergedUpdates = { ...user, ...filteredUpdates, updatedAt: new Date().toISOString() };
+      
+      const updatedUser = await User.update(id, mergedUpdates);
+      return res.status(200).json({ message: "USER_UPDATED_SUCCESSFULLY", updatedUser });
     } catch (error) {
-        console.error("Admin Update User Error:", error.message);
-        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+      console.error("Admin Update User Error:", error.message);
+      return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
     }
-};
+  };
 
 const deleteUserByAdmin = async (req, res) => {
     try {
