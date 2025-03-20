@@ -579,7 +579,7 @@ const updateRoadmap = async (req, res) => {
         const acquiredSkills = new Set(user.metadata.skills || []);
         const userSubjects = user.metadata.AH?.subjects || [];
 
-        // Si el roadmap no esta definido, obtenerlo de la BD a aprtir de la especialización del usuario
+        // Si el roadmap no está definido, obtenerlo de la BD a partir de la especialización del usuario
         if (!roadmap || roadmap.name !== user.metadata.specialization) {
             try {
                 const roadmapData = await Roadmap.findByName(user.metadata.specialization);
@@ -588,35 +588,46 @@ const updateRoadmap = async (req, res) => {
                 roadmap = roadmapData;
                 user.metadata.roadmap = roadmap;
 
-                // Guardar el roadmap en el usuario y responder directamente si no hay `body`
+                // Guardar el roadmap en el usuario
                 await User.update(id, { "metadata.roadmap": roadmap });
-                // if (!req.body || Object.keys(req.body).length === 0) {
-                //     return res.status(200).json({ message: "Roadmap asignado correctamente" });
-                // }
+                
+                // Si no hay parámetros adicionales, simplemente asignar el roadmap
+                if (!sectionName || !topicName || !newStatus) {
+                    return res.status(200).json({ message: "Roadmap asignado correctamente" });
+                }
             } catch (err) {
                 return res.status(500).json({ error: "ERROR_FETCHING_ROADMAP" });
             }
         }
 
+        // Hacer una copia del roadmap para evitar modificaciones no deseadas
+        const updatedRoadmapBody = JSON.parse(JSON.stringify(roadmap.body));
         let hasChanges = false;
-        const updatedRoadmapBody = { ...roadmap.body };
-
-        const normalizeName = (name) => name.trim().toLowerCase();
+        
+        // Preprocesar nombres de asignaturas para comparaciones (usado en autocompletado)
+        const normalizeName = (name) => name ? name.trim().toLowerCase() : '';
         const normalizedUserSubjects = userSubjects.map(subject => ({
             ...subject,
             normalizedName: normalizeName(subject.name),
         }));
 
-        // Auto-completar a partir del AH
+        // Encontrar temas que corresponden a asignaturas aprobadas
+        const approvedSubjectsMap = new Map();
+        normalizedUserSubjects.forEach(subject => {
+            if (subject.grade >= 5.0) {
+                approvedSubjectsMap.set(normalizeName(subject.name), subject);
+            }
+        });
+
+        // PRIMERO: Auto-completar basado en el historial académico (AH)
+        // Esta parte se ejecuta siempre, independientemente de si hay actualización manual o no
         for (const [section, topics] of Object.entries(updatedRoadmapBody)) {
             for (const [topic, topicData] of Object.entries(topics)) {
                 if (topicData?.subject) {
                     const normalizedSubjectName = normalizeName(topicData.subject);
-                    const subjectMatch = normalizedUserSubjects.find(
-                        (s) => s.normalizedName === normalizedSubjectName && s.grade >= 5.0
-                    );
-
-                    if (subjectMatch && topicData.status !== "done") {
+                    const isApproved = approvedSubjectsMap.has(normalizedSubjectName);
+                    
+                    if (isApproved && topicData.status !== "done") {
                         topicData.status = "done";
                         hasChanges = true;
                         if (topicData.skill) acquiredSkills.add(topicData.skill);
@@ -625,74 +636,57 @@ const updateRoadmap = async (req, res) => {
             }
         }
 
-        // Verificar si todas las asignaturas de un tema están completadas
-        for (const [section, topics] of Object.entries(updatedRoadmapBody)) {
-            for (const [topic, topicData] of Object.entries(topics)) {
-                if (topicData?.subject) {
-                    const normalizedSubjectName = normalizeName(topicData.subject);
-                    const subjectMatch = normalizedUserSubjects.find(
-                        (s) => s.normalizedName === normalizedSubjectName
-                    );
+        // SEGUNDO: Aplicar la actualización manual si se proporciona
+        if (sectionName && topicName && newStatus) {
+            // Validar que la sección y el tema existen
+            if (!updatedRoadmapBody[sectionName] || !updatedRoadmapBody[sectionName][topicName]) return res.status(404).json({ error: "SECTION_OR_TOPIC_NOT_FOUND" });
+            const topic = updatedRoadmapBody[sectionName][topicName];
 
-                    // Si la asignatura no tiene nota >= 5, marcar el tema como "doing"
-                    if (!subjectMatch || subjectMatch.grade < 5.0) {
-                        if (topicData.status === "done") {
-                            topicData.status = "doing";
-                            hasChanges = true;
-                        }
-                    }
+            // Si el estado es el mismo, no hacer cambios
+            if (topic.status === newStatus) {
+                // Aún así, guardamos si hubo cambios por el autocompletado
+                if (hasChanges) {
+                    await User.update(id, {
+                        "metadata.roadmap.body": updatedRoadmapBody,
+                        "metadata.skills": Array.from(acquiredSkills),
+                        "metadata.roadmap.lastUpdatedAt": new Date().toISOString(),
+                        "updatedAt": new Date().toISOString(),
+                    });
+                    return res.status(200).json({ message: "Roadmap actualizado automáticamente (tema específico sin cambios)" });
                 }
+                return res.status(200).json({ message: "No hay cambios que realizar (estado ya está actualizado)" });
+            }
+
+            if (newStatus === "done" || (topic.status !== "done")) {
+                topic.status = newStatus;
+                hasChanges = true;
+                
+                if (newStatus === "done" && topic.skill) acquiredSkills.add(topic.skill);
             }
         }
 
-        // Si no se proporcionan sectionName, topicName o newStatus, solo autocompletar
-        if (!sectionName || !topicName || !newStatus) {
-            if (hasChanges) {
-                // Actualizar el roadmap y las habilidades en la base de datos
-                await User.update(id, {
-                    "metadata.roadmap.body": updatedRoadmapBody, // Actualizar todo el cuerpo del roadmap
-                    "metadata.skills": Array.from(acquiredSkills),
-                    "metadata.roadmap.lastUpdatedAt": new Date().toISOString(),
-                    "updatedAt": new Date().toISOString(),
-                });
-                return res.status(200).json({ message: "Roadmap actualizado automáticamente" });
-            }
-            return res.status(200).json({ message: "No hay cambios que realizar" });
-        }
-
-        // Validar que la sección y el tema existen
-        if (!updatedRoadmapBody[sectionName] || !updatedRoadmapBody[sectionName][topicName]) {
-            return res.status(404).json({ error: "SECTION_OR_TOPIC_NOT_FOUND" });
-        }
-
-        // Obtener el tema específico
-        const topic = updatedRoadmapBody[sectionName][topicName];
-
-        // Si el estado es el mismo, no hacer cambios
-        if (topic.status === newStatus) {
-            return res.status(200).json({ message: "No hay cambios que realizar (estado ya está actualizado)" });
-        }
-
-        // Actualizar el estado del tema
-        topic.status = newStatus;
-        hasChanges = true;
-        if (newStatus === "done" && topic.skill) acquiredSkills.add(topic.skill);
-
-        // Guardar los cambios si los hay
         if (hasChanges) {
             await User.update(id, {
-                "metadata.roadmap.body": updatedRoadmapBody, // Actualizar todo el cuerpo del roadmap
+                "metadata.roadmap.body": updatedRoadmapBody,
                 "metadata.skills": Array.from(acquiredSkills),
                 "metadata.roadmap.lastUpdatedAt": new Date().toISOString(),
                 "updatedAt": new Date().toISOString(),
             });
-            return res.status(200).json({ message: "Roadmap actualizado correctamente" });
+            
+            let message;
+            if (sectionName && topicName && newStatus) {
+                message = "Roadmap actualizado correctamente";
+            } else {
+                message = "Roadmap actualizado automáticamente";
+            }
+            
+            return res.status(200).json({ message });
         }
 
-        return res.status(400).json({ error: "NO_CHANGES_DETECTED" });
+        return res.status(200).json({ message: "No hay cambios que realizar" });
     } catch (error) {
         console.error("Error updating roadmap:", error);
-        res.status(500).json({ error: "Error updating roadmap" });
+        return res.status(500).json({ error: "Error updating roadmap" });
     }
 };
 
