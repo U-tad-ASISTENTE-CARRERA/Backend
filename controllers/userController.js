@@ -212,7 +212,7 @@ const updateUserMetadata = async (req, res) => {
         if (user.role === "ADMIN") return handleHttpError(res, "ADMIN_CANNOT_HAVE_METADATA", 400);
 
         const METADATA_FIELDS = {
-            STUDENT: ["firstName", "lastName", "birthDate", "gender", "specialization", "degree", "yearsCompleted", "endDate", "languages", "programming_languages","skills", "certifications", "workExperience"],
+            STUDENT: ["firstName", "lastName", "birthDate", "gender", "specialization", "degree", "yearsCompleted", "endDate", "languages", "programming_languages","skills", "certifications", "jobOffers", "workExperience"],
             TEACHER: ["firstName", "lastName", "gender", "specialization"],
         };
 
@@ -278,7 +278,7 @@ const deleteUserMetadata = async (req, res) => {
         if (user.role === "ADMIN") return handleHttpError(res, "ADMIN_CANNOT_HAVE_METADATA", 400);
         
         const METADATA_FIELDS = {
-            STUDENT: ["firstName", "lastName", "birthDate", "gender", "specialization", "degree", "yearsCompleted", "endDate", "languages", "programming_languages","skills", "certifications", "workExperience"],
+            STUDENT: ["firstName", "lastName", "birthDate", "gender", "specialization", "degree", "yearsCompleted", "endDate", "languages", "programming_languages","skills", "certifications", "jobOffers", "workExperience"],
             TEACHER: ["firstName", "lastName", "gender", "specialization"],
         };
 
