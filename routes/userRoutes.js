@@ -35,6 +35,9 @@ const {
     updateUserByAdmin,
     deleteUserByAdmin,
     getStudentByTeacher,
+    sendDeletionRequest,
+    cancelDeletionRequest,
+    getDeletionRequests
 } = require("../controllers/userController");
 
 const { 
@@ -95,5 +98,11 @@ router.get("/admin", authUserMiddleware, checkRole("ADMIN"), getAllUsers);
 router.get("/admin/student", authUserMiddleware, checkRole("ADMIN"), getStudent);
 router.patch("/admin/:id", authUserMiddleware, checkRole("ADMIN"), updateUserByAdmin);
 router.delete("/admin/:id", authUserMiddleware, checkRole("ADMIN"), deleteUserByAdmin);
+
+// Deletion Request
+router.post("/deletionRequest", authUserMiddleware, checkRole(["STUDENT", "TEACHER"]), sendDeletionRequest);
+router.delete("/deletionRequest", authUserMiddleware, checkRole(["STUDENT", "TEACHER"]), cancelDeletionRequest);
+
+router.get("/admin/deletionRequests", authUserMiddleware, checkRole(["ADMIN"]), getDeletionRequests);
 
 module.exports = router;

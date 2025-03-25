@@ -3,7 +3,7 @@ POST http://localhost:3000/register
 Content-Type: application/json
 
 {
-  "email": "alvaroVqz@u-tad.com",
+  "email": "alvaroVqzdelete@u-tad.com",
   "password": "SecurePass123!",
   "seedWord": "sash"
 }
@@ -26,7 +26,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InB4ZTR1eHhze
     "firstName": "Alvaro",
     "lastName": "Vazquez",
     "gender": "male",
-    "dni": "12345678A",
     "degree": "INSO_DATA",
     "specialization": "Frontend Developer",
     "birthDate": "1985-08-20",

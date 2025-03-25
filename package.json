@@ -37,8 +37,7 @@
     "pdf-parse": "^1.1.1",
     "resend": "^4.1.2",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1",
-    "uuid": "^11.0.5"
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "jest": "^29.7.0",

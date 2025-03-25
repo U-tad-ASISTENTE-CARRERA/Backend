@@ -212,7 +212,7 @@ const updateUserMetadata = async (req, res) => {
         if (user.role === "ADMIN") return handleHttpError(res, "ADMIN_CANNOT_HAVE_METADATA", 400);
 
         const METADATA_FIELDS = {
-            STUDENT: ["firstName", "lastName", "birthDate", "gender", "specialization", "degree", "yearsCompleted", "endDate", "languages", "programming_languages","skills", "certifications", "jobOffers", "workExperience"],
+            STUDENT: ["firstName", "lastName", "birthDate", "gender", "specialization", "degree", "yearsCompleted", "endDate", "languages", "programming_languages", "skills", "certifications", "jobOffers", "workExperience"],
             TEACHER: ["firstName", "lastName", "gender", "specialization"],
         };
 
@@ -1286,6 +1286,176 @@ const deleteUserByAdmin = async (req, res) => {
     }
 };
 
+const sendDeletionRequest = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { reason } = req.body;
+        
+        if (!reason || reason.trim() === '') 
+            return handleHttpError(res, "REASON_REQUIRED", 400, "A reason for account deletion is required");
+        
+        const user = await User.findById(id);
+        if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
+        if (user.role === "ADMIN") return handleHttpError(res, "ADMINS_CANNOT_REQUEST_DELETION", 403);
+        
+        const admin = await User.findByRole("ADMIN");
+        if (!admin || admin.length === 0) return handleHttpError(res, "NO_ADMIN_FOUND", 404);
+        
+        const requestId = `del-${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 7)}`;
+        const currentTimestamp = new Date().toISOString();
+        
+        const notification = {
+            id: requestId,
+            senderId: id,
+            senderName: `${user.metadata?.firstName || ''} ${user.metadata?.lastName || ''}`.trim() || user.email,
+            senderEmail: user.email,
+            senderRole: user.role,
+            type: 'ACCOUNT_DELETION_REQUEST',
+            title: `Account Deletion Request: ${user.email}`,
+            body: reason,
+            timestamp: currentTimestamp,
+            status: 'pending',
+            read: false,
+            priority: 'high'
+        };
+        
+        const currentAdmin = admin[0];
+        const adminNotifications = currentAdmin.metadata?.notifications || [];
+        adminNotifications.push(notification);
+        
+        await User.update(currentAdmin.id, {
+            "metadata.notifications": adminNotifications,
+            updatedAt: currentTimestamp
+        });
+        
+        await sendEmail(
+            currentAdmin.email,
+            `Account Deletion Request: ${user.email}`,
+            `<h2>New Account Deletion Request</h2>
+            <p><strong>User:</strong> ${user.email} (${user.role})</p>
+            <p><strong>Name:</strong> ${user.metadata?.firstName || ''} ${user.metadata?.lastName || ''}</p>
+            <p><strong>Reason:</strong> ${reason}</p>
+            <p><strong>Date:</strong> ${new Date(currentTimestamp).toLocaleString()}</p>`
+        );
+        
+        return res.status(200).json({
+            message: "ACCOUNT_DELETION_REQUEST_SENT",
+            requestId,
+            status: 'pending',
+            requestDate: currentTimestamp
+        });
+    } catch (error) {
+        console.error("Send Deletion Request Error:", error);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+const cancelDeletionRequest = async (req, res) => {
+    try {
+        const { id } = req.user;
+        
+        const user = await User.findById(id);
+        if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
+        if (user.role === "ADMIN") return handleHttpError(res, "ADMINS_CANNOT_CANCEL", 403);
+      
+        const admin = await User.findByRole("ADMIN");
+        if (!admin || admin.length === 0) return handleHttpError(res, "NO_ADMIN_FOUND", 404);
+      
+        const currentAdmin = admin[0];
+        const notifications = currentAdmin.metadata?.notifications || [];
+      
+        const requestsToCancel = notifications.filter(
+            notif => notif.type === 'ACCOUNT_DELETION_REQUEST' && notif.senderId === id && (notif.status !== 'cancelled' && (!notif.read || notif.status === 'pending'))
+        );
+      
+        if (requestsToCancel.length === 0) return handleHttpError(res, "NO_ACTIVE_REQUESTS", 404, "No active deletion requests found");
+
+        const currentTime = new Date().toISOString();
+        const updatedNotifications = notifications.map(notif => {
+            if (notif.type === 'ACCOUNT_DELETION_REQUEST' && notif.senderId === id && (notif.status !== 'cancelled' && (!notif.read || notif.status === 'pending'))) {
+                return {
+                    ...notif,
+                    status: 'cancelled',
+                    cancelledAt: currentTime
+                };
+            }
+            return notif;
+        });
+      
+        await User.update(currentAdmin.id, {
+            "metadata.notifications": updatedNotifications,
+            updatedAt: currentTime
+        });
+      
+        return res.status(200).json({
+            message: "DELETION_REQUESTS_CANCELLED",
+            count: requestsToCancel.length,
+            cancelledAt: currentTime
+        });
+    } catch (error) {
+        console.error("Cancel Deletion Request Error:", error);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+const getDeletionRequests = async (req, res) => {
+    try {
+        const { id } = req.user; 
+        const admin = await User.findById(id);
+        if (!admin || admin.role !== "ADMIN") return handleHttpError(res, "NOT_AUTHORIZED", 403, "Only administrator can view deletion requests");
+        
+        const users = await User.findAll();
+        const nonAdminUsers = users.filter(user => user.role === "STUDENT" || user.role === "TEACHER");
+        const notifications = admin.metadata?.notifications || [];
+        const activeDeletionRequests = notifications.filter(
+            notif => notif.type === 'ACCOUNT_DELETION_REQUEST' && notif.status !== 'cancelled'
+        );
+      
+        let notificationsUpdated = false;
+        const updatedNotifications = notifications.filter(notif => {
+            if (notif.type === 'ACCOUNT_DELETION_REQUEST' && notif.status === 'cancelled') {
+                notificationsUpdated = true;
+                return false; 
+            }
+            
+            if (notif.type === 'ACCOUNT_DELETION_REQUEST' && !notif.read) {
+                notificationsUpdated = true;
+                notif.read = true;
+                notif.readAt = new Date().toISOString();
+            }
+            return true;
+        });
+      
+        if (notificationsUpdated) {
+            await User.update(id, {
+                "metadata.notifications": updatedNotifications,
+                updatedAt: new Date().toISOString()
+            });
+        }
+      
+        const enrichedRequests = activeDeletionRequests.map(request => {
+            const requestUser = nonAdminUsers.find(user => user.id === request.senderId);
+            return {
+                ...request,
+                userDetails: requestUser ? {
+                    id: requestUser.id,
+                    email: requestUser.email,
+                    role: requestUser.role,
+                    firstName: requestUser.metadata?.firstName,
+                    lastName: requestUser.metadata?.lastName,
+                } : null
+            };
+        });
+        
+        return res.status(200).json({
+            deletionRequests: enrichedRequests
+        });
+    } catch (error) {
+        console.error("Get Deletion Requests Error:", error);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
 module.exports = { 
     registerUser,
     loginUser,
@@ -1321,4 +1491,7 @@ module.exports = {
     getAllUsers,
     updateUserByAdmin,
     deleteUserByAdmin,
+    sendDeletionRequest,
+    cancelDeletionRequest,
+    getDeletionRequests
 };

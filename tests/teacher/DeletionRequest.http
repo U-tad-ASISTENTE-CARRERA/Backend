@@ -1,0 +1,52 @@
+###
+@baseUrl = http://localhost:3000
+
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InpVaWM1RVY2a1cxS2xPSndlR2RMIiwiZW1haWwiOiJhZG1pbkB1LXRhZC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NDI5MTYxNzYsImV4cCI6MTc0MzAwMjU3Nn0.pO8CPAJoohI6jyblmAiNjsRvinCzh_AQZt8ClIp0Zmc
+
+###
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "email": "alvaroVqzdelete@live.u-tad.com",
+  "password": "SecurePass123!"
+}
+
+###
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "email": "alvaroVqzdelete@u-tad.com",
+  "password": "SecurePass123!"
+}
+
+### 
+POST {{baseUrl}}/deletionRequest
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InhhQlpnTmh6cDZLYzBDUDh4bHFIIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MjkxODUyMSwiZXhwIjoxNzQzMDA0OTIxfQ.59XQCkIMRBXD51Y7Bagu9BLFxNU3VovJ_kr4qlRUz8Q
+
+{
+  "reason": "... idk"
+}
+
+### 
+POST {{baseUrl}}/deletionRequest
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRYVjZBbkd4MzUwNEVFM1cxejFCIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAdS10YWQuY29tIiwicm9sZSI6IlRFQUNIRVIiLCJpYXQiOjE3NDI5MTg1NzMsImV4cCI6MTc0MzAwNDk3M30.c7GzjZKXPOjUAAyI_un6_xenw8OSj0Y9YIyzlHiMSKM
+
+{
+  "reason": "... idk"
+}
+
+### 
+DELETE {{baseUrl}}/deletionRequest
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InhhQlpnTmh6cDZLYzBDUDh4bHFIIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MjkxODUyMSwiZXhwIjoxNzQzMDA0OTIxfQ.59XQCkIMRBXD51Y7Bagu9BLFxNU3VovJ_kr4qlRUz8Q
+
+### 
+DELETE {{baseUrl}}/deletionRequest
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRYVjZBbkd4MzUwNEVFM1cxejFCIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAdS10YWQuY29tIiwicm9sZSI6IlRFQUNIRVIiLCJpYXQiOjE3NDI5MTg1NzMsImV4cCI6MTc0MzAwNDk3M30.c7GzjZKXPOjUAAyI_un6_xenw8OSj0Y9YIyzlHiMSKM
+
+###
+GET {{baseUrl}}/admin/deletionRequests
+Authorization: Bearer {{adminToken}}
