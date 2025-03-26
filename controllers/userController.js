@@ -1291,12 +1291,13 @@ const sendDeletionRequest = async (req, res) => {
         const { id } = req.user;
         const { reason } = req.body;
         
-        if (!reason || reason.trim() === '') 
-            return handleHttpError(res, "REASON_REQUIRED", 400, "A reason for account deletion is required");
+        if (!reason || reason.trim() === '') return handleHttpError(res, "REASON_REQUIRED", 400, "A reason for account deletion is required");
         
         const user = await User.findById(id);
         if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
         if (user.role === "ADMIN") return handleHttpError(res, "ADMINS_CANNOT_REQUEST_DELETION", 403);
+        
+        if (user.metadata?.deletionRequestStatus === 'pending') return handleHttpError(res, "DELETION_REQUEST_ALREADY_PENDING", 400, "A deletion request is already in progress");
         
         const admin = await User.findByRole("ADMIN");
         if (!admin || admin.length === 0) return handleHttpError(res, "NO_ADMIN_FOUND", 404);
@@ -1328,6 +1329,13 @@ const sendDeletionRequest = async (req, res) => {
             updatedAt: currentTimestamp
         });
         
+        await User.update(id, {
+            "metadata.deletionRequestStatus": "pending",
+            "metadata.deletionRequestReason": reason,
+            "metadata.deletionRequestTimestamp": currentTimestamp,
+            updatedAt: currentTimestamp
+        });
+        
         await sendEmail(
             currentAdmin.email,
             `Account Deletion Request: ${user.email}`,
@@ -1353,26 +1361,30 @@ const sendDeletionRequest = async (req, res) => {
 const cancelDeletionRequest = async (req, res) => {
     try {
         const { id } = req.user;
-        
         const user = await User.findById(id);
         if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
         if (user.role === "ADMIN") return handleHttpError(res, "ADMINS_CANNOT_CANCEL", 403);
-      
+        if (user.metadata?.deletionRequestStatus !== 'pending') return handleHttpError(res, "NO_ACTIVE_REQUESTS", 404, "No active deletion requests found");
+        
         const admin = await User.findByRole("ADMIN");
         if (!admin || admin.length === 0) return handleHttpError(res, "NO_ADMIN_FOUND", 404);
-      
+        
         const currentAdmin = admin[0];
         const notifications = currentAdmin.metadata?.notifications || [];
-      
+        
         const requestsToCancel = notifications.filter(
-            notif => notif.type === 'ACCOUNT_DELETION_REQUEST' && notif.senderId === id && (notif.status !== 'cancelled' && (!notif.read || notif.status === 'pending'))
+            notif => notif.type === 'ACCOUNT_DELETION_REQUEST' && 
+                     notif.senderId === id && 
+                     (notif.status !== 'cancelled' && (!notif.read || notif.status === 'pending'))
         );
-      
+        
         if (requestsToCancel.length === 0) return handleHttpError(res, "NO_ACTIVE_REQUESTS", 404, "No active deletion requests found");
 
         const currentTime = new Date().toISOString();
         const updatedNotifications = notifications.map(notif => {
-            if (notif.type === 'ACCOUNT_DELETION_REQUEST' && notif.senderId === id && (notif.status !== 'cancelled' && (!notif.read || notif.status === 'pending'))) {
+            if (notif.type === 'ACCOUNT_DELETION_REQUEST' && 
+                notif.senderId === id && 
+                (notif.status !== 'cancelled' && (!notif.read || notif.status === 'pending'))) {
                 return {
                     ...notif,
                     status: 'cancelled',
@@ -1381,14 +1393,23 @@ const cancelDeletionRequest = async (req, res) => {
             }
             return notif;
         });
-      
+        
+        // Actualizar notificaciones del administrador
         await User.update(currentAdmin.id, {
             "metadata.notifications": updatedNotifications,
             updatedAt: currentTime
         });
-      
+        
+        // Actualizar estado de solicitud de eliminación del usuario
+        await User.update(id, {
+            "metadata.deletionRequestStatus": "cancelled",
+            "metadata.deletionRequestReason": null,
+            "metadata.deletionRequestTimestamp": null,
+            updatedAt: currentTime
+        });
+        
         return res.status(200).json({
-            message: "DELETION_REQUESTS_CANCELLED",
+            message: "DELETION_REQUEST_CANCELLED",
             count: requestsToCancel.length,
             cancelledAt: currentTime
         });
@@ -1410,7 +1431,7 @@ const getDeletionRequests = async (req, res) => {
         const activeDeletionRequests = notifications.filter(
             notif => notif.type === 'ACCOUNT_DELETION_REQUEST' && notif.status !== 'cancelled'
         );
-      
+        
         let notificationsUpdated = false;
         const updatedNotifications = notifications.filter(notif => {
             if (notif.type === 'ACCOUNT_DELETION_REQUEST' && notif.status === 'cancelled') {
@@ -1425,14 +1446,14 @@ const getDeletionRequests = async (req, res) => {
             }
             return true;
         });
-      
+        
         if (notificationsUpdated) {
             await User.update(id, {
                 "metadata.notifications": updatedNotifications,
                 updatedAt: new Date().toISOString()
             });
         }
-      
+        
         const enrichedRequests = activeDeletionRequests.map(request => {
             const requestUser = nonAdminUsers.find(user => user.id === request.senderId);
             return {
@@ -1443,6 +1464,9 @@ const getDeletionRequests = async (req, res) => {
                     role: requestUser.role,
                     firstName: requestUser.metadata?.firstName,
                     lastName: requestUser.metadata?.lastName,
+                    deletionRequestStatus: requestUser.metadata?.deletionRequestStatus,
+                    deletionRequestReason: requestUser.metadata?.deletionRequestReason,
+                    deletionRequestTimestamp: requestUser.metadata?.deletionRequestTimestamp,
                 } : null
             };
         });
