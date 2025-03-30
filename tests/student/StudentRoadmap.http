@@ -1,0 +1,42 @@
+### register 
+POST http://localhost:3000/register
+Content-Type: application/json
+
+{
+  "email": "alvaroVqzdelete@live.u-tad.com",
+  "password": "SecurePass123!",
+  "seedWord": "sash"
+}
+
+### login
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "email": "alvaroVqzdelete@live.u-tad.com",
+  "password": "SecurePass123!"
+}
+
+### Un alumno se le asigna un roadmap
+PATCH http://localhost:3000/userRoadmap
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkdPUlBPMk1oVDU5VHJDWk4yeWdxIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsInNlZWRXb3JkIjoic2FzaCIsImlhdCI6MTc0MzM1ODIxNiwiZXhwIjoxNzQzNDQ0NjE2fQ.faB7KkSSUXYUlacBNB5V6Bt4EseQAemTVvnTRWz0I60
+
+### Un alumno actualiza el estado de un campo de su roadmap
+PATCH http://localhost:3000/userRoadmap
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkdPUlBPMk1oVDU5VHJDWk4yeWdxIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsInNlZWRXb3JkIjoic2FzaCIsImlhdCI6MTc0MzM1ODIxNiwiZXhwIjoxNzQzNDQ0NjE2fQ.faB7KkSSUXYUlacBNB5V6Bt4EseQAemTVvnTRWz0I60
+Content-Type: application/json
+
+{
+  "sectionName": "Introducción",
+  "topicName": "Introducción a desarrollo frontend",
+  "newStatus": "done"
+}
+
+### Obtener el roadmap del usuario autenticado
+GET http://localhost:3000/userRoadmap
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkdPUlBPMk1oVDU5VHJDWk4yeWdxIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsInNlZWRXb3JkIjoic2FzaCIsImlhdCI6MTc0MzM1ODIxNiwiZXhwIjoxNzQzNDQ0NjE2fQ.faB7KkSSUXYUlacBNB5V6Bt4EseQAemTVvnTRWz0I60
+
+### Eliminar el roadmap del usuario autenticado
+DELETE http://localhost:3000/userRoadmap
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkdPUlBPMk1oVDU5VHJDWk4yeWdxIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsInNlZWRXb3JkIjoic2FzaCIsImlhdCI6MTc0MzM1ODIxNiwiZXhwIjoxNzQzNDQ0NjE2fQ.faB7KkSSUXYUlacBNB5V6Bt4EseQAemTVvnTRWz0I60

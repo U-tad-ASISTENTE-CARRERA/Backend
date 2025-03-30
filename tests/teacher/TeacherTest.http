@@ -1,14 +1,5 @@
-###
-@apiUrl = http://localhost:3000
-@studentToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InB4ZTR1eHhzeG5WOGRYME5zaXJQIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MjQ4NDk5NiwiZXhwIjoxNzQyNTcxMzk2fQ.H1qKaMNtkSa7rEuDEls-CDkrhCvUPdd57hC1l5jTa-s
-@teacherToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IllRa0pjZ296cWE4TXNjMFNLeEVYIiwiZW1haWwiOiJ0ZWFjaGVyQHUtdGFkLmNvbSIsInJvbGUiOiJURUFDSEVSIiwiaWF0IjoxNzQyMzgwNTI5LCJleHAiOjE3NDI0NjY5Mjl9.aoOKWXP1-ivVn3m5j8jL-PVenBHCrshf--Eh6I3sh9E
-@studentId = q7BCQoovfs0IIyLveliB
-@teacherId = MkzK0SfwGdbHdh4XOgfJ
-
-### AUTHENTICATION & BASIC USER OPERATIONS
-
 ### Register a student
-POST {{apiUrl}}/register
+POST http://localhost:3000/register
 Content-Type: application/json
 
 {
@@ -18,7 +9,7 @@ Content-Type: application/json
 }
 
 ### Register a teacher
-POST {{apiUrl}}/register
+POST http://localhost:3000/register
 Content-Type: application/json
 
 {
@@ -28,7 +19,7 @@ Content-Type: application/json
 }
 
 ### Login as student
-POST {{apiUrl}}/login
+POST http://localhost:3000/login
 Content-Type: application/json
 
 {
@@ -37,7 +28,7 @@ Content-Type: application/json
 }
 
 ### Login as teacher
-POST {{apiUrl}}/login
+POST http://localhost:3000/login
 Content-Type: application/json
 
 {
@@ -46,85 +37,85 @@ Content-Type: application/json
 }
 
 ### Get student profile
-GET {{apiUrl}}/
-Authorization: Bearer {{studentToken}}
+GET http://localhost:3000/
+Authorization: Bearer sttoken
 
 ### Get teacher profile
-GET {{apiUrl}}/
-Authorization: Bearer {{teacherToken}}
+GET http://localhost:3000/
+Authorization: Bearer teacherToken
 
 ### TEACHER-STUDENT RELATIONSHIP MANAGEMENT
 
 ### Get all teachers (student view)
-GET {{apiUrl}}/teacher
-Authorization: Bearer {{studentToken}}
+GET http://localhost:3000/teacher
+Authorization: Bearer sttoken
 
 ### Get teachers by specialization (student view)
-GET {{apiUrl}}/teacher/Frontend%20Developer
-Authorization: Bearer {{studentToken}}
+GET http://localhost:3000/teacher/Frontend%20Developer
+Authorization: Bearer sttoken
 
 ### Add a teacher to a student
-POST {{apiUrl}}/student/teacher
+POST http://localhost:3000/student/teacher
 Content-Type: application/json
-Authorization: Bearer {{studentToken}}
+Authorization: Bearer sttoken
 
 {
-  "teacherId": "{{teacherId}}"
+  "teacherId": "teacherId"
 }
 
 ### Get teachers assigned to a student
-GET {{apiUrl}}/student/teacher
-Authorization: Bearer {{studentToken}}
+GET http://localhost:3000/student/teacher
+Authorization: Bearer sttoken
 
 ### Delete a teacher from a student
-DELETE {{apiUrl}}/student/teacher
+DELETE http://localhost:3000/student/teacher
 Content-Type: application/json
-Authorization: Bearer {{studentToken}}
+Authorization: Bearer sttoken
 
 {
-  "teacherId": "{{teacherId}}"
+  "teacherId": "teacherId"
 }
 ### Get all students assigned to a teacher
-GET {{apiUrl}}/student/teacher/getAllStudents
-Authorization: Bearer {{teacherToken}}
+GET http://localhost:3000/student/teacher/getAllStudents
+Authorization: Bearer teacherToken
 
 ### Get specific student info (by teacher)
-GET {{apiUrl}}/student/teacher/getStudent
+GET http://localhost:3000/student/teacher/getStudent
 Content-Type: application/json
-Authorization: Bearer {{teacherToken}}
+Authorization: Bearer teacherToken
 
 {
-  "studentId": "{{studentId}}"
+  "studentId": "studentId"
 }
 
 ### NOTIFICATION SYSTEM
 
 ### Student sends a notification to teacher
-POST {{apiUrl}}/student/teacher/notification
+POST http://localhost:3000/student/teacher/notification
 Content-Type: application/json
-Authorization: Bearer {{studentToken}}
+Authorization: Bearer studentToken
 
 {
-  "teacherId": "{{teacherId}}",
+  "teacherId": "teacherId",
   "message": "Hello teacher, I have a question about the assignment on data structures."
 }
 
 ### Teacher gets all notifications
-GET {{apiUrl}}/student/teacher/notification
-Authorization: Bearer {{teacherToken}}
+GET http://localhost:3000/student/teacher/notification
+Authorization: Bearer teacherToken
 
 ### Teacher gets notifications with pagination and filtering
-GET {{apiUrl}}/student/teacher/notification?limit=10&onlyUnread=true
-Authorization: Bearer {{teacherToken}}
+GET http://localhost:3000/student/teacher/notification?limit=10&onlyUnread=true
+Authorization: Bearer teacherToken
 
 ### Teacher gets notifications from a specific student
-GET {{apiUrl}}/student/teacher/notification/byStudent?studentId={{studentId}}
-Authorization: Bearer {{teacherToken}}
+GET http://localhost:3000/student/teacher/notification/byStudent?studentId=studentId
+Authorization: Bearer teacherToken
 
 ### Teacher marks a notification as read
-PATCH {{apiUrl}}/student/teacher/notification
+PATCH http://localhost:3000/student/teacher/notification
 Content-Type: application/json
-Authorization: Bearer {{teacherToken}}
+Authorization: Bearer teacherToken
 
 {
   "notificationId": "m8fsl4ldgkkdl11opoh",
@@ -132,11 +123,9 @@ Authorization: Bearer {{teacherToken}}
 }
 
 ### Teacher marks all notifications as read
-POST {{apiUrl}}/student/teacher/notification/read-all
-Authorization: Bearer {{teacherToken}}
+POST http://localhost:3000/student/teacher/notification/read-all
+Authorization: Bearer teacherToken
 
 ### Teacher deletes a notification
-DELETE {{apiUrl}}/student/teacher/notification/m8fsl4ldgkkdl11opoh
-Authorization: Bearer {{teacherToken}}
-
-
+DELETE http://localhost:3000/student/teacher/notification/m8fsl4ldgkkdl11opoh
+Authorization: Bearer teacherToken

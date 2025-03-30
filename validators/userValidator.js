@@ -63,7 +63,7 @@ const validateLogin = [
 
 const METADATA_FIELDS = {
     STUDENT: new Set([
-        "firstName", "lastName", "birthDate", "gender", "dni", "degree", "endDate", "specialization", "languages", "programming_languages", "skills", "certifications", "jobOffers","workExperience", "academicHistory"
+        "firstName", "lastName", "birthDate", "gender", "dni", "degree", "endDate", "specialization", "languages", "programming_languages", "certifications", "jobOffers", "workExperience", "academicHistory"
     ]),
     TEACHER: new Set([
         "firstName", "lastName", "gender", "dni", "specialization"
@@ -77,37 +77,29 @@ const validateArrayObjects = (field, properties) => {
         .notEmpty().withMessage(`${field} cannot be empty`)
         .custom((items) => {
             for (const item of items) {
+                const hasId = item.hasOwnProperty('_id');
+            
                 for (const prop of properties) {
-                    if (!item.hasOwnProperty(prop.name)) {
-                        throw new Error(`${field} -> Each object must contain "${prop.name}"`);
-                    }
-                    if (typeof item[prop.name] !== prop.type) {
-                        throw new Error(`${field} -> "${prop.name}" must be of type ${prop.type}`);
-                    }
-                    if (prop.enum && !prop.enum.includes(item[prop.name])) {
-                        throw new Error(`${field} -> "${prop.name}" must be one of: ${prop.enum.join(", ")}`);
-                    }
+                    if (!item.hasOwnProperty(prop.name)) throw new Error(`${field} -> Each object must contain "${prop.name}"`);
+                    if (typeof item[prop.name] !== prop.type) throw new Error(`${field} -> "${prop.name}" must be of type ${prop.type}`);
+                    if (prop.enum && !prop.enum.includes(item[prop.name])) throw new Error(`${field} -> "${prop.name}" must be one of: ${prop.enum.join(", ")}`);
                 }
             }
+            
             return true;
-        });
+        }
+    );
 };
-
+  
 const validateMetadata = [
     body().custom((body, { req }) => {
         const role = req.user?.role;
-        if (!role || !METADATA_FIELDS[role]) {
-            throw new Error("Invalid user role for metadata update");
-        }
-
-        for (const field in body) {
-            if (!METADATA_FIELDS[role].has(field)) {
-                throw new Error(`Invalid field: ${field} for role: ${role}`);
-            }
-        }
+        if (!role || !METADATA_FIELDS[role]) throw new Error("Invalid user role for metadata update");
+      
+        for (const field in body) if (!METADATA_FIELDS[role].has(field)) throw new Error(`Invalid field: ${field} for role: ${role}`);
         return true;
     }),
-
+  
     check("firstName").if(body("firstName").exists()).isString().notEmpty().withMessage("firstName must be a non-empty string"),
     check("lastName").if(body("lastName").exists()).isString().notEmpty().withMessage("lastName must be a non-empty string"),
     check("gender").if(body("gender").exists()).isString().isIn(["male", "female", "prefer not to say"]).withMessage("gender must be one of: male, female, or prefer not to say"),
@@ -116,27 +108,27 @@ const validateMetadata = [
     check("endDate").if(body("endDate").exists()).isISO8601().toDate().withMessage("endDate must be a valid date"),
     check("specialization").if(body("specialization").exists()).isString().notEmpty().withMessage("specialization must be a non-empty string"),
     check("birthDate").if(body("birthDate").exists()).isISO8601().toDate().withMessage("birthDate must be a valid date"),
-
+  
     validateArrayObjects("languages", [
         { name: "language", type: "string" },
         { name: "level", type: "string", enum: ["A1", "A2", "B1", "B2", "C1", "C2"] },
     ]),
-
+  
     validateArrayObjects("programming_languages", [
         { name: "name", type: "string" },
         { name: "level", type: "string", enum: ["low", "medium", "high"] },
     ]),
-
-    validateArrayObjects("skills", [
-        { name: "skill", type: "string" },
-    ]),
-
+  
+    // validateArrayObjects("skills", [
+    //     { name: "skill", type: "string" },
+    // ]),
+  
     validateArrayObjects("certifications", [
         { name: "name", type: "string" },
         { name: "date", type: "string" },
         { name: "institution", type: "string" },
     ]),
-
+  
     validateArrayObjects("workExperience", [
         { name: "jobType", type: "string" },
         { name: "startDate", type: "string" }, 
@@ -145,7 +137,7 @@ const validateMetadata = [
         { name: "description", type: "string" },
         { name: "responsibilities", type: "string" },
     ]),
-
+  
     validateArrayObjects("jobOffers", [
         { name: "title", type: "string" },
         { name: "url", type: "string" },
@@ -159,7 +151,7 @@ const validateMetadata = [
         { name: "company", type: "string" }, 
         { name: "keywords", type: "string" }, 
     ]),
-
+  
     (req, res, next) => {
         return validateResults(req, res, next);
     }

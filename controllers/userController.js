@@ -7,6 +7,7 @@ const { Resend } = require("resend");
 const User = require("../models/User");
 const Roadmap = require("../models/Roadmap");
 const e = require("express");
+const { v4: uuidv4 } = require('uuid');
 const admin = require("firebase-admin");
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -24,7 +25,7 @@ const sendEmail = async (to, subject, content) => {
         console.error("Error sending email:", error.message);
     }
 };
-    
+
 const registerUser = async (req, res) => {
     try {
         const { email, password, seedWord } = req.body;
@@ -207,57 +208,77 @@ const updateUserMetadata = async (req, res) => {
         const { id } = req.user;
         const updates = req.body;
         const user = await User.findById(id);
-
+        
         if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
         if (user.role === "ADMIN") return handleHttpError(res, "ADMIN_CANNOT_HAVE_METADATA", 400);
-
+    
         const METADATA_FIELDS = {
-            STUDENT: ["firstName", "lastName", "birthDate", "gender", "specialization", "degree", "yearsCompleted", "endDate", "languages", "programming_languages", "skills", "certifications", "jobOffers", "workExperience"],
+            STUDENT: ["firstName", "lastName", "birthDate", "gender", "specialization", "degree", "yearsCompleted", "endDate", "languages", "programming_languages", "certifications", "jobOffers", "workExperience"],
             TEACHER: ["firstName", "lastName", "gender", "specialization"],
         };
-
+        
         const validFields = METADATA_FIELDS[user.role] || [];
         const metadataUpdates = {};
         const updateLog = [];
-
+        
         if (!user.metadata) user.metadata = {};
         if (!user.updateHistory || !Array.isArray(user.updateHistory)) user.updateHistory = [];
-
+    
         for (const key in updates) {
             if (validFields.includes(key)) {
                 const existingValue = user.metadata[key];
-
+                    
                 if (Array.isArray(updates[key])) {
-                    const existingArray = Array.isArray(existingValue) ? existingValue : [];
-                    const mergedData = [...new Set([...existingArray, ...updates[key]].map(JSON.stringify))].map(JSON.parse);
-                    metadataUpdates[`metadata.${key}`] = mergedData;
-                    updateLog.push({ field: key, oldValue: existingValue ?? null, newValue: mergedData });
+                    const arrayFields = ["languages", "programming_languages", "certifications", "jobOffers", "workExperience"];
+        
+                    if (arrayFields.includes(key)) {
+                        const existingArray = Array.isArray(existingValue) ? existingValue : [];
+                        let updatedArray = [...existingArray];
+                    
+                        for (const item of updates[key]) {
+                            if (item._id) {
+                                const existingIndex = updatedArray.findIndex(existing => existing._id === item._id);
+                            
+                                if (existingIndex !== -1) {
+                                    updatedArray[existingIndex] = {...updatedArray[existingIndex], ...item};
+                                } else updatedArray.push(item);
+                            } else updatedArray.push({...item, _id: uuidv4()});
+                        }
+                
+                        metadataUpdates[`metadata.${key}`] = updatedArray;
+                        updateLog.push({ field: key, oldValue: existingValue ?? null, newValue: updatedArray });
+                    } else {
+                        const existingArray = Array.isArray(existingValue) ? existingValue : [];
+                        const mergedData = [...new Set([...existingArray, ...updates[key]].map(JSON.stringify))].map(JSON.parse);
+                        
+                        metadataUpdates[`metadata.${key}`] = mergedData;
+                        updateLog.push({ field: key, oldValue: existingValue ?? null, newValue: mergedData });
+                    }
                 } else {
                     metadataUpdates[`metadata.${key}`] = updates[key];
                     updateLog.push({ field: key, oldValue: existingValue ?? null, newValue: updates[key] });
                 }
             }
         }
-
-        if (Object.keys(metadataUpdates).length === 0) {
-            return handleHttpError(res, "NO_VALID_FIELDS_TO_UPDATE", 400);
-        }
-
+    
+        if (Object.keys(metadataUpdates).length === 0) return handleHttpError(res, "NO_VALID_FIELDS_TO_UPDATE", 400);
+        
+    
         const now = new Date();
         user.updateHistory.push({
             timestamp: now.toISOString(),
             changes: updateLog.filter(change => change.oldValue !== undefined && change.newValue !== undefined),
         });
-
+    
         const oneYearAgo = new Date();
         oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
         user.updateHistory = user.updateHistory.filter(entry => new Date(entry.timestamp) > oneYearAgo);
-
+        
         metadataUpdates["metadata.updatedAt"] = now.toISOString();
         metadataUpdates["updateHistory"] = user.updateHistory;
-
+    
         await User.update(id, metadataUpdates);
-
+    
         return res.status(200).json({
             message: "METADATA_UPDATED_SUCCESS",
             updatedFields: metadataUpdates,
@@ -272,36 +293,61 @@ const updateUserMetadata = async (req, res) => {
 const deleteUserMetadata = async (req, res) => {
     try {
         const { id } = req.user;
-        const updates = req.body; 
+        const updates = req.body;
         const user = await User.findById(id);
+        
         if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
         if (user.role === "ADMIN") return handleHttpError(res, "ADMIN_CANNOT_HAVE_METADATA", 400);
         
         const METADATA_FIELDS = {
-            STUDENT: ["firstName", "lastName", "birthDate", "gender", "specialization", "degree", "yearsCompleted", "endDate", "languages", "programming_languages","skills", "certifications", "jobOffers", "workExperience"],
+            STUDENT: ["firstName", "lastName", "birthDate", "gender", "specialization", "degree", "yearsCompleted", "endDate", "languages", "programming_languages", "certifications", "jobOffers", "workExperience"],
             TEACHER: ["firstName", "lastName", "gender", "specialization"],
         };
-
+      
         const validFields = METADATA_FIELDS[user.role];
         const metadataDeletes = {};
         const deleteLog = [];
-
+        
         if (!user.metadata) user.metadata = {};
-        if (!user.updateHistory) user.updateHistory = []; 
+        if (!user.updateHistory) user.updateHistory = [];
+      
+        const arrayFields = ["languages", "programming_languages", "certifications", "jobOffers", "workExperience"];
+      
         for (const key in updates) {
             if (validFields.includes(key)) {
                 if (Array.isArray(user.metadata[key]) && Array.isArray(updates[key])) {
                     const existingData = user.metadata[key] || [];
-                    const filteredData = existingData.filter(item => 
-                        !updates[key].some(toDelete => JSON.stringify(toDelete) === JSON.stringify(item))
-                    );
-
-                    if (filteredData.length === 0) {
-                        metadataDeletes[`metadata.${key}`] = admin.firestore.FieldValue.delete();
-                        deleteLog.push({ field: key, oldValue: existingData });
+                    
+                    if (arrayFields.includes(key)) {
+                        let filteredData;
+                        if (updates[key].length > 0 && updates[key][0]._id) {
+                            const idsToDelete = updates[key].map(item => item._id);
+                            filteredData = existingData.filter(item => !idsToDelete.includes(item._id));
+                        } else {
+                            filteredData = existingData.filter(item =>
+                                !updates[key].some(toDelete => JSON.stringify(toDelete) === JSON.stringify(item))
+                            );
+                        }
+                    
+                        if (filteredData.length === 0) {
+                            metadataDeletes[`metadata.${key}`] = admin.firestore.FieldValue.delete();
+                            deleteLog.push({ field: key, oldValue: existingData });
+                        } else {
+                            metadataDeletes[`metadata.${key}`] = filteredData;
+                            deleteLog.push({ field: key, oldValue: updates[key] });
+                        }
                     } else {
-                        metadataDeletes[`metadata.${key}`] = filteredData;
-                        deleteLog.push({ field: key, oldValue: updates[key] });
+                        const filteredData = existingData.filter(item =>
+                            !updates[key].some(toDelete => JSON.stringify(toDelete) === JSON.stringify(item))
+                        );
+                    
+                        if (filteredData.length === 0) {
+                            metadataDeletes[`metadata.${key}`] = admin.firestore.FieldValue.delete();
+                            deleteLog.push({ field: key, oldValue: existingData });
+                        } else {
+                            metadataDeletes[`metadata.${key}`] = filteredData;
+                            deleteLog.push({ field: key, oldValue: updates[key] });
+                        }
                     }
                 } else {
                     if (user.metadata[key] !== undefined) {
@@ -311,8 +357,9 @@ const deleteUserMetadata = async (req, res) => {
                 }
             }
         }
-
+      
         if (deleteLog.length === 0) return handleHttpError(res, "NO_VALID_FIELDS_TO_DELETE", 400);
+        
         const now = new Date();
         user.updateHistory.push({
             timestamp: now.toISOString(),
@@ -321,16 +368,18 @@ const deleteUserMetadata = async (req, res) => {
                 newValue: "DELETED"
             }))
         });
-
+      
         const oneYearAgo = new Date();
         oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
         user.updateHistory = user.updateHistory.filter(entry => new Date(entry.timestamp) > oneYearAgo);
+        
         metadataDeletes["metadata.updatedAt"] = now.toISOString();
         metadataDeletes["updateHistory"] = user.updateHistory;
-
+      
         await User.update(id, metadataDeletes);
-        return res.status(200).json({ 
-            message: "METADATA_DELETED_SUCCESS", 
+        
+        return res.status(200).json({
+            message: "METADATA_DELETED_SUCCESS",
             deletedFields: Object.keys(metadataDeletes),
             updateHistory: user.updateHistory
         });
@@ -436,15 +485,33 @@ const updateAH = async (req, res) => {
 
         // Actualización de programming_languages (solo si la nota es >= 5)
         if (!user.metadata.programming_languages) user.metadata.programming_languages = [];
-
         const programmingLanguagesSet = new Set(user.metadata.programming_languages.map(pl => pl.name));
+        const programmingLanguagesMap = new Map(user.metadata.programming_languages.map(pl => [pl.name, pl]));
+
         updatedSubjects.forEach(subject => {
-            if (subject.programming_languages && subject.grade !== null && subject.grade >= 5.0 && !programmingLanguagesSet.has(subject.programming_languages)) {
-                user.metadata.programming_languages.push({
-                    name: subject.programming_languages,
-                    level: "medium", // Nivel por defecto
-                });
-                programmingLanguagesSet.add(subject.programming_languages); // Evitar duplicados
+            if (subject.programming_languages && subject.grade !== null && subject.grade >= 5.0) {
+                let level = "low";
+                if (subject.grade >= 6.0) level = "medium"; 
+                if (subject.grade >= 8.0) level = "high"; 
+                
+                if (programmingLanguagesMap.has(subject.programming_languages)) {
+                    const existingLang = programmingLanguagesMap.get(subject.programming_languages);
+                    
+                    if (subject.grade >= 6.0 && existingLang.level !== "medium") existingLang.level = "medium";
+                    if (subject.grade >= 8.0 && existingLang.level !== "high") existingLang.level = "high";                
+                } 
+
+                else if (!programmingLanguagesSet.has(subject.programming_languages)) {
+                    const newLanguage = {
+                        _id: uuidv4(),
+                        name: subject.programming_languages,
+                        level: level
+                    };
+                    
+                    user.metadata.programming_languages.push(newLanguage);
+                    programmingLanguagesSet.add(subject.programming_languages);
+                    programmingLanguagesMap.set(subject.programming_languages, newLanguage);
+                }
             }
         });
 
@@ -837,17 +904,17 @@ const sendNotificationToTeacher = async (req, res) => {
         
         const notification = {
             id: notificationId,
-            senderId: id,
-            senderName: `${student.metadata.firstName || ''} ${student.metadata.lastName || ''}`.trim(),
-            senderEmail: student.email,
-            senderRole: 'STUDENT',
-            receiverId: teacherId,
-            title: 'Nuevo mensaje de estudiante',
-            body: message,
-            data: {
-            type: 'student_message',
-            studentId: id,
-            redirectTo: `/student/profile/${id}`
+                senderId: id,
+                senderName: `${student.metadata.firstName || ''} ${student.metadata.lastName || ''}`.trim(),
+                senderEmail: student.email,
+                senderRole: 'STUDENT',
+                receiverId: teacherId,
+                title: 'Nuevo mensaje de estudiante',
+                body: message,
+                data: {
+                type: 'student_message',
+                studentId: id,
+                redirectTo: `/student/profile/${id}`
             },
             timestamp: currentTimestamp, 
             createdAt: currentTimestamp,

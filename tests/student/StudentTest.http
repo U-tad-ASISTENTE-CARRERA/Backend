@@ -13,14 +13,26 @@ POST http://localhost:3000/login
 Content-Type: application/json
 
 {
-  "email": "alvaroVqz@live.u-tad.com",
+  "email": "alvaroVqzdelete@live.u-tad.com",
   "password": "SecurePass123!"
 }
 
-###
-PATCH http://localhost:3000/metadata
+################################################
+### estudiante entero 
+GET http://localhost:3000/
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InB4ZTR1eHhzeG5WOGRYME5zaXJQIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MjM3ODE4NSwiZXhwIjoxNzQyNDY0NTg1fQ.-Gy6Ucz_wQlu2_dTQPEgESovGBrTD0DOZjlvqGtjOLU
+
+### metadata de un estudiante
+GET http://localhost:3000/metadata
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlBwZjlUSjFPV0ZiY1VZMXdqUHd0IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDY1NTMwOSwiZXhwIjoxNzQwNzQxNzA5fQ.O8Jfj1MyXZjucTPj7zfmRf75V82hF2U6M9vetF6l05o
+
+################################################
+### actualizar metadata de un estudiante
+PATCH http://localhost:3000/metadata
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkdPUlBPMk1oVDU5VHJDWk4yeWdxIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsInNlZWRXb3JkIjoic2FzaCIsImlhdCI6MTc0MzM1ODIxNiwiZXhwIjoxNzQzNDQ0NjE2fQ.faB7KkSSUXYUlacBNB5V6Bt4EseQAemTVvnTRWz0I60
 
 {
     "firstName": "Alvaro",
@@ -38,9 +50,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InB4ZTR1eHhze
         { "language": "Spanish", "level": "C2" },
         { "language": "French", "level": "C2" }
     ],
-    "skills": [
-        { "skill": "C" }
-    ],
     "certifications": [
         { "name": "AWS Certified Developer", "date": "2024-01-15", "institution": "Amazon" },
         { "name": "Microsoft Certified: Azure Developer Associate", "date": "2024-02-15", "institution": "Microsoft" },
@@ -59,254 +68,133 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InB4ZTR1eHhze
     ]
 }
 
+### testear
+PATCH http://localhost:3000/metadata
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik1sR1l3Y1A5OGNvZ2NsSE54enprIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsInNlZWRXb3JkIjoic2FzaCIsImlhdCI6MTc0MzM1NTc5OSwiZXhwIjoxNzQzNDQyMTk5fQ.qjaVmdXa1yfz3PwoPG4qBYEAip2TGuzxqcJuGwgpuBs
+
+{
+  "gender" :  "male"
+}
+
 ###
 PATCH http://localhost:3000/metadata
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik1sR1l3Y1A5OGNvZ2NsSE54enprIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsInNlZWRXb3JkIjoic2FzaCIsImlhdCI6MTc0MzM1NTc5OSwiZXhwIjoxNzQzNDQyMTk5fQ.qjaVmdXa1yfz3PwoPG4qBYEAip2TGuzxqcJuGwgpuBs
 
 {
-    "firstName": "Alvaroo",
-    "lastName": "Vazquezz"
+  "languages": [
+    { "_id": "25dc42f4-4604-4d8e-87e9-102dc2cec4e4", "language": "Spanish", "level": "C1" },
+    {"language": "INDI", "level": "C1"}
+  ]
+}
+
+###
+PATCH http://localhost:3000/metadata
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik1sR1l3Y1A5OGNvZ2NsSE54enprIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsInNlZWRXb3JkIjoic2FzaCIsImlhdCI6MTc0MzM1NTc5OSwiZXhwIjoxNzQzNDQyMTk5fQ.qjaVmdXa1yfz3PwoPG4qBYEAip2TGuzxqcJuGwgpuBs
+
+{
+  "workExperience": [
+    {
+      "_id": "590c1770-902c-4b0b-9595-f744ee24e5bd",
+      "jobType": "Intern",
+      "startDate": "2023-06-01",
+      "endDate": "2023-12-31",
+      "company": "Amazon",
+      "description": "AI Developer Senior",
+      "responsibilities": "AI"
+    },
+    {
+      "jobType": "Intern",
+      "startDate": "2023-06-01",
+      "endDate": "2023-12-31",
+      "company": "Google",
+      "description": "AI Developer Junior",
+      "responsibilities": "Basic AI"
+    }
+  ]
 }
 
 ### 
 PATCH http://localhost:3000/metadata
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik1sR1l3Y1A5OGNvZ2NsSE54enprIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsInNlZWRXb3JkIjoic2FzaCIsImlhdCI6MTc0MzM1NTc5OSwiZXhwIjoxNzQzNDQyMTk5fQ.qjaVmdXa1yfz3PwoPG4qBYEAip2TGuzxqcJuGwgpuBs
 
 {
-    "skills": [
-        { "skill": "C++" },
-        { "skill": "Python" },
-        { "skill": "Rust" }
-    ]
+  "programming_languages": [
+    { "_id": "6b6392b7-4740-4a85-8925-0ae1492f9c25", "name": "C", "level": "high" },
+    { "name": "Java", "level": "high" }
+  ]
 }
 
 ###
 PATCH http://localhost:3000/metadata
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik1sR1l3Y1A5OGNvZ2NsSE54enprIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsInNlZWRXb3JkIjoic2FzaCIsImlhdCI6MTc0MzM1NTc5OSwiZXhwIjoxNzQzNDQyMTk5fQ.qjaVmdXa1yfz3PwoPG4qBYEAip2TGuzxqcJuGwgpuBs
 
 {
-    "certifications": [
-        { "name": "AWS Certified Developer", "date": "2024-01-15", "institution": "Amazon" },
-        { "name": "Microsoft Certified: Azure Developer Associate", "date": "2024-02-15", "institution": "Microsoft" },
-        { "name": "Google Professional Data Engineer", "date": "2024-03-15", "institution": "Google" },
-        { "name": "Oracle Certified Professional: Java SE 11 Developer", "date": "2024-04-15", "institution": "Oracle" },
-        { "name": "TensorFlow Developer Certificate", "date": "2025-01-10", "institution": "Google" }
-    ]
+  "certifications": [
+    { 
+      "_id": "774a0173-26a2-454c-b65e-f079490c1a43",
+      "name": "AWS Certified Developer",
+      "date": "2024-01-15",
+      "institution": "Amazon" 
+    },
+    { 
+      "name": "Oracle Certified Professional: Java Developer",
+      "date": "2024-04-20",
+      "institution": "Oracle" 
+    }
+  ]
 }
 
-### 
-PATCH http://localhost:3000/metadata
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
-
-{
-    "workExperience": [
-        { 
-            "jobType": "Intern", 
-            "startDate": "2023-06-01", 
-            "endDate": "2023-12-31", 
-            "company": "Nvidia", 
-            "description": "AI Developer", 
-            "responsibilities": "AI development tasks" 
-        },
-        { 
-            "jobType": "Software Engineer", 
-            "startDate": "2024-02-01", 
-            "endDate": "2024-12-31", 
-            "company": "Google", 
-            "description": "Backend Developer", 
-            "responsibilities": "Developing scalable backend systems" 
-        }
-    ]
-}
-
-###
-PATCH http://localhost:3000/metadata
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
-
-{
-    "languages": [
-        { "language": "English", "level": "high" },
-        { "language": "Spanish", "level": "high" },
-        { "language": "German", "level": "medium" }
-    ]
-}
-
-###
-PATCH http://localhost:3000/metadata
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNLb3BFdG9SWFZHaUNLYlFzRFBaIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MTE4ODc4OSwiZXhwIjoxNzQxMjc1MTg5fQ.sLtl9UD6TaHuueB4dS_LQMqOIKYR-aXYacnzY-xiNcM
-
-{
-  "firstName": "MIT"
-}
-
+#############################################################
 ### Test para obtener un estudiante
-GET http://localhost:3000/
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InB4ZTR1eHhzeG5WOGRYME5zaXJQIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MjM3ODE4NSwiZXhwIjoxNzQyNDY0NTg1fQ.-Gy6Ucz_wQlu2_dTQPEgESovGBrTD0DOZjlvqGtjOLU
-
-### Test para obtener la metadata de un estudiante
-GET http://localhost:3000/metadata
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlBwZjlUSjFPV0ZiY1VZMXdqUHd0IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDY1NTMwOSwiZXhwIjoxNzQwNzQxNzA5fQ.O8Jfj1MyXZjucTPj7zfmRf75V82hF2U6M9vetF6l05o
 
 ###  Test para eliminar algun dato la metadata de un estudiante
 DELETE http://localhost:3000/metadata
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijl1ZUhRdUhNOFVBRU0wUWV5QjB6IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDMzMzE5MywiZXhwIjoxNzQwNDE5NTkzfQ.0MiE0N2W7xdad3g86_RXOb0HVdBtDlmKwexcpm4VD1Q
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik1sR1l3Y1A5OGNvZ2NsSE54enprIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsInNlZWRXb3JkIjoic2FzaCIsImlhdCI6MTc0MzM1NTc5OSwiZXhwIjoxNzQzNDQyMTk5fQ.qjaVmdXa1yfz3PwoPG4qBYEAip2TGuzxqcJuGwgpuBs
 
 {
-    "workExperience": [
-        { "jobType": "Intern", "startDate": "2023-06-01", "endDate": "2023-12-31", "company": "Nvidia", "description": "AI Developer", "responsibilities": "AI development tasks" }
-    ],
-    "certifications": [
-        { "name": "AWS Certified Developer", "date": "2024-01-15", "institution": "Amazon" },
-        { "name": "Microsoft Certified: Azure Developer Associate", "date": "2024-02-15", "institution": "Microsoft" },
-        { "name": "Oracle Certified Professional: Java SE 11 Developer", "date": "2024-04-15", "institution": "Oracle" }
-    ]
-}
-
-### Test obtener el historial academico de un estudiante
-GET http://localhost:3000/AH
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik1IbTVXVUxvZ2ZaTlpyYzVNNjFSIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsInNlZWRXb3JkIjoic2FzaCIsImlhdCI6MTc0MTg3MTA4OSwiZXhwIjoxNzQxOTU3NDg5fQ.6vKC1NEJ5TzHZSYyTse0uBGKMmWRwu30izTUtiq4n9k
-
-### subir notas de un estudiante
-PATCH http://localhost:3000/AH
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InV1SlkxTDh4Y1A5VG41ZUlKWm1PIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsInNlZWRXb3JkIjoic2FzaCIsImlhdCI6MTc0MTg3MTMyOCwiZXhwIjoxNzQxOTU3NzI4fQ.pB2H_bVLoq_OJ_sLz8uzdR0lsVhRtWqQqZ-SQAe1zg0
-
-{
-  "grades": [
-    { "name": "Fundamentos de Desarrollo Web", "grade": 8.5 },
-    { "name": "Bases de Datos", "grade": 8.5 },
-    { "name": "Álgebra", "grade": 6.8 }
+  "programming_languages": [
+    { "_id": "6b6392b7-4740-4a85-8925-0ae1492f9c25", "name": "C", "level": "high" }
   ]
 }
 
 ###
-PATCH http://localhost:3000/AH
+DELETE http://localhost:3000/metadata
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InV1SlkxTDh4Y1A5VG41ZUlKWm1PIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsInNlZWRXb3JkIjoic2FzaCIsImlhdCI6MTc0MTg3MTMyOCwiZXhwIjoxNzQxOTU3NzI4fQ.pB2H_bVLoq_OJ_sLz8uzdR0lsVhRtWqQqZ-SQAe1zg0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik1sR1l3Y1A5OGNvZ2NsSE54enprIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsInNlZWRXb3JkIjoic2FzaCIsImlhdCI6MTc0MzM1NTc5OSwiZXhwIjoxNzQzNDQyMTk5fQ.qjaVmdXa1yfz3PwoPG4qBYEAip2TGuzxqcJuGwgpuBs
 
 {
-  "grades": [
-    { "name": "Fundamentos de Desarrollo Web", "grade": 9.3 },
-    { "name": "Introducción a la Programación I", "grade": 4.8 },
-    { "name": "Laboratorios de Redes y Sistemas Operativos", "grade": 7.1 },
-    { "name": "Lógica y Matemática Discreta", "grade": 5.5 },
-    { "name": "Pensamiento Creativo", "grade": 9.0 },
-    { "name": "Álgebra", "grade": 5.2 },
-    { "name": "Arquitectura de Ordenadores", "grade": 6.7 },
-    { "name": "Introducción a la Programación II", "grade": 2.9 },
-    { "name": "Laboratorio de Bases de Datos y Sistemas Distribuidos", "grade": 8.8 },
-    { "name": "Sociedad Digital", "grade": 7.4 },
-    { "name": "Proyectos I: Técnicas y Tecnologías Digitales", "grade": 5.9 }
+  "languages": [
+    { "_id": "cb9995cf-9817-44ef-9cc5-22fc50095fb2", "language": "Spanish", "level": "C1" }
   ]
 }
 
 ###
-PATCH http://localhost:3000/AH
+DELETE http://localhost:3000/metadata
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InB4ZTR1eHhzeG5WOGRYME5zaXJQIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MjQ4MzA0MiwiZXhwIjoxNzQyNTY5NDQyfQ.w8hERTgKASp2D51hA2WM5CZdCXlDrUmTmvI7OIf2kv8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik1sR1l3Y1A5OGNvZ2NsSE54enprIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsInNlZWRXb3JkIjoic2FzaCIsImlhdCI6MTc0MzM1NTc5OSwiZXhwIjoxNzQzNDQyMTk5fQ.qjaVmdXa1yfz3PwoPG4qBYEAip2TGuzxqcJuGwgpuBs
 
 {
-  "grades": [
-    { "name": "Fundamentos de Desarrollo Web", "grade": 9.3 },
-    { "name": "Introducción a la Programación I", "grade": 5.8 },
-    { "name": "Laboratorios de Redes y Sistemas Operativos", "grade": 7.1 },
-    { "name": "Lógica y Matemática Discreta", "grade": 5.5 },
-    { "name": "Pensamiento Creativo", "grade": 9.0 },
-    { "name": "Álgebra", "grade": 5.2 },
-    { "name": "Arquitectura de Ordenadores", "grade": 6.7 },
-    { "name": "Laboratorio de Bases de Datos y Sistemas Distribuidos", "grade": 8.8 },
-    { "name": "Sociedad Digital", "grade": 7.4 },
-    { "name": "Proyectos I: Técnicas y Tecnologías Digitales", "grade": 5.9 },
-    { "name": "Fundamentos de Composición Visual", "grade": 6.5 },
-    { "name": "Probabilidad y Estadística", "grade": 7.8 },
-    { "name": "Programación Orientada a Objetos", "grade": 8.2 },
-    { "name": "Redes de Ordenadores", "grade": 7.0 },
-    { "name": "Sistemas Operativos", "grade": 6.9 },
-    { "name": "Análisis y Diseño de Algoritmos", "grade": 8.1 },
-    { "name": "Bases de Datos", "grade": 7.5 },
-    { "name": "Cálculo", "grade": 6.3 },
-    { "name": "Diseño de Software", "grade": 8.0 },
-    { "name": "Negocios y Modelos Digitales", "grade": 7.2 },
-    { "name": "Proyectos II: Tendencias de la Ingeniería del Software", "grade": 6.8 },
-    { "name": "Inteligencia Artificial", "grade": 8.7 },
-    { "name": "Dirección y Gestión de Proyectos", "grade": 7.6 },
-    { "name": "Programación de Sistemas Distribuidos", "grade": 8.4 },
-    { "name": "Programación Web I, Cliente", "grade": 7.9 },
-    { "name": "Programación Web II, Servidor", "grade": 8.3 },
-    { "name": "Desarrollo de aplicaciones móviles", "grade": 6.6 },
-    { "name": "Fundamentos de UX", "grade": 7.3 },
-    { "name": "Proyectos III: Desarrollo Web y Apps", "grade": 8.5 },
-    { "name": "Ampliación de Bases de Datos", "grade": 7.7 },
-    { "name": "Búsqueda y Análisis de la Información", "grade": 8.6 },
-    { "name": "Procesamiento de Datos", "grade": 8.9 },
-    { "name": "TFG", "grade": 9.1 },
-    { "name": "Creación y Dirección de Empresas", "grade": 6.4 },
-    { "name": "Ingeniería del Software", "grade": 7.8 },
-    { "name": "Paradigmas de Programación", "grade": 6.2 },
-    { "name": "Formación para el Empleo", "grade": 7.0 },
-    { "name": "Prácticas en Empresa", "grade": 8.1 },
-    { "name": "Programación de Bajo Nivel", "grade": 6.9 },
-    { "name": "Verificación de Software", "grade": 7.5 },
-    { "name": "Proyectos de Ingeniería de Datos", "grade": 8.2 },
-    { "name": "Aprendizaje Automático I", "grade": 8.7 },
-    { "name": "Visión por Computador", "grade": 8.4 },
-    { "name": "Aprendizaje Automático II", "grade": 8.6 },
-    { "name": "Visualización de Datos", "grade": 7.9 }
+  "certifications": [
+    { 
+      "_id":  "29ad254c-cd29-4dad-815b-03206ef2aab4",
+      "name": "AWS Certified Developer",
+      "date": "2024-01-15",
+      "institution": "Amazon" 
+    }
   ]
 }
 
 ###
-PATCH http://localhost:3000/AH
+DELETE http://localhost:3000/metadata
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlBwZjlUSjFPV0ZiY1VZMXdqUHd0IiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MDY1NTMwOSwiZXhwIjoxNzQwNzQxNzA5fQ.O8Jfj1MyXZjucTPj7zfmRf75V82hF2U6M9vetF6l05o
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik1sR1l3Y1A5OGNvZ2NsSE54enprIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsInNlZWRXb3JkIjoic2FzaCIsImlhdCI6MTc0MzM1NTc5OSwiZXhwIjoxNzQzNDQyMTk5fQ.qjaVmdXa1yfz3PwoPG4qBYEAip2TGuzxqcJuGwgpuBs
 
 {
-  "grades": [
-    { "name": "Fundamentos de Composición Visual", "grade": 1.3 },
-    { "name": "Probabilidad y Estadística", "grade": 8.3 },
-    { "name": "Programación Orientada a Objetos", "grade": 5.3 },
-    { "name": "Redes de Ordenadores", "grade": 6.3 },
-    { "name": "Sistemas Operativos", "grade": 9.3 },
-    { "name": "Análisis y Diseño de Algoritmos", "grade": 5.3 },
-    { "name": "Bases de Datos", "grade": 9.3 },
-    { "name": "Cálculo", "grade": 8.3 },
-    { "name": "Diseño de Software", "grade": 7.3 },
-    { "name": "Negocios y Modelos Digitales", "grade": 6.3 },
-    { "name": "Proyectos II: Tendencias de la Ingeniería del Software", "grade": 5.3 }
-  ]
+  "gender" :  "male"
 }
-
-
-### Un alumno se le asigna un roadmap
-PATCH http://localhost:3000/userRoadmap
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InB4ZTR1eHhzeG5WOGRYME5zaXJQIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MjQ4MzA0MiwiZXhwIjoxNzQyNTY5NDQyfQ.w8hERTgKASp2D51hA2WM5CZdCXlDrUmTmvI7OIf2kv8
-
-### Un alumno actualiza el estado de un campo de su roadmap
-PATCH http://localhost:3000/userRoadmap
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InB4ZTR1eHhzeG5WOGRYME5zaXJQIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MjQ4MzA0MiwiZXhwIjoxNzQyNTY5NDQyfQ.w8hERTgKASp2D51hA2WM5CZdCXlDrUmTmvI7OIf2kv8
-Content-Type: application/json
-
-{
-  "sectionName": "intro",
-  "topicName": "intro a desarrollo frontend",
-  "newStatus": "done"
-}
-
-### Obtener el roadmap del usuario autenticado
-GET http://localhost:3000/userRoadmap
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InB4ZTR1eHhzeG5WOGRYME5zaXJQIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MjQ4MzA0MiwiZXhwIjoxNzQyNTY5NDQyfQ.w8hERTgKASp2D51hA2WM5CZdCXlDrUmTmvI7OIf2kv8
-
-### Eliminar el roadmap del usuario autenticado
-DELETE http://localhost:3000/userRoadmap
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InB4ZTR1eHhzeG5WOGRYME5zaXJQIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MjQ4MzA0MiwiZXhwIjoxNzQyNTY5NDQyfQ.w8hERTgKASp2D51hA2WM5CZdCXlDrUmTmvI7OIf2kv8

@@ -1,9 +1,4 @@
 ###
-@baseUrl = http://localhost:3000
-
-@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InpVaWM1RVY2a1cxS2xPSndlR2RMIiwiZW1haWwiOiJhZG1pbkB1LXRhZC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NDI5MTYxNzYsImV4cCI6MTc0MzAwMjU3Nn0.pO8CPAJoohI6jyblmAiNjsRvinCzh_AQZt8ClIp0Zmc
-
-###
 POST http://localhost:3000/login
 Content-Type: application/json
 
@@ -22,7 +17,7 @@ Content-Type: application/json
 }
 
 ### 
-POST {{baseUrl}}/deletionRequest
+POST http://localhost:3000/deletionRequest
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InZCelczU0pFUkpkMVVSY0VzS0Q2IiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MzAwODk3NiwiZXhwIjoxNzQzMDk1Mzc2fQ.2U6njRGmURHJ9MLvYygK1b9kXLfWfRk4Sza_fE8sK8o
 
@@ -31,7 +26,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InZCelczU0pFU
 }
 
 ### 
-POST {{baseUrl}}/deletionRequest
+POST http://localhost:3000/deletionRequest
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRYVjZBbkd4MzUwNEVFM1cxejFCIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAdS10YWQuY29tIiwicm9sZSI6IlRFQUNIRVIiLCJpYXQiOjE3NDI5MTg1NzMsImV4cCI6MTc0MzAwNDk3M30.c7GzjZKXPOjUAAyI_un6_xenw8OSj0Y9YIyzlHiMSKM
 
@@ -40,13 +35,13 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRYVjZBbkd4M
 }
 
 ### 
-DELETE {{baseUrl}}/deletionRequest
+DELETE http://localhost:3000/deletionRequest
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InZCelczU0pFUkpkMVVSY0VzS0Q2IiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MzAwODk3NiwiZXhwIjoxNzQzMDk1Mzc2fQ.2U6njRGmURHJ9MLvYygK1b9kXLfWfRk4Sza_fE8sK8o
 
 ### 
-DELETE {{baseUrl}}/deletionRequest
+DELETE http://localhost:3000/deletionRequest
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRYVjZBbkd4MzUwNEVFM1cxejFCIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAdS10YWQuY29tIiwicm9sZSI6IlRFQUNIRVIiLCJpYXQiOjE3NDI5MTg1NzMsImV4cCI6MTc0MzAwNDk3M30.c7GzjZKXPOjUAAyI_un6_xenw8OSj0Y9YIyzlHiMSKM
 
 ###
-GET {{baseUrl}}/admin/deletionRequests
+GET http://localhost:3000/admin/deletionRequests
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InpVaWM1RVY2a1cxS2xPSndlR2RMIiwiZW1haWwiOiJhZG1pbkB1LXRhZC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NDMwMDkwMDcsImV4cCI6MTc0MzA5NTQwN30.Cp5x6_yGlovOGzCFVsdLaKp0i3Xg2-bFDWA2TPNkSvc
