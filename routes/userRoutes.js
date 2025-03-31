@@ -37,7 +37,13 @@ const {
     getStudentByTeacher,
     sendDeletionRequest,
     cancelDeletionRequest,
-    getDeletionRequests
+    getDeletionRequests,
+    generateSummary, 
+    getLatestSummary, 
+    getAllSummaries,
+    getStudentAllSummaries,
+    getStudentLatestSummary,
+    deleteSummaryById
 } = require("../controllers/userController");
 
 const { 
@@ -99,10 +105,20 @@ router.get("/admin/student", authUserMiddleware, checkRole("ADMIN"), getStudent)
 router.patch("/admin/:id", authUserMiddleware, checkRole("ADMIN"), updateUserByAdmin);
 router.delete("/admin/:id", authUserMiddleware, checkRole("ADMIN"), deleteUserByAdmin);
 
-// Deletion Request
+// Deletion Request routes
 router.post("/deletionRequest", authUserMiddleware, checkRole(["STUDENT", "TEACHER"]), sendDeletionRequest);
 router.delete("/deletionRequest", authUserMiddleware, checkRole(["STUDENT", "TEACHER"]), cancelDeletionRequest);
 
 router.get("/admin/deletionRequests", authUserMiddleware, checkRole(["ADMIN"]), getDeletionRequests);
+
+// Summary routes
+router.post("/summary", authUserMiddleware, checkRole("STUDENT"), generateSummary);
+
+router.get("/summary", authUserMiddleware, checkRole("STUDENT"), getAllSummaries);
+router.get("/summary/latest", authUserMiddleware, checkRole("STUDENT"), getLatestSummary);
+router.delete("/summary/:summaryId", authUserMiddleware, checkRole("STUDENT"), deleteSummaryById);
+
+router.get("/summary/:studentId/all", authUserMiddleware, checkRole("TEACHER"), getStudentAllSummaries);
+router.get("/summary/:studentId/latest", authUserMiddleware, checkRole("TEACHER"), getStudentLatestSummary);
 
 module.exports = router;

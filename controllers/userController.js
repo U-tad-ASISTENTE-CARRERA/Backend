@@ -658,10 +658,8 @@ const updateRoadmap = async (req, res) => {
                 // Guardar el roadmap en el usuario
                 await User.update(id, { "metadata.roadmap": roadmap });
                 
-                // Si no hay parámetros adicionales, simplemente asignar el roadmap
-                if (!sectionName || !topicName || !newStatus) {
-                    return res.status(200).json({ message: "Roadmap asignado correctamente" });
-                }
+                // Si no hay parámetros adicionales, simplemente asignar el roadmap --> descomentar si queremos solo asignar y no autocompletar con AH del usuario
+                // if (!sectionName || !topicName || !newStatus) return res.status(200).json({ message: "Roadmap asignado correctamente" });
             } catch (err) {
                 return res.status(500).json({ error: "ERROR_FETCHING_ROADMAP" });
             }
@@ -1298,43 +1296,39 @@ const getAllUsers = async (req, res) => {
 
 const updateUserByAdmin = async (req, res) => {
     try {
-      const { id } = req.params;
-      const updates = req.body;
+        const { id } = req.params;
+        const updates = req.body;
+        
+        const user = await User.findById(id);
+        if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
+        if (user.role === "ADMIN") return handleHttpError(res, "CANNOT_UPDATE_ADMIN", 403);
+        
+        if (updates.password) updates.password = await bcrypt.hash(updates.password, 10);
+        const allowedUpdates = ["email", "password", "seedWord", "role", "metadata"];
+        const filteredUpdates = {};
       
-      const user = await User.findById(id);
-      if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
-      if (user.role === "ADMIN") return handleHttpError(res, "CANNOT_UPDATE_ADMIN", 403);
+        Object.keys(updates).forEach(key => {
+            if (allowedUpdates.includes(key)) {
+                if (key === "metadata" && updates.metadata) {
+                    filteredUpdates[key] = { ...user.metadata, ...updates.metadata };
+                } else {
+                    filteredUpdates[key] = updates[key];
+                }
+            }
+        });
       
-      if (updates.password) {
-        updates.password = await bcrypt.hash(updates.password, 10);
-      }
+        if (Object.keys(filteredUpdates).length === 0) return handleHttpError(res, "NO_VALID_FIELDS_TO_UPDATE", 400);
       
-      const allowedUpdates = ["email", "password", "seedWord", "role", "metadata"];
-      const filteredUpdates = {};
       
-      Object.keys(updates).forEach(key => {
-        if (allowedUpdates.includes(key)) {
-          if (key === "metadata" && updates.metadata) {
-            filteredUpdates[key] = { ...user.metadata, ...updates.metadata };
-          } else {
-            filteredUpdates[key] = updates[key];
-          }
-        }
-      });
-      
-      if (Object.keys(filteredUpdates).length === 0) {
-        return handleHttpError(res, "NO_VALID_FIELDS_TO_UPDATE", 400);
-      }
-      
-      const mergedUpdates = { ...user, ...filteredUpdates, updatedAt: new Date().toISOString() };
-      
-      const updatedUser = await User.update(id, mergedUpdates);
-      return res.status(200).json({ message: "USER_UPDATED_SUCCESSFULLY", updatedUser });
+        const mergedUpdates = { ...user, ...filteredUpdates, updatedAt: new Date().toISOString() };
+        
+        const updatedUser = await User.update(id, mergedUpdates);
+        return res.status(200).json({ message: "USER_UPDATED_SUCCESSFULLY", updatedUser });
     } catch (error) {
-      console.error("Admin Update User Error:", error.message);
-      return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+        console.error("Admin Update User Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
     }
-  };
+};
 
 const deleteUserByAdmin = async (req, res) => {
     try {
@@ -1547,6 +1541,323 @@ const getDeletionRequests = async (req, res) => {
     }
 };
 
+const generateSummary = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const user = await User.findById(id);
+        
+        if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
+        if (user.role !== "STUDENT") return handleHttpError(res, "NOT_A_STUDENT", 403);
+        
+        const metadata = user.metadata || {};
+        const AH = metadata.AH || {};
+        const roadmap = metadata.roadmap || {};
+        
+        const summary = {
+            id: uuidv4(),
+            createdAt: new Date().toISOString(),
+            studentInfo: {
+                firstName: metadata.firstName || "No disponible",
+                lastName: metadata.lastName || "No disponible",
+                email: user.email,
+                degree: metadata.degree || "No disponible",
+                yearsCompleted: metadata.yearsCompleted || []
+            },
+            academicInfo: {
+                averageGrade: AH.averageGrade || null,
+                totalCredits: AH.totalCredits || 0,
+                earnedCredits: AH.totalCreditsWithGrades || 0,
+                topSubjects: AH.top5BestSubjects || [],
+                weakSubjects: AH.top5WorstSubjects || []
+            },
+            skills: {
+                programmingLanguages: metadata.programming_languages || [],
+                languages: metadata.languages || [],
+                certifications: metadata.certifications || [],
+                acquiredSkills: metadata.skills || []
+            },
+            workExperience: metadata.workExperience || [],
+            roadmapProgress: {
+                name: roadmap.name,
+                completedCheckpoints: 0,
+                totalCheckpoints: 0,
+                sections: []
+            },
+            strengths: {
+                topSubjects: [],
+                strongProgrammingLanguages: []
+            },
+            weaknesses: {
+                weakSubjects: [],
+                weakProgrammingLanguages: []
+            }
+        };
+        
+        // strengths & weaknesses
+        if (AH.top5BestSubjects && AH.top5BestSubjects.length > 0) {
+            summary.strengths.topSubjects = AH.top5BestSubjects.slice(0, 3).map(subject => ({
+                name: subject.name,
+                grade: subject.grade
+            }));
+        }
+
+        if (AH.top5WorstSubjects && AH.top5WorstSubjects.length > 0) {
+            summary.weaknesses.weakSubjects = AH.top5WorstSubjects.slice(0, 3).map(subject => ({
+                name: subject.name,
+                grade: subject.grade
+            }));
+        }
+        
+        if (metadata.programming_languages && metadata.programming_languages.length > 0) {
+            summary.strengths.strongProgrammingLanguages = metadata.programming_languages.filter(lang => lang.level === "high").slice(0, 3).map(lang => lang.name);
+            summary.weaknesses.weakProgrammingLanguages = metadata.programming_languages.filter(lang => lang.level === "medium" || lang.level === "low").slice(0, 3).map(lang => lang.name);
+        }
+        
+        // roadmap
+        if (roadmap.body) {
+            let completedCount = 0;
+            let totalCount = 0;
+            
+            const sections = [];
+            
+            for (const [sectionName, sectionContent] of Object.entries(roadmap.body)) {
+                if (typeof sectionContent === 'object' && sectionContent !== null) {
+                    const topics = [];
+                    
+                    for (const [topicName, topicContent] of Object.entries(sectionContent)) {
+                        if (typeof topicContent === 'object' && topicContent !== null && topicContent.status) {
+                            totalCount++;
+                            if (topicContent.status === "done") completedCount++;
+                        
+                            topics.push({
+                                name: topicName,
+                                status: topicContent.status,
+                                skill: topicContent.skill || null,
+                                subject: topicContent.subject || null
+                            });
+                        }
+                    }
+                    
+                    if (topics.length > 0) {
+                        sections.push({
+                            name: sectionName,
+                            order: sectionContent.order || 0,
+                            topics
+                        });
+                    }
+                }
+            }
+            
+            sections.sort((a, b) => a.order - b.order);
+            summary.roadmapProgress.completedCheckpoints = completedCount;
+            summary.roadmapProgress.totalCheckpoints = totalCount;
+            summary.roadmapProgress.sections = sections;
+        }
+        
+        if (!metadata.summaries) metadata.summaries = [];
+        metadata.summaries.push(summary);
+        
+        await User.update(id, { 
+            "metadata.summaries": metadata.summaries,
+            "updatedAt": new Date().toISOString()
+        });
+        
+        return res.status(201).json({ 
+            message: "SUMMARY_GENERATED_SUCCESSFULLY", 
+            summary 
+        });
+        
+    } catch (error) {
+        console.error("Generate Summary Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+const getAllSummaries = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const user = await User.findById(id);
+        
+        if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
+        if (user.role !== "STUDENT") return handleHttpError(res, "NOT_A_STUDENT", 403);
+        
+        const summaries = user.metadata?.summaries || [];
+        
+        if (summaries.length === 0) {
+            return res.status(404).json({ 
+                message: "NO_SUMMARIES_FOUND",
+                suggestion: "Generate a new summary to see your academic progress" 
+            });
+        }
+        
+        const sortedSummaries = [...summaries].sort((a, b) => 
+            new Date(b.createdAt) - new Date(a.createdAt)
+        );
+        
+        return res.status(200).json({ 
+            message: "ALL_SUMMARIES_RETRIEVED",
+            count: sortedSummaries.length,
+            summaries: sortedSummaries
+        });
+        
+    } catch (error) {
+        console.error("Get All Summaries Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+const getLatestSummary = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const user = await User.findById(id);
+        
+        if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
+        if (user.role !== "STUDENT") return handleHttpError(res, "NOT_A_STUDENT", 403);
+        
+        const summaries = user.metadata?.summaries || [];
+        
+        if (summaries.length === 0) {
+            return res.status(404).json({ 
+                message: "NO_SUMMARIES_FOUND",
+                suggestion: "Generate a new summary to see your academic progress" 
+            });
+        }
+        
+        summaries.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        return res.status(200).json({ 
+            message: "LATEST_SUMMARY_RETRIEVED",
+            summary: summaries[0] 
+        });
+    } catch (error) {
+        console.error("Get Latest Summary Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+const getStudentAllSummaries = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { studentId } = req.params; 
+        if (!studentId) return handleHttpError(res, "STUDENT_ID_REQUIRED", 400);
+        
+        const teacher = await User.findById(id);
+        if (!teacher) return handleHttpError(res, "TEACHER_NOT_FOUND", 404);
+        
+        const student = await User.findById(studentId);
+        if (!student) return handleHttpError(res, "STUDENT_NOT_FOUND", 404);
+        
+        if (!student.metadata?.teacherList?.includes(id)) return handleHttpError(res, "STUDENT_NOT_ASSIGNED_TO_TEACHER", 403);
+        
+        const summaries = student.metadata?.summaries || [];
+        if (summaries.length === 0) {
+            return res.status(404).json({ 
+            message: "NO_SUMMARIES_FOUND",
+            suggestion: "This student does not have any summaries generated yet" 
+            });
+        }
+      
+        const sortedSummaries = [...summaries].sort((a, b) => 
+            new Date(b.createdAt) - new Date(a.createdAt)
+        );
+      
+        return res.status(200).json({ 
+            message: "STUDENT_ALL_SUMMARIES_RETRIEVED",
+            studentInfo: {
+                id: student.id,
+                email: student.email,
+                firstName: student.metadata?.firstName || "No disponible",
+                lastName: student.metadata?.lastName || "No disponible",
+            },
+            count: sortedSummaries.length,
+            summaries: sortedSummaries
+        });
+    } catch (error) {
+        console.error("Get Student All Summaries Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+const getStudentLatestSummary = async (req, res) => {
+    try {
+        const { id } = req.user; 
+        const { studentId } = req.params;
+
+        if (!studentId) return handleHttpError(res, "STUDENT_ID_REQUIRED", 400);
+        
+        const teacher = await User.findById(id);
+        if (!teacher) return handleHttpError(res, "TEACHER_NOT_FOUND", 404);
+        
+        const student = await User.findById(studentId);
+        if (!student) return handleHttpError(res, "STUDENT_NOT_FOUND", 404);
+        
+        if (!student.metadata?.teacherList?.includes(id)) return handleHttpError(res, "STUDENT_NOT_ASSIGNED_TO_TEACHER", 403);        
+        const summaries = student.metadata?.summaries || [];
+        if (summaries.length === 0) {
+            return res.status(404).json({ 
+                message: "NO_SUMMARIES_FOUND",
+                suggestion: "This student does not have any summaries generated yet" 
+            });
+        }
+    
+        summaries.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        return res.status(200).json({ 
+            message: "STUDENT_LATEST_SUMMARY_RETRIEVED",
+            studentInfo: {
+                id: student.id,
+                email: student.email,
+                firstName: student.metadata?.firstName || "No disponible",
+                lastName: student.metadata?.lastName || "No disponible",
+            },
+            summary: summaries[0] 
+        });
+    
+    } catch (error) {
+        console.error("Get Student Latest Summary Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+const deleteSummaryById = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { summaryId } = req.params;
+        if (!summaryId) return handleHttpError(res, "SUMMARY_ID_REQUIRED", 400);
+        
+        const user = await User.findById(id);
+        if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
+        
+        if (!user.metadata?.summaries || user.metadata.summaries.length === 0) {
+            return res.status(404).json({ 
+                message: "NO_SUMMARIES_FOUND",
+                suggestion: "This account doesn't have any summaries to delete" 
+            });
+        }
+      
+        const summaryIndex = user.metadata.summaries.findIndex(s => s.id === summaryId);
+        if (summaryIndex === -1) {
+            return res.status(404).json({ 
+                message: "SUMMARY_NOT_FOUND",
+                suggestion: "Check the summaryId parameter" 
+            });
+        }
+      
+        user.metadata.summaries.splice(summaryIndex, 1);      
+        await User.update(id, { 
+            "metadata.summaries": user.metadata.summaries,
+            "updatedAt": new Date().toISOString()
+        });
+      
+        return res.status(200).json({ 
+            message: "SUMMARY_DELETED_SUCCESSFULLY",
+            summaryId
+        });
+    } catch (error) {
+        console.error("Delete Summary Error:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
 module.exports = { 
     registerUser,
     loginUser,
@@ -1584,5 +1895,11 @@ module.exports = {
     deleteUserByAdmin,
     sendDeletionRequest,
     cancelDeletionRequest,
-    getDeletionRequests
+    getDeletionRequests,
+    generateSummary,
+    getLatestSummary,
+    getAllSummaries,
+    getStudentAllSummaries,
+    getStudentLatestSummary,
+    deleteSummaryById
 };

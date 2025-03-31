@@ -1,0 +1,89 @@
+# router.post("/summary", authUserMiddleware, checkRole("STUDENT"), generateSummary);
+
+# router.get("/summary", authUserMiddleware, checkRole("STUDENT"), getAllSummaries);
+# router.get("/summary/latest", authUserMiddleware, checkRole("STUDENT"), getLatestSummary);
+# router.delete("/summary/:summaryId", authUserMiddleware, checkRole("STUDENT"), deleteSummaryById);
+
+# router.get("/summary/:studentId/all", authUserMiddleware, checkRole("TEACHER"), getStudentAllSummaries);
+# router.get("/summary/student/latest", authUserMiddleware, checkRole("TEACHER"), getStudentLatestSummary);
+
+###  Register a student
+POST http://localhost:3000/register
+Content-Type: application/json
+
+{
+  "email": "alvaroVqzdelete@live.u-tad.com",
+  "password": "SecurePass123!",
+  "seedWord": "sash"
+}
+
+### Login as student
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "email": "alvaroVqzdelete@live.u-tad.com",
+  "password": "SecurePass123!"
+}
+
+##############################################
+### post new summary
+POST http://localhost:3000/summary
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkdPUlBPMk1oVDU5VHJDWk4yeWdxIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MzQxMjkyMSwiZXhwIjoxNzQzNDk5MzIxfQ.PO4qhJrtiFhPW6tJgEoI4poni3I_-9Mg35IOWNjZPDY
+Content-Type: application/json
+
+### get all summaries
+GET http://localhost:3000/summary
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkdPUlBPMk1oVDU5VHJDWk4yeWdxIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MzQxMjkyMSwiZXhwIjoxNzQzNDk5MzIxfQ.PO4qhJrtiFhPW6tJgEoI4poni3I_-9Mg35IOWNjZPDY
+
+### get latest summary
+GET http://localhost:3000/summary/latest
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkdPUlBPMk1oVDU5VHJDWk4yeWdxIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MzQxMjkyMSwiZXhwIjoxNzQzNDk5MzIxfQ.PO4qhJrtiFhPW6tJgEoI4poni3I_-9Mg35IOWNjZPDY
+
+### delete summary by id
+DELETE http://localhost:3000/summary/609f1995-21e1-4294-bfc9-8042f66b4127
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkdPUlBPMk1oVDU5VHJDWk4yeWdxIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MzQxMjkyMSwiZXhwIjoxNzQzNDk5MzIxfQ.PO4qhJrtiFhPW6tJgEoI4poni3I_-9Mg35IOWNjZPDY
+
+##############################################
+
+### Register a teacher
+POST http://localhost:3000/register
+Content-Type: application/json
+
+{
+  "email": "teacher@u-tad.com",
+  "password": "SecurePass123!",
+  "seedWord": "orange"
+}
+
+### Login as teacher
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "email": "teacher@u-tad.com",
+  "password": "SecurePass123!"
+}
+
+##############################################
+###
+GET http://localhost:3000/teacher
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkdPUlBPMk1oVDU5VHJDWk4yeWdxIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MzQxMjkyMSwiZXhwIjoxNzQzNDk5MzIxfQ.PO4qhJrtiFhPW6tJgEoI4poni3I_-9Mg35IOWNjZPDY
+
+### Add a teacher to a student
+POST http://localhost:3000/student/teacher
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkdPUlBPMk1oVDU5VHJDWk4yeWdxIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MzQxMjkyMSwiZXhwIjoxNzQzNDk5MzIxfQ.PO4qhJrtiFhPW6tJgEoI4poni3I_-9Mg35IOWNjZPDY
+
+{
+  "teacherId": "vNKoASASrzXEFSt0xWkN"
+}
+
+##############################################
+### get all student summaries
+GET http://localhost:3000/summary/GORPO2MhT59TrCZN2ygq/all
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InZOS29BU0FTcnpYRUZTdDB4V2tOIiwiZW1haWwiOiJ0ZWFjaGVyQHUtdGFkLmNvbSIsInJvbGUiOiJURUFDSEVSIiwic2VlZFdvcmQiOiJvcmFuZ2UiLCJpYXQiOjE3NDM0MTM5NDgsImV4cCI6MTc0MzUwMDM0OH0.YNvPJUgGc27VbUCgB3X_6Rdln6JBumxWvC2pQWztjdg
+
+### get student latest summary
+GET http://localhost:3000/summary/GORPO2MhT59TrCZN2ygq/latest
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InZOS29BU0FTcnpYRUZTdDB4V2tOIiwiZW1haWwiOiJ0ZWFjaGVyQHUtdGFkLmNvbSIsInJvbGUiOiJURUFDSEVSIiwic2VlZFdvcmQiOiJvcmFuZ2UiLCJpYXQiOjE3NDM0MTM5NDgsImV4cCI6MTc0MzUwMDM0OH0.YNvPJUgGc27VbUCgB3X_6Rdln6JBumxWvC2pQWztjdg
