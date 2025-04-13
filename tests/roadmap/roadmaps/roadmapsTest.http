@@ -13,14 +13,14 @@ Content-Type: application/json
 
 ### crear un roadmap (Admin)
 POST http://localhost:3000/roadmaps/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InpVaWM1RVY2a1cxS2xPSndlR2RMIiwiZW1haWwiOiJhZG1pbkB1LXRhZC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NDIzODMxMjAsImV4cCI6MTc0MjQ2OTUyMH0.yskscKELiEL4WfH7tKeL9A-7JT-XX7316jZlzrDRo3U
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IndBcUpBU2YwY000N1hPelBFaUEyIiwiZW1haWwiOiJhZG1pbkB1LXRhZC5jb20iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NDQ1NDI2MjYsImV4cCI6MTc0NDYyOTAyNn0.KHbmaVVQ0y-sGw0YkzfhlQktEgHYunZvUV0qDw7s_48
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
 
 ------WebKitFormBoundary
-Content-Disposition: form-data; name="file"; filename="roadmapFrontend.json"
+Content-Disposition: form-data; name="file"; filename="roadmapAI.json"
 Content-Type: application/json
 
-< ./roadmapFrontend.json
+< ./roadmapAI.json
 ------WebKitFormBoundary--
 
 ### obtener todos los roadmaps (admin)

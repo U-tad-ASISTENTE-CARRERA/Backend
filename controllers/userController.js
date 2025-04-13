@@ -907,7 +907,7 @@ const sendNotificationToTeacher = async (req, res) => {
                 senderEmail: student.email,
                 senderRole: 'STUDENT',
                 receiverId: teacherId,
-                title: 'Nuevo mensaje de estudiante',
+                title: 'Mensaje de estudiante',
                 body: message,
                 data: {
                 type: 'student_message',
