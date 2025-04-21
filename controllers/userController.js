@@ -26,31 +26,72 @@ const sendEmail = async (to, subject, content) => {
     }
 };
 
+// const registerUser = async (req, res) => {
+//     try {
+//         const { email, password, seedWord } = req.body;
+//         console.log(email, password, seedWord);
+        
+//         try {
+//             await User.findByEmail(email);
+//             return handleHttpError(res, "USER_ALREADY_EXISTS", 400);
+//         } catch (error) {}
+
+//         const domain = email.split("@")[1];
+//         if (!domain) return handleHttpError(res, "INVALID_EMAIL", 400);    
+//         const role = domain === "live.u-tad.com" ? "STUDENT" : "TEACHER";
+
+//         const hashedPassword = await bcrypt.hash(password, 10);
+    
+//         const newUser = new User(email, hashedPassword, seedWord, role);
+//         const savedUser = await newUser.save();        
+//         const userId = savedUser.id; 
+//         const token = generateToken({ id: userId, email: savedUser.email, role: savedUser.role, seedWord: savedUser.seedWord });
+        
+//         await sendEmail(
+//             email,
+//             "Bienvenido a la plataforma",
+//             `<h2>Hola ${email.split(".")[0]}</h2>
+//             <p>Tu cuenta ha sido creada con éxito.</p>
+//             <p>Gracias por registrarte.</p>`
+//         );
+
+//         return res.status(201).json({ 
+//             message: "USER_CREATED", 
+//             token, 
+//             user: { ...savedUser, password: undefined } 
+//         });
+//     } catch (error) {
+//         console.error("Register User Error:", error.message);
+//         return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+//     }
+// };
+
 const registerUser = async (req, res) => {
     try {
         const { email, password, seedWord } = req.body;
-        console.log(email, password, seedWord);
+        
+        const normalizedEmail = email.toLowerCase();
+        console.log(normalizedEmail, password, seedWord);
         
         try {
-            await User.findByEmail(email);
+            await User.findByEmailNormalized(normalizedEmail);
             return handleHttpError(res, "USER_ALREADY_EXISTS", 400);
         } catch (error) {}
 
-        const domain = email.split("@")[1];
+        const domain = normalizedEmail.split("@")[1];
         if (!domain) return handleHttpError(res, "INVALID_EMAIL", 400);    
         const role = domain === "live.u-tad.com" ? "STUDENT" : "TEACHER";
-
         const hashedPassword = await bcrypt.hash(password, 10);
-    
-        const newUser = new User(email, hashedPassword, seedWord, role);
+
+        const newUser = new User(normalizedEmail, hashedPassword, seedWord, role);
         const savedUser = await newUser.save();        
         const userId = savedUser.id; 
         const token = generateToken({ id: userId, email: savedUser.email, role: savedUser.role, seedWord: savedUser.seedWord });
         
         await sendEmail(
-            email,
+            normalizedEmail,
             "Bienvenido a la plataforma",
-            `<h2>Hola ${email.split(".")[0]}</h2>
+            `<h2>Hola ${normalizedEmail.split(".")[0]}</h2>
             <p>Tu cuenta ha sido creada con éxito.</p>
             <p>Gracias por registrarte.</p>`
         );
@@ -66,13 +107,43 @@ const registerUser = async (req, res) => {
     }
 };
 
+// const loginUser = async (req, res) => {
+//     try {
+//         const { email, password } = req.body;
+
+//         let user;
+//         try {
+//             user = await User.findByEmail(email);
+//         } catch (error) {
+//             return handleHttpError(res, "INVALID_CREDENTIALS", 401);
+//         }
+        
+//         const isPasswordValid = await bcrypt.compare(password, user.password);
+//         if (!isPasswordValid) return handleHttpError(res, "INVALID_CREDENTIALS", 401);
+
+//         await User.update(user.id, { updatedAt: new Date().toISOString() });
+//         const token = generateToken({ id: user.id, email: user.email, role: user.role });
+
+//         return res.json({ 
+//             message: "LOGIN_SUCCESS", 
+//             token, 
+//             user: { ...user, password: undefined, updatedAt: new Date().toISOString() } 
+//         });
+
+//     } catch (error) {
+//         console.error("Login User Error:", error.message);
+//         return handleHttpError(res, error.message || "INTERNAL_SERVER_ERROR", 500);
+//     }
+// };
+
 const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
+        const normalizedEmail = email.toLowerCase();
 
         let user;
         try {
-            user = await User.findByEmail(email);
+            user = await User.findByEmail(normalizedEmail);
         } catch (error) {
             return handleHttpError(res, "INVALID_CREDENTIALS", 401);
         }

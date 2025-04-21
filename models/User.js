@@ -39,13 +39,20 @@ class User {
     if (querySnapshot.empty) throw new Error("User with this email not found");
     return querySnapshot.docs[0].data();
   }
+  
+  static async findByEmailNormalized(email) {
+    const normalizedEmail = email.toLowerCase();
+    const querySnapshot = await db.collection("users").where("email", "==", normalizedEmail).get();
+    if (querySnapshot.empty) throw new Error("User with this email not found");
+    return querySnapshot.docs[0].data();
+  }
 
   static async findByRole(role) {
     const querySnapshot = await db.collection("users").where("role", "==", role).get();
     if (querySnapshot.empty) throw new Error("No users with this role found");
 
-    return querySnapshot.docs.map(doc => doc.data()); 
-}
+    return querySnapshot.docs.map(doc => doc.data());
+  }
 
   static async findByIdAndDelete(id) {
     const doc = await db.collection("users").doc(id).get();
