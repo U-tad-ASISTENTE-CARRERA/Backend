@@ -43,7 +43,8 @@ const {
     getAllSummaries,
     getStudentAllSummaries,
     getStudentLatestSummary,
-    deleteSummaryById
+    deleteSummaryById,
+    getUpdateHistory
 } = require("../controllers/userController");
 
 const { 
@@ -120,5 +121,7 @@ router.delete("/summary/:summaryId", authUserMiddleware, checkRole("STUDENT"), d
 
 router.get("/summary/:studentId/all", authUserMiddleware, checkRole("TEACHER"), getStudentAllSummaries);
 router.get("/summary/:studentId/latest", authUserMiddleware, checkRole("TEACHER"), getStudentLatestSummary);
+
+router.get("/updateHistory", authUserMiddleware, checkRole("STUDENT"), getUpdateHistory);
 
 module.exports = router;

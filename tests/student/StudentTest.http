@@ -21,7 +21,7 @@ Content-Type: application/json
 ### estudiante entero 
 GET http://localhost:3000/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InB4ZTR1eHhzeG5WOGRYME5zaXJQIiwiZW1haWwiOiJhbHZhcm9WcXpAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsImlhdCI6MTc0MjM3ODE4NSwiZXhwIjoxNzQyNDY0NTg1fQ.-Gy6Ucz_wQlu2_dTQPEgESovGBrTD0DOZjlvqGtjOLU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImVGSmJtZzBJYzIzZnBsWlNBeUpTIiwiZW1haWwiOiJhbGFAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsInNlZWRXb3JkIjoic2FzaCIsImlhdCI6MTc0NTU5MTQxNiwiZXhwIjoxNzQ1Njc3ODE2fQ.GTejeExA_R4zWb1VM_f_XAtBQ4nhSS6cZ2Z4IBdMrq0
 
 ### metadata de un estudiante
 GET http://localhost:3000/metadata
@@ -32,7 +32,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlBwZjlUSjFPV
 ### actualizar metadata de un estudiante
 PATCH http://localhost:3000/metadata
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IkdPUlBPMk1oVDU5VHJDWk4yeWdxIiwiZW1haWwiOiJhbHZhcm9WcXpkZWxldGVAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsInNlZWRXb3JkIjoic2FzaCIsImlhdCI6MTc0MzM1ODIxNiwiZXhwIjoxNzQzNDQ0NjE2fQ.faB7KkSSUXYUlacBNB5V6Bt4EseQAemTVvnTRWz0I60
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImVGSmJtZzBJYzIzZnBsWlNBeUpTIiwiZW1haWwiOiJhbGFAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsInNlZWRXb3JkIjoic2FzaCIsImlhdCI6MTc0NTU5MTQxNiwiZXhwIjoxNzQ1Njc3ODE2fQ.GTejeExA_R4zWb1VM_f_XAtBQ4nhSS6cZ2Z4IBdMrq0
 
 {
     "firstName": "Alvaro",
@@ -198,3 +198,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik1sR1l3Y1A5O
 {
   "gender" :  "male"
 }
+
+### 
+GET http://localhost:3000/updateHistory
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImVGSmJtZzBJYzIzZnBsWlNBeUpTIiwiZW1haWwiOiJhbGFAbGl2ZS51LXRhZC5jb20iLCJyb2xlIjoiU1RVREVOVCIsInNlZWRXb3JkIjoic2FzaCIsImlhdCI6MTc0NTU5MTQxNiwiZXhwIjoxNzQ1Njc3ODE2fQ.GTejeExA_R4zWb1VM_f_XAtBQ4nhSS6cZ2Z4IBdMrq0

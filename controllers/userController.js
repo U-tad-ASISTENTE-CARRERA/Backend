@@ -1929,6 +1929,35 @@ const deleteSummaryById = async (req, res) => {
     }
 };
 
+const getUpdateHistory = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const user = await User.findById(id);
+        if (!user) return handleHttpError(res, "USER_NOT_FOUND", 404);
+        
+        const updateHistory = user.updateHistory || [];
+        const metadata = {
+            lastUpdate: user.updatedAt || null,
+            totalUpdates: updateHistory.length,
+            user: {
+                id: user.id,
+                email: user.email,
+                role: user.role
+            }
+        };
+        
+        return res.status(200).json({ 
+            message: "UPDATE_HISTORY_RETRIEVED",
+            metadata,
+            updateHistory
+        });
+    } catch (error) {
+        console.error("Error retrieving update history:", error.message);
+        return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
+    }
+};
+
+
 module.exports = { 
     registerUser,
     loginUser,
@@ -1972,5 +2001,6 @@ module.exports = {
     getAllSummaries,
     getStudentAllSummaries,
     getStudentLatestSummary,
-    deleteSummaryById
+    deleteSummaryById,
+    getUpdateHistory
 };
