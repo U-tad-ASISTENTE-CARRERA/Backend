@@ -26,46 +26,6 @@ const sendEmail = async (to, subject, content) => {
     }
 };
 
-// const registerUser = async (req, res) => {
-//     try {
-//         const { email, password, seedWord } = req.body;
-//         console.log(email, password, seedWord);
-        
-//         try {
-//             await User.findByEmail(email);
-//             return handleHttpError(res, "USER_ALREADY_EXISTS", 400);
-//         } catch (error) {}
-
-//         const domain = email.split("@")[1];
-//         if (!domain) return handleHttpError(res, "INVALID_EMAIL", 400);    
-//         const role = domain === "live.u-tad.com" ? "STUDENT" : "TEACHER";
-
-//         const hashedPassword = await bcrypt.hash(password, 10);
-    
-//         const newUser = new User(email, hashedPassword, seedWord, role);
-//         const savedUser = await newUser.save();        
-//         const userId = savedUser.id; 
-//         const token = generateToken({ id: userId, email: savedUser.email, role: savedUser.role, seedWord: savedUser.seedWord });
-        
-//         await sendEmail(
-//             email,
-//             "Bienvenido a la plataforma",
-//             `<h2>Hola ${email.split(".")[0]}</h2>
-//             <p>Tu cuenta ha sido creada con éxito.</p>
-//             <p>Gracias por registrarte.</p>`
-//         );
-
-//         return res.status(201).json({ 
-//             message: "USER_CREATED", 
-//             token, 
-//             user: { ...savedUser, password: undefined } 
-//         });
-//     } catch (error) {
-//         console.error("Register User Error:", error.message);
-//         return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
-//     }
-// };
-
 const registerUser = async (req, res) => {
     try {
         const { email, password, seedWord } = req.body;
@@ -106,35 +66,6 @@ const registerUser = async (req, res) => {
         return handleHttpError(res, "INTERNAL_SERVER_ERROR", 500);
     }
 };
-
-// const loginUser = async (req, res) => {
-//     try {
-//         const { email, password } = req.body;
-
-//         let user;
-//         try {
-//             user = await User.findByEmail(email);
-//         } catch (error) {
-//             return handleHttpError(res, "INVALID_CREDENTIALS", 401);
-//         }
-        
-//         const isPasswordValid = await bcrypt.compare(password, user.password);
-//         if (!isPasswordValid) return handleHttpError(res, "INVALID_CREDENTIALS", 401);
-
-//         await User.update(user.id, { updatedAt: new Date().toISOString() });
-//         const token = generateToken({ id: user.id, email: user.email, role: user.role });
-
-//         return res.json({ 
-//             message: "LOGIN_SUCCESS", 
-//             token, 
-//             user: { ...user, password: undefined, updatedAt: new Date().toISOString() } 
-//         });
-
-//     } catch (error) {
-//         console.error("Login User Error:", error.message);
-//         return handleHttpError(res, error.message || "INTERNAL_SERVER_ERROR", 500);
-//     }
-// };
 
 const loginUser = async (req, res) => {
     try {
@@ -826,6 +757,180 @@ const updateRoadmap = async (req, res) => {
     }
 };
 
+/* 
+// Nice to hace multi Roadmap 
+const updateRoadmap = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { roadmapId, sectionName, topicName, newStatus } = req.body;
+
+        const user = await User.findById(id);
+        if (!user) return res.status(404).json({ error: "USER_NOT_FOUND" });
+        if (!user.metadata) user.metadata = {};
+        if (!user.metadata.roadmaps) user.metadata.roadmaps = [];
+        
+        const acquiredSkills = new Set(user.metadata.skills || []);
+        const userSubjects = user.metadata.AH?.subjects || [];
+
+        let targetRoadmap;
+        let roadmapIndex = -1;
+
+        if (roadmapId) {
+            roadmapIndex = user.metadata.roadmaps.findIndex(r => r._id === roadmapId);
+            if (roadmapIndex !== -1) {
+                targetRoadmap = user.metadata.roadmaps[roadmapIndex];
+            } else {
+                return res.status(404).json({ error: "ROADMAP_NOT_FOUND" });
+            }
+        } 
+
+        // Si no hay ID, intentar encontrar o crear uno basado en la especialización
+        else {
+            roadmapIndex = user.metadata.roadmaps.findIndex(r => 
+                r.name === user.metadata.specialization
+            );
+
+            if (roadmapIndex !== -1) targetRoadmap = user.metadata.roadmaps[roadmapIndex];
+            else {
+                try {
+                    const roadmapData = await Roadmap.findByName(user.metadata.specialization);
+                    if (!roadmapData) return res.status(404).json({ error: "ROADMAP_NOT_FOUND" });
+
+                    // Crear un nuevo roadmap con ID único
+                    targetRoadmap = {
+                        _id: uuidv4(),
+                        name: roadmapData.name,
+                        body: roadmapData.body,
+                        createdAt: new Date().toISOString(),
+                        lastUpdatedAt: new Date().toISOString()
+                    };
+
+                    // Añadir al array de roadmaps
+                    user.metadata.roadmaps.push(targetRoadmap);
+                    roadmapIndex = user.metadata.roadmaps.length - 1;
+                    
+                    if (!sectionName && !topicName && !newStatus) {
+                        await User.update(id, { 
+                            "metadata.roadmaps": user.metadata.roadmaps,
+                            "updatedAt": new Date().toISOString()
+                        });
+                    }
+                } catch (err) {
+                    return res.status(500).json({ error: "ERROR_FETCHING_ROADMAP" });
+                }
+            }
+        }
+
+        const updatedRoadmapBody = JSON.parse(JSON.stringify(targetRoadmap.body));
+        let hasChanges = false;
+        
+        const normalizeName = (name) => name ? name.trim().toLowerCase() : '';
+        const normalizedUserSubjects = userSubjects.map(subject => ({
+            ...subject,
+            normalizedName: normalizeName(subject.name),
+        }));
+
+        const approvedSubjectsMap = new Map();
+        normalizedUserSubjects.forEach(subject => {
+            if (subject.grade >= 5.0) {
+                approvedSubjectsMap.set(normalizeName(subject.name), subject);
+            }
+        });
+
+        // PRIMERO: Auto-completar basado en el historial académico (AH)
+        // Esta parte se ejecuta siempre, independientemente de si hay actualización manual o no
+        for (const [section, topics] of Object.entries(updatedRoadmapBody)) {
+            for (const [topic, topicData] of Object.entries(topics)) {
+                if (topicData?.subject) {
+                    const normalizedSubjectName = normalizeName(topicData.subject);
+                    const isApproved = approvedSubjectsMap.has(normalizedSubjectName);
+                    
+                    if (isApproved && topicData.status !== "done") {
+                        topicData.status = "done";
+                        hasChanges = true;
+                        if (topicData.skill) acquiredSkills.add(topicData.skill);
+                    }
+                }
+            }
+        }
+
+        // SEGUNDO: Aplicar la actualización manual si se proporciona
+        if (sectionName && topicName && newStatus) {
+            // Validar que la sección y el tema existen
+            if (!updatedRoadmapBody[sectionName] || !updatedRoadmapBody[sectionName][topicName]) {
+                return res.status(404).json({ error: "SECTION_OR_TOPIC_NOT_FOUND" });
+            }
+            
+            const topic = updatedRoadmapBody[sectionName][topicName];
+
+            // Si el estado es el mismo, no hacer cambios
+            if (topic.status === newStatus) {
+                // Aún así, guardamos si hubo cambios por el autocompletado
+                if (hasChanges) {
+                    // Actualizar el roadmap específico en el array
+                    user.metadata.roadmaps[roadmapIndex].body = updatedRoadmapBody;
+                    user.metadata.roadmaps[roadmapIndex].lastUpdatedAt = new Date().toISOString();
+                    
+                    await User.update(id, {
+                        "metadata.roadmaps": user.metadata.roadmaps,
+                        "metadata.skills": Array.from(acquiredSkills),
+                        "updatedAt": new Date().toISOString(),
+                    });
+                    
+                    return res.status(200).json({ 
+                        message: "Roadmap actualizado automáticamente (tema específico sin cambios)",
+                        roadmapId: targetRoadmap._id
+                    });
+                }
+                return res.status(200).json({ 
+                    message: "No hay cambios que realizar (estado ya está actualizado)",
+                    roadmapId: targetRoadmap._id
+                });
+            }
+
+            if (newStatus === "done" || (topic.status !== "done")) {
+                topic.status = newStatus;
+                hasChanges = true;
+                
+                if (newStatus === "done" && topic.skill) acquiredSkills.add(topic.skill);
+            }
+        }
+
+        if (hasChanges) {
+            // Actualizar el roadmap específico en el array
+            user.metadata.roadmaps[roadmapIndex].body = updatedRoadmapBody;
+            user.metadata.roadmaps[roadmapIndex].lastUpdatedAt = new Date().toISOString();
+            
+            await User.update(id, {
+                "metadata.roadmaps": user.metadata.roadmaps,
+                "metadata.skills": Array.from(acquiredSkills),
+                "updatedAt": new Date().toISOString(),
+            });
+            
+            let message;
+            if (sectionName && topicName && newStatus) {
+                message = "Roadmap actualizado correctamente";
+            } else {
+                message = "Roadmap actualizado automáticamente";
+            }
+            
+            return res.status(200).json({ 
+                message,
+                roadmapId: targetRoadmap._id
+            });
+        }
+
+        return res.status(200).json({ 
+            message: "No hay cambios que realizar",
+            roadmapId: targetRoadmap._id
+        });
+    } catch (error) {
+        console.error("Error updating roadmap:", error);
+        return res.status(500).json({ error: "Error updating roadmap" });
+    }
+};
+*/
+
 const getRoadmap = async (req, res) => {
     try {
         const { id } = req.user;
@@ -839,6 +944,40 @@ const getRoadmap = async (req, res) => {
     }
 };
 
+/*
+// Nice to hace multi Roadmap 
+const getRoadmap = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { roadmapId } = req.query;
+        
+        const user = await User.findById(id);
+        if (!user) return res.status(404).json({ error: "USER_NOT_FOUND" });
+        
+        const userRoadmaps = user.metadata.roadmaps || [];
+        
+        if (roadmapId) {
+            const selectedRoadmap = userRoadmaps.find(r => r._id === roadmapId);
+            if (!selectedRoadmap) return res.status(404).json({ error: "ROADMAP_NOT_FOUND" });
+            return res.status(200).json({ roadmap: selectedRoadmap });
+        }
+        
+        if (userRoadmaps.length === 0) {
+            return res.status(404).json({ 
+                error: "NO_ROADMAPS_FOUND",
+                message: "User has no roadmaps assigned"
+            });
+        }
+        
+        return res.status(200).json({ roadmaps: userRoadmaps });
+        
+    } catch (error) {
+        console.error("Error retrieving roadmap:", error.message);
+        return res.status(500).json({ error: "ERROR_RETRIEVING_ROADMAP" });
+    }
+};
+*/
+
 const deleteRoadmap = async (req, res) => {
     try {
         const { id } = req.user;
@@ -849,6 +988,7 @@ const deleteRoadmap = async (req, res) => {
         const metadataUpdates = {
             "metadata.roadmap": admin.firestore.FieldValue.delete(),
             "metadata.updatedAt": new Date().toISOString(),
+            "metadata.hasHadRoadmap": true,
         };
 
         await User.update(id, metadataUpdates);
@@ -858,6 +998,51 @@ const deleteRoadmap = async (req, res) => {
         return res.status(500).json({ error: "Internal server error" });
     }
 };
+
+/* 
+// Nice to hace multi Roadmap 
+const deleteRoadmap = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { roadmapId } = req.body;
+        
+        if (!roadmapId) {
+            return res.status(400).json({ 
+                error: "MISSING_ROADMAP_ID",
+                message: "Roadmap ID is required for deletion"
+            });
+        }
+        
+        const user = await User.findById(id);
+        if (!user) return res.status(404).json({ error: "USER_NOT_FOUND" });
+        
+        const userRoadmaps = user.metadata.roadmaps || [];
+        const roadmapIndex = userRoadmaps.findIndex(r => r._id === roadmapId);
+        
+        if (roadmapIndex === -1) {
+            return res.status(404).json({ 
+                error: "ROADMAP_NOT_FOUND",
+                message: "No roadmap found with the provided ID"
+            });
+        }
+        
+        const deletedRoadmap = userRoadmaps.splice(roadmapIndex, 1)[0];        
+        await User.update(id, {
+            "metadata.roadmaps": userRoadmaps,
+            "updatedAt": new Date().toISOString()
+        });
+        
+        return res.status(200).json({
+            message: "Roadmap deleted successfully",
+            deletedRoadmap: { _id: deletedRoadmap._id, name: deletedRoadmap.name }
+        });
+        
+    } catch (error) {
+        console.error("Error deleting roadmap:", error.message);
+        return res.status(500).json({ error: "ERROR_DELETING_ROADMAP" });
+    }
+};
+*/
 
 const addTeacherToStudent = async (req, res) => {
     try {
